@@ -1,0 +1,111 @@
+PODS:
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
+  - device_info (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_appauth (0.0.1):
+    - AppAuth
+    - Flutter
+  - flutter_email_sender (0.0.1):
+    - Flutter
+  - flutter_mailer (0.0.1):
+    - Flutter
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - "geolocator (5.3.2+2)":
+    - Flutter
+  - image_picker (0.0.1):
+    - Flutter
+  - "location_permissions (3.0.0+1)":
+    - Flutter
+  - package_info (0.0.1):
+    - Flutter
+  - path_provider (0.0.1):
+    - Flutter
+  - shared_preferences (0.0.1):
+    - Flutter
+  - sqflite (0.0.1):
+    - Flutter
+    - FMDB (~> 2.7.2)
+  - uni_links (0.0.1):
+    - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - device_info (from `.symlinks/plugins/device_info/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_appauth (from `.symlinks/plugins/flutter_appauth/ios`)
+  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
+  - flutter_mailer (from `.symlinks/plugins/flutter_mailer/ios`)
+  - geolocator (from `.symlinks/plugins/geolocator/ios`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - uni_links (from `.symlinks/plugins/uni_links/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+
+SPEC REPOS:
+  trunk:
+    - AppAuth
+    - FMDB
+
+EXTERNAL SOURCES:
+  device_info:
+    :path: ".symlinks/plugins/device_info/ios"
+  Flutter:
+    :path: Flutter
+  flutter_appauth:
+    :path: ".symlinks/plugins/flutter_appauth/ios"
+  flutter_email_sender:
+    :path: ".symlinks/plugins/flutter_email_sender/ios"
+  flutter_mailer:
+    :path: ".symlinks/plugins/flutter_mailer/ios"
+  geolocator:
+    :path: ".symlinks/plugins/geolocator/ios"
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
+  location_permissions:
+    :path: ".symlinks/plugins/location_permissions/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
+  uni_links:
+    :path: ".symlinks/plugins/uni_links/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
+
+SPEC CHECKSUMS:
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_appauth: 19bf8864f437f642a5f10ea1aa7bb9a9d9478cb9
+  flutter_email_sender: f787522d0e82f50e5766c1213dbffff22fdcf009
+  flutter_mailer: 2ef5a67087bc8c6c4cefd04a178bf1ae2c94cd83
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  geolocator: f7622e0e7e2a24718285b73916d60c4a54b9f5b6
+  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  location_permissions: 7e0f9aa0f60deb8ff93ddf0e2a164c7e8197bc94
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
+  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.3
