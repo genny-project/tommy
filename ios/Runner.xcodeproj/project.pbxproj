@@ -307,7 +307,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 7.0.9;
-				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1.tommy;
+				PRODUCT_BUNDLE_IDENTIFIER = life.genny.tommy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -447,7 +447,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 7.0.9;
-				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1.tommy;
+				PRODUCT_BUNDLE_IDENTIFIER = life.genny.tommy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -481,7 +481,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 7.0.9;
-				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1.tommy;
+				PRODUCT_BUNDLE_IDENTIFIER = life.genny.tommy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
