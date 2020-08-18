@@ -1,0 +1,2 @@
+1. The users will now be able to send emails to the Outcome.life support team from within the app
+2. Bug Fixes

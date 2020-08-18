@@ -1,2 +1,2 @@
-json_key_file("/Users/kanikagulati/project/genny/api-5955347737253545224-483253-5031bc475ab3.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file("~/projects/genny/google_play/api-6253111433666395689-728947-0c4d1380d4ca.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
 package_name("life.genny.alyson") # e.g. com.krausefx.app
