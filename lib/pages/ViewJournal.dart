@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/widgets/AlertMessage.dart';
+import '../models/BaseEntity.dart';
+import '../utils/internmatch/BaseEntityUtils.dart';
+import '../utils/internmatch/Sync.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../widgets/AlertMessage.dart';
 import '../ProjectEnv.dart';
-import 'package:internmatch/pages/Dashboard.dart';
+import '../pages/Dashboard.dart';
 
 class ViewJournal extends StatefulWidget {
   UserEventHelper _eventHelper;

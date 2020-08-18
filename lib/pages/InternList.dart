@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/pages/CustomState.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/widgets/InternListBuilder.dart';
-import 'package:internmatch/widgets/ListBuilder.dart';
+import '../models/BaseEntity.dart';
+import '../pages/CustomState.dart';
+import '../utils/internmatch/GetTokenData.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../widgets/InternListBuilder.dart';
+import '../widgets/ListBuilder.dart';
 import '../ProjectEnv.dart';
 
 class InternList extends StatefulWidget {

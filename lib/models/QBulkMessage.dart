@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:internmatch/models/QDataBaseEntityMessage.dart';
+import '../models/QDataBaseEntityMessage.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'BaseEntity.dart';

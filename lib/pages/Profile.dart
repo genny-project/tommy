@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:internmatch/ProjectEnv.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/pages/ViewJournal.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import '../ProjectEnv.dart';
+import '../models/BaseEntity.dart';
+import '../pages/ViewJournal.dart';
+import '../utils/internmatch/GetTokenData.dart';
 
 class Profile extends StatefulWidget {
   @override

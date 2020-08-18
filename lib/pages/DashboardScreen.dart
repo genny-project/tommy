@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/ProjectEnv.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/pages/CustomState.dart';
-import 'package:internmatch/pages/FetchJournals.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/EventHandler.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/widgets/FloatingButton.dart';
-import 'package:internmatch/widgets/countButton.dart';
+import '../ProjectEnv.dart';
+import '../models/BaseEntity.dart';
+import '../pages/CustomState.dart';
+import '../pages/FetchJournals.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/EventHandler.dart';
+import '../utils/internmatch/GetTokenData.dart';
+import '../utils/internmatch/Sync.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../widgets/FloatingButton.dart';
+import '../widgets/countButton.dart';
 
 int tabIndex = 0;
 String unapprovedCount;

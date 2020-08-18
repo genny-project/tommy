@@ -1,11 +1,11 @@
 library multi_page_form;
 
 import 'package:flutter/material.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/models/EntityAttribute.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/widgets/AlertMessage.dart';
+import '../models/BaseEntity.dart';
+import '../models/EntityAttribute.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../widgets/AlertMessage.dart';
 
 class MultiPageForm extends StatefulWidget {
   UserEventHelper eventHelper;

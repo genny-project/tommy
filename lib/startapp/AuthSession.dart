@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:internmatch/startapp/Home.dart';
-import 'package:internmatch/models/SessionData.dart';
-import 'package:internmatch/utils/internmatch/AppAuthHelper.dart';
+import '../startapp/Home.dart';
+import '../models/SessionData.dart';
+import '../utils/internmatch/AppAuthHelper.dart';
 
-import 'package:internmatch/utils/internmatch/EventHandler.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/pages/Dashboard.dart';
-import 'package:internmatch/pages/Login.dart';
+import '../utils/internmatch/EventHandler.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../pages/Dashboard.dart';
+import '../pages/Login.dart';
 import '../ProjectEnv.dart';
 
 

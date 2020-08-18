@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/pages/AppInfo.dart';
-import 'package:internmatch/pages/Profile.dart';
-import 'package:internmatch/pages/Support.dart';
+import '../models/BaseEntity.dart';
+import '../pages/AppInfo.dart';
+import '../pages/Profile.dart';
+import '../pages/Support.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
 import '../utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/pages/Dashboard.dart';
+import '../pages/Dashboard.dart';
 import '../ProjectEnv.dart';
 import '../utils/internmatch/SqlConsole.dart';
 import 'CustomState.dart';

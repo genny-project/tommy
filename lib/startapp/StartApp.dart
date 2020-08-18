@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/ProjectEnv.dart';
+import '../ProjectEnv.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';

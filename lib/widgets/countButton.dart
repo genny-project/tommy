@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/pages/CustomState.dart';
-import 'package:internmatch/pages/Dashboard.dart';
-import 'package:internmatch/pages/DashboardScreen.dart';
-import 'package:internmatch/pages/InternList.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
+import '../pages/CustomState.dart';
+import '../pages/Dashboard.dart';
+import '../pages/DashboardScreen.dart';
+import '../pages/InternList.dart';
+import '../utils/internmatch/UserEventHelper.dart';
 import '../models/BaseEntity.dart';
 
 class CountButton extends StatefulWidget {

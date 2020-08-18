@@ -1,6 +1,6 @@
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/models/EntityAttribute.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import '../../models/BaseEntity.dart';
+import '../../models/EntityAttribute.dart';
+import './GetTokenData.dart';
 import 'package:intl/intl.dart';
 
 class BaseEntityUtils {
