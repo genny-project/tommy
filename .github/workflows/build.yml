@@ -21,4 +21,10 @@ jobs:
       - name: Build Android
         run: flutter build apk
       - name: Build iOS
-        run: flutter build ios --release --no-codesign
+              run: flutter build ios --release --no-codesign
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build files
+          path: |
+            /Users/runner/work/tommy/tommy/build/app/outputs/flutter-apk/app-release.apk
+            /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
