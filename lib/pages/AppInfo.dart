@@ -53,7 +53,7 @@ class _AppInfoState extends State<AppInfo> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
                       child: Text(
-                        "18th AUGUST 2020",
+                        "18th AUGUST 2020.",
                         style: TextStyle(color: Colors.white, fontSize: 15),
                       ),
                     )

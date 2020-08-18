@@ -12,9 +12,9 @@ BUILD_NUMBER=`git rev-list --all|wc -l|xargs`
 #done
 
 flutter clean;
-flutter build appbundle --build-number $BUILD_NUMBER
-#flutter build ios --build-number $BUILD_NUMBER;
-#cd ios
-#fastlane internal
-#cd ..
+#flutter build appbundle --build-number $BUILD_NUMBER
+flutter build ios --build-number $BUILD_NUMBER;
+cd ios
+fastlane internal
+cd ..
 
