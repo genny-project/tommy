@@ -52,6 +52,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   path_provider: ^0.5.0+1
   cached_network_image: ^2.0.0
+  flutter_launcher_icons: ^0.7.2+1
 
 dev_dependencies:
   flutter_test:
@@ -98,3 +99,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
+
+  flutter_icons:    
+    android: true  
+    ios: true
+    image_path: "assets/AppleStore/AppIcon.png"
