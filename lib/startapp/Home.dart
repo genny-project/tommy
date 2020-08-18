@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:internmatch/StartApp/AuthSession.dart';
+import 'package:internmatch/startapp/AuthSession.dart';
 import 'package:internmatch/models/SessionData.dart';
 import 'package:internmatch/utils/internmatch/AppAuthHelper.dart';
 import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';

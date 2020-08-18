@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:internmatch/StartApp/Home.dart';
+import 'package:internmatch/startapp/Home.dart';
 import 'package:internmatch/models/SessionData.dart';
 import 'package:internmatch/utils/internmatch/AppAuthHelper.dart';
 
