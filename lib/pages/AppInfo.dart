@@ -39,15 +39,24 @@ class _AppInfoState extends State<AppInfo> {
                   children: <Widget>[
                     new Image.asset(ProjectEnv.img,
                         width: 300, repeat: ImageRepeat.noRepeat, height: 200),
-                        Text("Powered By GADA Technology",style: TextStyle(color: Colors.white, fontSize: 20),),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text("v${widget.version}", style: TextStyle(color: Colors.white, fontSize: 20),),
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-                          child: Text("26th JUNE 2020",style: TextStyle(color: Colors.white, fontSize: 15),),
-                        )
+                    Text(
+                      "Powered By GADA Technology",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        "v${widget.version}",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+                      child: Text(
+                        "18th AUGUST 2020",
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
+                    )
                   ],
                 ),
               ),
