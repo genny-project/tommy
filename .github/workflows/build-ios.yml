@@ -1,4 +1,4 @@
-name: Flutter build
+name: Flutter build iOS
 on: push
 
 env:
@@ -18,13 +18,10 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
       - name: Install dependencies
         run: flutter pub get
-      - name: Build Android
-        run: flutter build apk
       - name: Build iOS
         run: flutter build ios --release --no-codesign
       - uses: actions/upload-artifact@v2
         with:
-          name: Build files
+          name: iOS build files
           path: |
-            /Users/runner/work/tommy/tommy/build/app/outputs/flutter-apk/app-release.apk
             /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
