@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/ProjectEnv.dart';
+import '../ProjectEnv.dart';
 
 
 class Login extends StatelessWidget {

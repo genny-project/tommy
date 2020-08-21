@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/pages/CustomState.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
+import '../models/BaseEntity.dart';
+import '../pages/CustomState.dart';
+import '../utils/internmatch/BaseEntityUtils.dart';
+import '../utils/internmatch/Sync.dart';
+import '../utils/internmatch/UserEventHelper.dart';
 import '../ProjectEnv.dart';
 import '../pages/FetchJournals.dart';
 import '../pages/ViewJournal.dart';

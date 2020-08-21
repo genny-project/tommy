@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/ProjectEnv.dart';
+import '../ProjectEnv.dart';
 import 'package:intl/intl.dart';
 
 class AppInfo extends StatefulWidget {

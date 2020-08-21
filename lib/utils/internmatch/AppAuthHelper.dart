@@ -1,8 +1,8 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:internmatch/models/BridgeEnv.dart';
-import 'package:internmatch/models/SessionData.dart';
-import 'package:internmatch/utils/internmatch/ApiHelper.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import '../../models/BridgeEnv.dart';
+import '../../models/SessionData.dart';
+import './ApiHelper.dart';
+import './GetTokenData.dart';
 
 import '../../ProjectEnv.dart';
 

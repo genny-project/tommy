@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:internmatch/models/BridgeEnv.dart';
-import 'package:internmatch/models/EntityAttribute.dart';
-import 'package:internmatch/models/Event.dart';
+import '../../models/BridgeEnv.dart';
+import '../../models/EntityAttribute.dart';
+import '../../models/Event.dart';
 
-import 'package:internmatch/models/BaseEntity.dart' as b;
-import 'package:internmatch/models/Answer.dart' as ans;
-import 'package:internmatch/models/QDataAnswerMessage.dart';
-import 'package:internmatch/models/SessionData.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
-import 'package:internmatch/utils/internmatch/MessageWrapper.dart';
-import 'package:internmatch/utils/internmatch/PushToHTTP.dart';
-import 'package:internmatch/utils/internmatch/Websocket.dart';
+import '../../models/BaseEntity.dart' as b;
+import '../../models/Answer.dart' as ans;
+import '../../models/QDataAnswerMessage.dart';
+import '../../models/SessionData.dart';
+import './DatabaseHelper.dart';
+import './GetTokenData.dart';
+import './MessageWrapper.dart';
+import './PushToHTTP.dart';
+import './Websocket.dart';
 
 import '../../ProjectEnv.dart';
 import 'Device.dart';

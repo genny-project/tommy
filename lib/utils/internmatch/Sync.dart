@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'package:internmatch/ProjectEnv.dart';
-import 'package:internmatch/models/Answer.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/models/QBulkMessage.dart';
-import 'package:internmatch/models/QDataAnswerMessage.dart';
-import 'package:internmatch/utils/internmatch/Device.dart';
-import 'package:internmatch/utils/internmatch/VersionInfo.dart';
+import '../../ProjectEnv.dart';
+import '../../models/Answer.dart';
+import '../../models/BaseEntity.dart';
+import '../../models/QBulkMessage.dart';
+import '../../models/QDataAnswerMessage.dart';
+import './Device.dart';
+import './VersionInfo.dart';
 import 'AppAuthHelper.dart';
 import 'BaseEntityUtils.dart';
 

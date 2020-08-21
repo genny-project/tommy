@@ -1,4 +1,4 @@
-import 'package:internmatch/models/BaseEntity.dart';
+import '../models/BaseEntity.dart';
 
 
 

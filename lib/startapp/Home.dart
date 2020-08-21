@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:internmatch/StartApp/AuthSession.dart';
-import 'package:internmatch/models/SessionData.dart';
-import 'package:internmatch/utils/internmatch/AppAuthHelper.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/Device.dart';
-import 'package:internmatch/utils/internmatch/EventHandler.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/pages/Dashboard.dart';
-import 'package:internmatch/pages/Login.dart';
-import 'package:internmatch/utils/internmatch/VersionInfo.dart';
+import '../startapp/AuthSession.dart';
+import '../models/SessionData.dart';
+import '../utils/internmatch/AppAuthHelper.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/Device.dart';
+import '../utils/internmatch/EventHandler.dart';
+import '../utils/internmatch/Sync.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../pages/Dashboard.dart';
+import '../pages/Login.dart';
+import '../utils/internmatch/VersionInfo.dart';
 import '../ProjectEnv.dart';
 
 class Home extends StatefulWidget {

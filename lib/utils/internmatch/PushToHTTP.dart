@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:internmatch/models/Answer.dart';
-import 'package:internmatch/models/QDataAnswerMessage.dart';
+import '../../models/Answer.dart';
+import '../../models/QDataAnswerMessage.dart';
 import 'BaseEntityUtils.dart';
 import 'DatabaseHelper.dart';
 
