@@ -1,4 +1,4 @@
-name: Flutter build Android
+name: build-android
 on: push
 
 env:
@@ -6,7 +6,7 @@ env:
   java_version: "12.x"
 
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -22,6 +22,6 @@ jobs:
         run: flutter build apk
       - uses: actions/upload-artifact@v2
         with:
-          name: Android build files
+          name: android-build-files
           path: |
-            /build/app/outputs/flutter-apk/app-release.apk
+            /Users/runner/work/tommy/tommy/build/app/outputs/flutter-apk/app-release.apk

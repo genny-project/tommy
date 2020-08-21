@@ -1,4 +1,5 @@
 # tommy
 
-![Flutter build](https://github.com/genny-project/tommy/workflows/Flutter%20build%20Android/badge.svg)
-![Flutter build](https://github.com/genny-project/tommy/workflows/Flutter%20build%20iOS/badge.svg)
+![build-android](https://github.com/genny-project/tommy/workflows/build-android/badge.svg)
+![build-ios](https://github.com/genny-project/tommy/workflows/build-ios/badge.svg)
+![flutter-test](https://github.com/genny-project/tommy/workflows/flutter-test/badge.svg)
