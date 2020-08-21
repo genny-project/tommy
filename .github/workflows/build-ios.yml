@@ -23,5 +23,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ios-build-files
-          path: |
-            /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
+          path: /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
