@@ -9,7 +9,7 @@ import '../ProjectEnv.dart';
 import '../utils/internmatch/BaseEntityUtils.dart';
 import '../pages/Dashboard.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import '../packages/Multipageform.dart';
+import '../packages/MultiPageForm.dart';
 
 //This file contains the functions for adding a journal and submitting a journal to the DB
 
