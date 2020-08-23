@@ -1,6 +1,6 @@
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import '../utils/internmatch/BaseEntityUtils.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/GetTokenData.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AliasCode {

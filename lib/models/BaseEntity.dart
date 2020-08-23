@@ -1,8 +1,8 @@
-import 'package:internmatch/models/AliasCode.dart';
-import 'package:internmatch/models/EntityAttribute.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import './AliasCode.dart';
+import './EntityAttribute.dart';
+import '../utils/internmatch/BaseEntityUtils.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/GetTokenData.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';

@@ -1,6 +1,6 @@
-import 'package:internmatch/models/Answer.dart';
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
+import '../models/Answer.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/GetTokenData.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';

@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/models/EntityAttribute.dart';
-import 'package:internmatch/models/AliasCode.dart';
-import 'package:internmatch/models/Token.dart';
+import '../../models/BaseEntity.dart';
+import '../../models/EntityAttribute.dart';
+import '../../models/AliasCode.dart';
+import '../../models/Token.dart';
 
-import 'package:internmatch/models/UserToken.dart';
+import '../../models/UserToken.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

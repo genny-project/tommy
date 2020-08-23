@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:internmatch/utils/internmatch/Device.dart';
-import 'package:internmatch/ProjectEnv.dart';
-import 'package:internmatch/utils/internmatch/GetTokenData.dart';
-import 'package:internmatch/utils/internmatch/VersionInfo.dart';
+import '../utils/internmatch/Device.dart';
+import '../ProjectEnv.dart';
+import '../utils/internmatch/GetTokenData.dart';
+import '../utils/internmatch/VersionInfo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // This class is

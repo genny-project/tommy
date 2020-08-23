@@ -4,13 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:internmatch/ProjectEnv.dart';
-import 'package:internmatch/models/Answer.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/models/QBulkMessage.dart';
-import 'package:internmatch/models/Token.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
+import '../../ProjectEnv.dart';
+import '../../models/Answer.dart';
+import '../../models/BaseEntity.dart';
+import '../../models/QBulkMessage.dart';
+import '../../models/Token.dart';
+import './BaseEntityUtils.dart';
+import './Sync.dart';
 
 import 'dart:io';
 

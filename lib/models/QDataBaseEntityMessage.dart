@@ -1,9 +1,9 @@
-import 'package:internmatch/models/BaseEntity.dart';
+import '../models/BaseEntity.dart';
 
-import 'package:internmatch/utils/internmatch/DatabaseHelper.dart';
+import '../utils/internmatch/DatabaseHelper.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:internmatch/models/AliasCode.dart';
+import '../models/AliasCode.dart';
 part 'QDataBaseEntityMessage.g.dart';
 
 @JsonSerializable(explicitToJson: true)

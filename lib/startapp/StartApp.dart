@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internmatch/ProjectEnv.dart';
+import '../ProjectEnv.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
@@ -7,7 +7,7 @@ import '../models/BridgeEnv.dart';
 
 import '../ProjectEnv.dart';
 
-import '../StartApp/Home.dart';
+import '../startapp/Home.dart';
 import '../utils/internmatch/ApiHelper.dart';
 import '../pages/SplashScreen.dart';
 

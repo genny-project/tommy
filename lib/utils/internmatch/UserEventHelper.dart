@@ -1,6 +1,6 @@
 /*Event helper class any user event will first call method from this class*/
-import 'package:internmatch/models/Event.dart';
-import 'package:internmatch/utils/internmatch/EventHandler.dart';
+import '../../models/Event.dart';
+import './EventHandler.dart';
 
 class UserEventHelper {
   EventHandler _eventHandler;

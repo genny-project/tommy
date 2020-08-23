@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:internmatch/models/Answer.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
+import '../../models/Answer.dart';
+import './BaseEntityUtils.dart';
 import 'package:package_info/package_info.dart';
 
 class Version {

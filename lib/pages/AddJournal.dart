@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:internmatch/models/BaseEntity.dart';
-import 'package:internmatch/utils/internmatch/Sync.dart';
-import 'package:internmatch/utils/internmatch/UserEventHelper.dart';
-import 'package:internmatch/widgets/AlertMessage.dart';
+import '../models/BaseEntity.dart';
+import '../utils/internmatch/Sync.dart';
+import '../utils/internmatch/UserEventHelper.dart';
+import '../widgets/AlertMessage.dart';
 import 'package:intl/intl.dart';
 import '../ProjectEnv.dart';
-import 'package:internmatch/utils/internmatch/BaseEntityUtils.dart';
-import 'package:internmatch/pages/Dashboard.dart';
+import '../utils/internmatch/BaseEntityUtils.dart';
+import '../pages/Dashboard.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:internmatch/packages/multipageform.dart';
+import '../packages/MultiPageForm.dart';
 
 //This file contains the functions for adding a journal and submitting a journal to the DB
 
