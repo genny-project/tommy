@@ -30,3 +30,9 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: testers
           file: ./build/app/outputs/flutter-apk/app-release.apk
+      - name: Notify slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: abinoda/slack-action@v1.0.7
+        with:
+          args: '{\"channel\":\"CT6CF0UJW\",\"text\":\"Android build deployed to testers\"}'
