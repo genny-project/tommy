@@ -1,5 +1,8 @@
 name: build-deploy-android
-on: push
+on:
+  push:
+    branches:
+      - master
 
 env:
   flutter_version: "1.20.2"
