@@ -1,0 +1,13 @@
+name: ios-final
+
+on:
+  push:
+    branches:
+      - "*.0"
+
+jobs:
+  ios-final:
+    runs-on: self-hosted
+    steps:
+      - name: Echo
+        run: echo "Final stable iOS app"
