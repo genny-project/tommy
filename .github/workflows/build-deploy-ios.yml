@@ -1,8 +1,8 @@
 name: build-deploy-ios
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 7.0.*
 
 env:
   flutter_version: "1.20.2"
