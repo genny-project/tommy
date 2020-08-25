@@ -1,0 +1,15 @@
+name: command
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Enter a command"
+        required: true
+
+jobs:
+  command:
+    runs-on: self-hosted
+    steps:
+      - run: |
+          ${{ github.event.inputs.command }}
