@@ -25,6 +25,8 @@ jobs:
         run: flutter pub get
       - name: Build Android
         run: flutter build apk
+      - name: print user name
+        run: echo `whoami`
       - uses: actions/upload-artifact@v2
         with:
           name: android-build-files
