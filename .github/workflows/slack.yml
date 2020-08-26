@@ -1,0 +1,15 @@
+name: slack
+
+on:
+  workflow_dispatch:
+    inputs:
+      slack:
+        description: "Enter a Slack message"
+        required: true
+
+jobs:
+  slack:
+    runs-on: self-hosted
+    steps:
+      - run: |
+          curl -X POST -H 'Content-type: application/json' --data '{\"text":\"${{ github.event.inputs.slack }}\"}' ${{secrets.SLACK_URL}}
