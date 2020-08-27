@@ -11,5 +11,7 @@ jobs:
   slack:
     runs-on: self-hosted
     steps:
-      - run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":" ${{ github.event.inputs.slack }} "}' ${{secrets.SLACK_URL}}
+      - uses: ./.github/slacker
+        with:
+          SLACK_URL: ${{ secrets.SLACK_URL_TEST }}
+          SLACK_MSG: ${{ github.event.inputs.slack }}
