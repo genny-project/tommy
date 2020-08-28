@@ -1,4 +1,4 @@
-app_identifier("life.genny.alysonV1") # The bundle identifier of your app
+app_identifier("life.genny.tommy") # The bundle identifier of your app
 apple_id("acrow@crowtech.com.au") # Your Apple email address
 
 itc_team_id("118504676") # App Store Connect Team ID
