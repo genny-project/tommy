@@ -13,11 +13,11 @@ jobs:
   build-ios:
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v1
       - uses: ./.github/slacker
         with:
           SLACK_URL: ${{ secrets.SLACK_URL }}
           SLACK_MSG: "Starting iOS beta build"
-      - uses: actions/checkout@v1
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.flutter_version }}
