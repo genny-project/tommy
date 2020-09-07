@@ -47,7 +47,7 @@ jobs:
           name: android-build-files
       - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
+          appId: ${{secrets.FIREBASE_ANDROID_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: alpha
           file: app-release.apk
