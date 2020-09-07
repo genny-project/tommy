@@ -7,22 +7,22 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: "1.20.2"
+  flutter_version: "1.20.3"
   java_version: "12.x"
 
 jobs:
   build-android:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v1
       - uses: ./.github/slacker
         with:
           SLACK_URL: ${{ secrets.SLACK_URL }}
           SLACK_MSG: "Starting Android beta build"
-      - uses: actions/checkout@v1
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ env.java_version }}
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v1.3.2
         with:
           flutter-version: ${{ env.flutter_version }}
       - name: Install dependencies
@@ -47,7 +47,7 @@ jobs:
           name: android-build-files
       - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
+          appId: ${{secrets.FIREBASE_ANDROID_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: alpha
           file: app-release.apk
