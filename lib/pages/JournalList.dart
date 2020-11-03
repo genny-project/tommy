@@ -30,7 +30,7 @@ class _JournalListState extends CustomState<JournalList>
   static var count3 = 0;
 
   final List<Tab> myTabs = <Tab>[
-    new Tab(text: 'Unapproved($count1)'),
+    new Tab(text: 'Submitted($count1)'),
     new Tab(text: 'Approved($count2)'),
     new Tab(text: 'Rejected($count3)')
   ];

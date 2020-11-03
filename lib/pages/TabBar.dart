@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 Widget tabBar() {
   return (TabBar(
     tabs: [
-      Tab(text: "Unapproved"),
+      Tab(text: "Submitted"),
       Tab(text: "Approved"),
       Tab(text: "Rejected"),
     ],

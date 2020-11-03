@@ -163,7 +163,7 @@ Widget displayCountButtons(
     context, widget, user, updateJournalList, _setIndex) {
   if (user.hasRole("INTERN")) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      CountButton(Colors.orangeAccent, "UNAPPROVED", "JNL_", "PRI_STATUS",
+      CountButton(Colors.orangeAccent, "SUBMITTED", "JNL_", "PRI_STATUS",
           "UNAPPROVED", updateJournalList, _setIndex, 0, false),
       CountButton(Colors.green, "APPROVED", "JNL_", "PRI_STATUS", "APPROVED",
           updateJournalList, _setIndex, 1, false),
