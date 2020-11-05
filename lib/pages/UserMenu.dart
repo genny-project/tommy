@@ -171,31 +171,8 @@ class _UserMenuState extends CustomState<UserMenu> {
                 onPressed: () {
                   Navigator.of(context).push(_sqlConsoleRoute());
                 }),
-                displayDev(context, user),
               ])),
         ));
-  }
-
-  Widget displayDev(context, user) {
-    getUser();
-    if ((user != null) && (user.hasRole("DEV"))) {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(200.0),
-                ),
-                color: Colors.green,
-                child: Text('sqlConsoleRoute',
-                    style: TextStyle(color: Colors.white, fontSize: 15)),
-                onPressed: () {
-                  Navigator.of(context).push(_sqlConsoleRoute());
-                }),
-          ]);
-    } else {
-      return Container(width: 0.0);
-    }
   }
 }
 
