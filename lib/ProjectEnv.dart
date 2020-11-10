@@ -6,7 +6,7 @@ class ProjectEnv {
   //static var url = "http://acrow2.gada.io";
   //static var url = "https://internmatch-cyrus.gada.io";
   static var apiVersion = "/v7";
-  static var projectColor = 0xFF233a4e;
+  static var projectColor = 0xFF20a4a4;
   static var appBarColor = 0xFFEEEEEE;
   static var projectName = "InternMatch";
   var fontsize = 3;
