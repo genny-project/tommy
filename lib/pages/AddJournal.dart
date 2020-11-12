@@ -38,7 +38,7 @@ final _formKey = GlobalKey<FormState>();
 class _AddJournalState extends State<AddJournal> {
   DateTime date;
   BaseEntity baseEntity;
-  double hour = 7.5;
+  double hour = 8.0;
   String task;
   String status;
   String feedback;
@@ -309,8 +309,8 @@ class _AddJournalState extends State<AddJournal> {
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter some text';
-          } else if (value.length < 150) {
-            return 'Please enter at least 150 characters';
+          } else if (value.length < 100) {
+            return 'Please enter at least 100 characters';
           }
           return null;
         },
@@ -388,8 +388,8 @@ class _AddJournalState extends State<AddJournal> {
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter some text';
-          } else if (value.length < 150) {
-            return 'Please enter at least 150 characters';
+          } else if (value.length < 100) {
+            return 'Please enter at least 100 characters';
           }
           return null;
         },
@@ -522,8 +522,8 @@ class _AddJournalState extends State<AddJournal> {
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please enter some text';
-                    } else if (value.length < 150) {
-                      return 'Please enter at least 150 characters';
+                    } else if (value.length < 100) {
+                      return 'Please enter at least 100 characters';
                     }
                     return null;
                   },
@@ -556,8 +556,8 @@ class _AddJournalState extends State<AddJournal> {
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please enter some text';
-                    } else if (value.length < 150) {
-                      return 'Please enter at least 150 characters';
+                    } else if (value.length < 100) {
+                      return 'Please enter at least 100 characters';
                     }
                     return null;
                   },

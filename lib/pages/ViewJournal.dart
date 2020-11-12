@@ -391,8 +391,8 @@ class _ViewJournalState extends State<ViewJournal> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please enter some text';
-                        } else if (value.length < 150) {
-                          return 'Please enter at least 150 characters';
+                        } else if (value.length < 100) {
+                          return 'Please enter at least 100 characters';
                         }
                         return null;
                       },
@@ -423,8 +423,8 @@ class _ViewJournalState extends State<ViewJournal> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please enter some text';
-                        } else if (value.length < 150) {
-                          return 'Please enter at least 150 characters';
+                        } else if (value.length < 100) {
+                          return 'Please enter at least 100 characters';
                         }
                         return null;
                       },
