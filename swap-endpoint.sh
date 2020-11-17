@@ -1,4 +1,4 @@
 #!/bin/bash
-LNK=$1
-URL='static var url = "https://internmatch-'$LNK'.gada.io";'
-sed -i "" "2s~.*~$URL~" lib/ProjectEnv.dart
+INPUT_URL=$1
+VAR_URL='  static var url = "https://'$INPUT_URL'";'
+sed -i "" "2s~.*~$VAR_URL~" lib/ProjectEnv.dart
