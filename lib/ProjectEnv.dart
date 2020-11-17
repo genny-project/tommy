@@ -1,5 +1,5 @@
 class ProjectEnv {
-  static var url = "https://internmatch-mobile.gada.io";
+  static var url = "https://internmatch-dev.gada.io";
   //static var url = "https://internmatch-cyrus.gada.io";
   //static var url = "https://internmatch-interns.gada.io";
   //static var url = "http://local.crowtech.com.au";
