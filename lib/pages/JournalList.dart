@@ -25,9 +25,9 @@ class _JournalListState extends CustomState<JournalList>
     with SingleTickerProviderStateMixin {
   var user;
   TabController tabController;
-  static var count1 = 0;
-  static var count2 = 0;
-  static var count3 = 0;
+  static String count1 = "0";
+  static String count2 = "0";
+  static String count3 = "0";
 
   final List<Tab> myTabs = <Tab>[
     new Tab(text: 'Submitted($count1)'),
@@ -51,9 +51,9 @@ class _JournalListState extends CustomState<JournalList>
           .then((value2) {
         return BaseEntity.fetchBaseEntitys("JNL_", "PRI_STATUS", "REJECTED")
             .then((value3) {
-          count1 = value1.length;
-          count2 = value2.length;
-          count3 = value3.length;
+          count1 = value1.length.toString();
+          count2 = value2.length.toString();
+          count3 = value3.length.toString();
           return true;
         });
       });

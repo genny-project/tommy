@@ -14,7 +14,7 @@ BUILD_NAME=`git branch --show-current`
 #  esac
 #done
 ./swap-endpoint.sh internmatch-dev.gada.io
-flutter clean;
+flutter clean
 #flutter build appbundle --build-number $BUILD_NUMBER
 flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER
 cd ios

@@ -704,3 +704,5 @@ fastlane/test_output
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
+ios/*.cer
+ios/*.mobileprovision
