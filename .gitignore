@@ -706,3 +706,4 @@ fastlane/test_output
 
 ios/*.cer
 ios/*.mobileprovision
+ios/AppStore_life.genny.alysonV1.mobileprovision
