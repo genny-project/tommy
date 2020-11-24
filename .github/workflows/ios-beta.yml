@@ -30,6 +30,8 @@ jobs:
           cd ./ios && pod install
       - name: Setup SSH Keys and known_hosts for fastlane match
         run: |
+          git config --global user.name $GIT_USER
+          git config --global user.email $GIT_EMAIL
           SSH_PATH="$HOME/.ssh"
           mkdir -p "$SSH_PATH"
           touch "$SSH_PATH/known_hosts"
@@ -41,6 +43,8 @@ jobs:
           eval $(ssh-agent)
           ssh-add "$SSH_PATH/id_rsa"
         env:
+          GIT_USER: ${{ secrets.GIT_USER }}
+          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy to TestFlight
         run: |
