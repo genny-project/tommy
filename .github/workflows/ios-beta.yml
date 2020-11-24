@@ -44,7 +44,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy to TestFlight
         run: |
-          cd ./ios && bundle exec fastlane beta
+          cd ./ios && bundle exec fastlane internal
         env:
           TEAM_ID: ${{ secrets.TEAM_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
