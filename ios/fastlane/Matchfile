@@ -1,4 +1,4 @@
-git_url("https://github.com/OutcomeLife/tommy_secrets")
+git_url("git@github.com:OutcomeLife/tommy_secrets.git")
 
 storage_mode("git")
 
