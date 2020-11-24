@@ -13,7 +13,7 @@ BUILD_NAME=`git branch --show-current`
 #      "iOS" ) flutter build ios --build-number $BUILD_NUMBER; break;;
 #  esac
 #done
-./swap-endpoint.sh internmatch-dev.gada.io
+./swap-endpoint.sh internmatch-mobile.gada.io
 flutter clean
 #flutter build appbundle --build-number $BUILD_NUMBER
 flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER
