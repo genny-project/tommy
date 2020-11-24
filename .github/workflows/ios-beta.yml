@@ -1,41 +1,21 @@
 name: ios-beta
 
 on:
-    push:
-        branches:
-            - "*-beta"
-    workflow_dispatch:
+  push:
+    branches:
+      - "*-beta"
+  workflow_dispatch:
 
 env:
-    flutter_version: "1.22.4"
+  flutter_version: "1.22.4"
 
 jobs:
-    build-ios:
-        runs-on: macos-latest
-        steps:
-            - uses: actions/checkout@v1
-            - uses: subosito/flutter-action@v1
-              with:
-                  flutter-version: ${{ env.flutter_version }}
-            - name: Install dependencies
-              run: flutter pub get
-            - name: Build iOS
-              run: flutter build ios --release --no-codesign
-            - uses: actions/upload-artifact@v2
-              with:
-                  name: ios-build-files
-                  path: /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
-    deploy-ios:
-        needs: build-ios
-        runs-on: self-hosted
-        steps:
-            - name: Download iOS build file
-              uses: actions/download-artifact@v2
-              with:
-                  name: ios-build-files
-            - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
-              with:
-                  appId: ${{secrets.FIREBASE_IOS_APP_ID}}
-                  token: ${{secrets.FIREBASE_TOKEN}}
-                  groups: alpha
-                  file: Runner.app
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.flutter_version }}
+      - name: build
+        run: ./deploy-all.sh
