@@ -16,5 +16,5 @@ flutter clean
 #flutter build appbundle --build-number $BUILD_NUMBER
 flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER
 cd ios
-fastlane internal --verbose
+fastlane internal
 cd ..
