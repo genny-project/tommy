@@ -33,9 +33,7 @@ platform :ios do
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
     )
-    get_certificates
-    get_provisioning_profile
-    build_app(workspace: "Runner.xcworkspace", scheme: "Runner", export_xcargs: "-allowProvisioningUpdates")
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner", export_method: "app-store", export_xcargs: "-allowProvisioningUpdates")
     upload_to_testflight
   end
 end
