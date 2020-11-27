@@ -28,7 +28,7 @@ jobs:
         run: |
           flutter pub get
           cd ./ios && pod install
-      - name: Install tools
+      - name: Flutter build
         run: |
           BUILD_NUMBER=`git rev-list --all|wc -l|xargs`
           BUILD_NAME=`git branch --show-current`

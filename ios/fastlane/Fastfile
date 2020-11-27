@@ -13,7 +13,7 @@ platform :ios do
       )
     end
     match(
-      type: "appstore",
+      type: "development",
       readonly: is_ci,
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
@@ -23,6 +23,8 @@ platform :ios do
       scheme: "Runner",
       export_method: "app-store"
     )
-    upload_to_testflight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
   end
 end
