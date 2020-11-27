@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Select Xcode version
-        run: sudo xcode-select -s '/Applications/Xcode_12.0.app/Contents/Developer'
+        run: sudo xcode-select -s '/Applications/Xcode_12.app/Contents/Developer'
       - name: Bundle install
         run: cd ./ios && bundle install
       - name: Setup JDK
@@ -28,12 +28,6 @@ jobs:
         run: |
           flutter pub get
           cd ./ios && pod install
-      - name: Build
-        run: |
-          BUILD_NUMBER=`git rev-list --all|wc -l|xargs`
-          BUILD_NAME=`git branch --show-current`
-          flutter clean
-          flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER
       - name: Setup SSH Keys and known_hosts for fastlane match
         run: |
           git config --global user.name $GIT_USER
@@ -52,7 +46,7 @@ jobs:
           GIT_USER: ${{ secrets.GIT_USER }}
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Deploy to TestFlight
+      - name: Build and deploy to TestFlight
         run: |
           cd ./ios && bundle exec fastlane internal
         env:
