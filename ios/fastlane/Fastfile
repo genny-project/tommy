@@ -13,7 +13,7 @@ platform :ios do
       )
     end
     match(
-      type: "development",
+      type: "appstore",
       readonly: is_ci,
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
