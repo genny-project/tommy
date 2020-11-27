@@ -28,6 +28,12 @@ jobs:
         run: |
           flutter pub get
           cd ./ios && pod install
+      - name: Build
+        run: |
+          BUILD_NUMBER=`git rev-list --all|wc -l|xargs`
+          BUILD_NAME=`git branch --show-current`
+          flutter clean
+          flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER
       - name: Setup SSH Keys and known_hosts for fastlane match
         run: |
           git config --global user.name $GIT_USER
