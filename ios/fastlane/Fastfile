@@ -1,22 +1,7 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-# For a list of all available plugins, check out
-#
-#     https://docs.fastlane.tools/plugins/available-plugins
-#
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
-  lane :internal do
+  lane :beta do
     if is_ci
       create_keychain(
         name: ENV['MATCH_KEYCHAIN_NAME'],
@@ -28,12 +13,16 @@ platform :ios do
       )
     end
     match(
-      type: "development",
+      type: "appstore",
       readonly: is_ci,
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
     )
-    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
     upload_to_testflight
   end
 end

@@ -5,5 +5,5 @@ BUILD_NAME=`git branch --show-current`
 flutter clean
 flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER --no-codesign
 cd ios
-fastlane internal
+fastlane beta
 cd ..
