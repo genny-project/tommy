@@ -440,7 +440,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 756;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
@@ -463,7 +463,7 @@
 				MARKETING_VERSION = 7.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development life.genny.alysonV1";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore life.genny.alysonV1";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -673,7 +673,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 756;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
@@ -696,7 +696,7 @@
 				MARKETING_VERSION = 7.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development life.genny.alysonV1";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore life.genny.alysonV1";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -713,7 +713,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 756;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
@@ -736,7 +736,7 @@
 				MARKETING_VERSION = 7.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = life.genny.alysonV1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development life.genny.alysonV1";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore life.genny.alysonV1";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
