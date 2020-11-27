@@ -3,7 +3,7 @@ name: android-beta
 on:
   push:
     branches:
-      - "*-android-beta"
+      - "*-beta"
   workflow_dispatch:
 
 jobs:
