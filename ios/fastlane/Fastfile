@@ -28,12 +28,12 @@ platform :ios do
       )
     end
     match(
-      type: "appstore",
+      type: "development",
       readonly: is_ci,
       keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
     )
-    build_app(workspace: "Runner.xcworkspace", scheme: "Runner", export_method: "app-store", export_xcargs: "allowProvisioningUpdates")
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner", export_method: "app-store", export_xcargs: "-allowProvisioningUpdates")
     upload_to_testflight
   end
 end
