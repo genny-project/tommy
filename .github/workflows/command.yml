@@ -9,7 +9,7 @@ on:
 
 jobs:
   command:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - run: |
           ${{ github.event.inputs.command }}

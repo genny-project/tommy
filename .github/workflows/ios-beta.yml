@@ -6,48 +6,62 @@ on:
       - "*-beta"
   workflow_dispatch:
 
-env:
-  flutter_version: "1.20.3"
-
 jobs:
-  build-ios:
+  build-deploy-ios:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: ./.github/slacker
+      - uses: actions/checkout@v2
+      - name: Select Xcode version
+        run: sudo xcode-select -s '/Applications/Xcode_12.app/Contents/Developer'
+      - name: Bundle install
+        run: cd ./ios && bundle install
+      - name: Setup JDK
+        uses: actions/setup-java@v1
         with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "Starting iOS beta build"
-      - uses: subosito/flutter-action@v1.3.2
+          java-version: "12.x"
+      - name: Setup flutter
+        uses: subosito/flutter-action@v1
         with:
-          flutter-version: ${{ env.flutter_version }}
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ios-build-files
-          path: /Users/runner/work/tommy/tommy/build/ios/iphoneos/Runner.app
-      - uses: ./.github/slacker
-        with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "iOS beta build completed"
-  deploy-ios:
-    needs: build-ios
-    runs-on: self-hosted
-    steps:
-      - name: Download iOS build file
-        uses: actions/download-artifact@v2
-        with:
-          name: ios-build-files
-      - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
-        with:
-          appId: ${{secrets.FIREBASE_IOS_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
-          groups: alpha
-          file: Runner.app
-      - uses: ./.github/slacker
-        with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "iOS beta build deployed to beta testers"
+          flutter-version: "1.22.4"
+          channel: "stable"
+      - name: Install tools
+        run: |
+          flutter pub get
+          cd ./ios && pod install
+      - name: Flutter build
+        run: |
+          BUILD_NUMBER=`git rev-list --all|wc -l|xargs`
+          BUILD_NAME=`git branch --show-current`
+          flutter build ios --build-name $BUILD_NAME --build-number $BUILD_NUMBER --release --no-codesign
+      - name: Setup SSH Keys and known_hosts for fastlane match
+        run: |
+          git config --global user.name $GIT_USER
+          git config --global user.email $GIT_EMAIL
+          SSH_PATH="$HOME/.ssh"
+          mkdir -p "$SSH_PATH"
+          touch "$SSH_PATH/known_hosts"
+          echo "$PRIVATE_KEY" > "$SSH_PATH/id_rsa"
+          chmod 700 "$SSH_PATH"
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 600 "$SSH_PATH/known_hosts"
+          chmod 600 "$SSH_PATH/id_rsa"
+          eval $(ssh-agent)
+          ssh-add "$SSH_PATH/id_rsa"
+        env:
+          GIT_USER: ${{ secrets.GIT_USER }}
+          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Build and deploy to TestFlight
+        run: |
+          cd ./ios && bundle exec fastlane beta
+        env:
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_KEYCHAIN_NAME: ${{ secrets.MATCH_KEYCHAIN_NAME }}
+          MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
+          DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS: ${{ secrets.DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS }}

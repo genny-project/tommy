@@ -1,5 +1,5 @@
 app_identifier("life.genny.alysonV1") # The bundle identifier of your app
-apple_id("baradghimire@gmail.com") # Your Apple email address
+apple_id("certs@crowtech.com.au") # Your Apple email address
 
 itc_team_id("118504676") # App Store Connect Team ID
 team_id("TRU7S39L5Z") # Developer Portal Team ID

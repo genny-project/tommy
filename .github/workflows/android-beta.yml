@@ -3,26 +3,22 @@ name: android-beta
 on:
   push:
     branches:
-      - "*-beta"
+      - "*-android-beta"
   workflow_dispatch:
 
 env:
-  flutter_version: "1.20.3"
+  flutter_version: "1.22.4"
   java_version: "12.x"
 
 jobs:
   build-android:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: ./.github/slacker
-        with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "Starting Android beta build"
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ env.java_version }}
-      - uses: subosito/flutter-action@v1.3.2
+      - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.flutter_version }}
       - name: Install dependencies
@@ -33,25 +29,17 @@ jobs:
         with:
           name: android-build-files
           path: ./build/app/outputs/flutter-apk/app-release.apk
-      - uses: ./.github/slacker
-        with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "Android beta build completed"
   deploy-android:
     needs: build-android
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Download Android build file
         uses: actions/download-artifact@v2
         with:
           name: android-build-files
-      - uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+      - uses: wzieba/Firebase-Distribution-Github-Action@v1.3.2
         with:
           appId: ${{secrets.FIREBASE_ANDROID_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: alpha
           file: app-release.apk
-      - uses: ./.github/slacker
-        with:
-          SLACK_URL: ${{ secrets.SLACK_URL }}
-          SLACK_MSG: "Android beta build deployed to beta testers"
