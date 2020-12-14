@@ -11,6 +11,7 @@ class TestWidget extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: showAlertMessage('find this', context),
+        //body: Text('find this'),
       ),
     );
   }
@@ -20,7 +21,7 @@ void main() {
   //MockBuildContext _mockContext = MockBuildContext();
   testWidgets('showAlertMessage widget test', (WidgetTester tester) async {
     //Build our app and trigger a frame.
-    await tester.pumpWidget(TestWidget());
+    await tester.pumpWidget(MaterialApp(home: TestWidget()));
 
     // await tester.pumpWidget(MaterialApp(
     //   title: 'Flutter Demo',
@@ -34,7 +35,7 @@ void main() {
     //   ),
     // ));
 
-    tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
     //Future(() => expect(find.text('find this'), findsOneWidget));
     expect(find.text('find this'), findsOneWidget);
