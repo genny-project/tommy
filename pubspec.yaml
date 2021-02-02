@@ -44,6 +44,8 @@ dependencies:
   liquid_progress_indicator: 0.3.2
   sqlite_at_runtime: ^0.0.1
   rename: ^1.2.0
+  fluttertoast: ^3.1.0
+  flutter_local_notifications: ^3.0.3
 
   flutter:
     sdk: flutter
