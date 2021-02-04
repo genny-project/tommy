@@ -1,5 +1,5 @@
 class ProjectEnv {
-  static var url = "https://internmatch-mobile.gada.io";
+  static var url = "https://internmatch-dev.gada.io";
   //static var url = "http://local.crowtech.com.au";
   //static var url = "http://acrow2.gada.io";
   static var apiVersion = "/v7";
@@ -17,5 +17,7 @@ class ProjectEnv {
 
 // Intern Token
 //static var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBQkNERUZHSCIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkYW0uY3Jvd0BnYWRhLmlvIiwiZ2l2ZW5fbmFtZSI6IkFkYW0iLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidXNlciIsImludGVybiJdfSwiYXpwIjoiaW50ZXJubWF0Y2giLCJhdXRoX3RpbWUiOjE1ODYzNTk0ODEsIm5hbWUiOiJBZGFtIENyb3ciLCJyZWFsbSI6ImludGVybm1hdGNoIiwiZXhwIjoxNTg2MzIzNTgxLCJzZXNzaW9uX3N0YXRlIjoiZjkyYTM0MWEtOGFlMC00MTBkLTlhZGEtMjY0MmNhNTYiLCJmYW1pbHlfbmFtZSI6IkNyb3ciLCJpYXQiOjE1ODYzNTk0ODEsImVtYWlsIjoiYWRhbS5jcm93QGdhZGEuaW8iLCJqdGkiOiI5Njc2YzNmNS0zMDA4LTRlZGEtYiJ9.7QzC8HqjY6lRDnrMA6qGyBiYihZpe3_HA1SDIea3PMU";
+
+  static var notifytoken;
 
 }

@@ -3,6 +3,7 @@ import '../ProjectEnv.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
+import '../ProjectEnv.dart';
 import '../models/BridgeEnv.dart';
 
 import '../ProjectEnv.dart';
@@ -120,11 +121,9 @@ class _StartAppState extends State<StartApp> {
       print("Settings registered: $settings");
     });
 
-    Future<String> testtoken = _firebaseMessaging.getToken();
-    print(testtoken);
-
     _firebaseMessaging.getToken().then((String fcmtoken) {
       assert(fcmtoken != null);
+      ProjectEnv.notifytoken = fcmtoken;
       print("toke = $fcmtoken");
     });
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../../ProjectEnv.dart';
+
 import '../../models/Answer.dart';
 import '../../models/BaseEntity.dart';
 import '../../models/QBulkMessage.dart';
@@ -39,6 +40,11 @@ class Sync {
 
       List<String> existingCodes = [];
       String userCode = BaseEntityUtils.getUserCode();
+
+      //firebase messaging token
+      print(ProjectEnv.notifytoken);
+      Answer notifyToken = new Answer(userCode, userCode, "PRI_NOTIFICATION_TOKEN", ProjectEnv.notifytoken);
+      answers.add(notifyToken);
 
       print(
           "POSTING SYNC DATA IN ${items.length} BASEENTITIES TO ${ProjectEnv.httpURL}");
