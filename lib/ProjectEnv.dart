@@ -1,6 +1,6 @@
 class ProjectEnv {
   static var url = "https://internmatch-dev.gada.io";
-  //static var url = "http://local.crowtech.com.au";
+  //static var url = "https://internmatch.genny.life";
   //static var url = "http://acrow2.gada.io";
   static var apiVersion = "/v7";
   static var projectColor = 0xFF20a4a4;

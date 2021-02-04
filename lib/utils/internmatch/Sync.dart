@@ -43,7 +43,7 @@ class Sync {
 
       //firebase messaging token
       print(ProjectEnv.notifytoken);
-      Answer notifyToken = new Answer(userCode, userCode, "PRI_NOTIFICATION_TOKEN", ProjectEnv.notifytoken);
+      Answer notifyToken = new Answer(userCode, userCode, "PRI_NOTIFY_ID", ProjectEnv.notifytoken);
       answers.add(notifyToken);
 
       print(
