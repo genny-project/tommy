@@ -4,6 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'ProjectEnv.dart';
+import 'dart:convert';
+
+import './widgets/AlertMessage.dart';
+
+class FcmData{
+  String test;
+}
+
+class FcmNotification {
+  String title;
+  String body;
+}
+
+class FcmObject {
+  FcmNotification notification;
+  FcmData data;
+}
 
 class PushNotificationsManager {
 
@@ -94,9 +111,11 @@ class PushNotificationsManager {
         // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
         //displayNotification(message);
         // _showItemDialog(message);
+        showAlertMessage('${message}', context);
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
+        //FcmObject fcmMessage 
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
