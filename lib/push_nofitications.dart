@@ -7,6 +7,7 @@ import 'ProjectEnv.dart';
 import 'dart:convert';
 
 import './widgets/AlertMessage.dart';
+import './pages/ViewJournal.dart';
 
 class FcmData{
   String test;
@@ -20,6 +21,10 @@ class FcmNotification {
 class FcmObject {
   FcmNotification notification;
   FcmData data;
+
+  FcmObject.fromJson(Map<String, dynamic> json)
+    : notification = json['notification'],
+    data = json['data'];
 }
 
 class PushNotificationsManager {
@@ -111,14 +116,17 @@ class PushNotificationsManager {
         // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
         //displayNotification(message);
         // _showItemDialog(message);
-        showAlertMessage('${message}', context);
+        String popUpMessage = message["notification"]["body"];
+        showAlertMessage('$popUpMessage', context);
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
         //FcmObject fcmMessage 
+        // ViewJournal();
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
+        // ViewJournal();
       },
     );
     _firebaseMessaging.requestNotificationPermissions(
