@@ -7,29 +7,16 @@ import 'ProjectEnv.dart';
 import 'dart:convert';
 
 import './widgets/AlertMessage.dart';
+import './models/BaseEntity.dart';
 import './pages/ViewJournal.dart';
 
-class FcmData{
-  String test;
-}
-
-class FcmNotification {
-  String title;
-  String body;
-}
-
-class FcmObject {
-  FcmNotification notification;
-  FcmData data;
-
-  FcmObject.fromJson(Map<String, dynamic> json)
-    : notification = json['notification'],
-    data = json['data'];
-}
+import 'utils/internmatch/UserEventHelper.dart';
 
 class PushNotificationsManager {
 
   BuildContext context;
+
+  UserEventHelper eventHelper;
 
   PushNotificationsManager(BuildContext context){
 
@@ -144,5 +131,14 @@ class PushNotificationsManager {
       
       _initialized = true;
     }
+  }
+  Future<void> checkJournalMessage() async {
+    // this stuff is unfortuantly specific to internmatch as of making this (if you could tell from the eventHelper being imported from an internmatch folder)
+    //ViewJournal(_eventHelper);
+    //ViewJournal(eventHelper, index, baseEntityItem, user, name, getFilteredList)
+
+
+
+
   }
 }
