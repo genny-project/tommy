@@ -53,7 +53,7 @@ class Sync {
           String synced = be.getValue("PRI_SYNC", "FALSE");
           print("Item ${be.code} has sync = $synced");
           // SEND EVERYTHING EVERY TIME
-          //  if (synced == "FALSE") {
+          //if (synced == "FALSE") {
           answers.addAll(be.getAsAnswers());
           //  } else {
           //existingCodes.add(be.code);
