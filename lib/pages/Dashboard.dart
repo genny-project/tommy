@@ -9,8 +9,11 @@ import '../pages/JournalList.dart';
 import '../pages/DashboardScreen.dart';
 import 'UserMenu.dart';
 
+//import '../push_nofitications.dart';
+
 class Dashboard extends StatefulWidget {
   UserEventHelper _eventHelper;
+  //PushNotificationsManager.eventHelper = _eventHelper;
 
   Dashboard(UserEventHelper eventHelper) {
     _eventHelper = eventHelper;

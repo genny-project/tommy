@@ -3,13 +3,15 @@ import '../ProjectEnv.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
-import '../models/BridgeEnv.dart';
 
-import '../ProjectEnv.dart';
+import '../models/BridgeEnv.dart';
 
 import '../startapp/Home.dart';
 import '../utils/internmatch/ApiHelper.dart';
 import '../pages/SplashScreen.dart';
+
+import '../push_nofitications.dart';
+
 
 var dbData;
 var  dbData1;
@@ -22,6 +24,7 @@ class StartApp extends StatefulWidget {
 }
 
 class _StartAppState extends State<StartApp> {
+
   @override
   void initState() {
     
@@ -33,6 +36,8 @@ class _StartAppState extends State<StartApp> {
 
     super.initState();
 
+    PushNotificationsManager _pushNotifications = new PushNotificationsManager(context);
+    _pushNotifications.init();
 
     if (!BridgeEnvs.fetchSuccess) {
       getEnvFromBridge();

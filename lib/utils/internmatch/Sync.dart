@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../../ProjectEnv.dart';
+
 import '../../models/Answer.dart';
 import '../../models/BaseEntity.dart';
 import '../../models/QBulkMessage.dart';
@@ -15,11 +16,10 @@ import 'BaseEntityUtils.dart';
 class Sync {
   Sync() {
     //initPlatformState().whenComplete(() => null);
-     //_performSync();
+    //_performSync();
   }
 
-  static void doTheSync() async
-  {
+  static void doTheSync() async {
     await performSync();
   }
 
@@ -28,7 +28,7 @@ class Sync {
         "POSTING SYNC DATA TO ${ProjectEnv.httpURL} *************************************");
     // Fetch All Unsynced BaseEntitys'
     return BaseEntity.fetch("JNL_").then((items) {
-    //return BaseEntity.fetch("JNL_").then((items) {
+      //return BaseEntity.fetch("JNL_").then((items) {
       List<Answer> answers = [];
       answers.add(Version.appNameAns);
       answers.add(Version.appBuildNumberAns);
@@ -40,17 +40,24 @@ class Sync {
       List<String> existingCodes = [];
       String userCode = BaseEntityUtils.getUserCode();
 
+      //firebase messaging token
+      print(ProjectEnv.notifytoken);
+      Answer notifyToken = new Answer(
+          userCode, userCode, "PRI_NOTIFY_ID", ProjectEnv.notifytoken);
+      answers.add(notifyToken);
+
       print(
           "POSTING SYNC DATA IN ${items.length} BASEENTITIES TO ${ProjectEnv.httpURL}");
       if (items.length > 0) {
         for (BaseEntity be in items) {
           String synced = be.getValue("PRI_SYNC", "FALSE");
           print("Item ${be.code} has sync = $synced");
-          if (synced == "FALSE") {
-            answers.addAll(be.getAsAnswers());
-          } else {
-            //existingCodes.add(be.code);
-          }
+          // SEND EVERYTHING EVERY TIME
+          //if (synced == "FALSE") {
+          answers.addAll(be.getAsAnswers());
+          //  } else {
+          //existingCodes.add(be.code);
+          //  }
         }
       } else {
         Answer existingAnswer =
@@ -70,7 +77,7 @@ class Sync {
       QDataAnswerMessage answerMsg = new QDataAnswerMessage(answers);
       var json = jsonEncode(answerMsg);
       // make POST request
-     // print("Posting User Data $json");
+      // print("Posting User Data $json");
       return Sync.postHTTP(ProjectEnv.httpURL, json).then((statusCode) {
         print("Sync Status Code =  $statusCode");
         return true;
