@@ -15,11 +15,10 @@ import 'BaseEntityUtils.dart';
 class Sync {
   Sync() {
     //initPlatformState().whenComplete(() => null);
-     //_performSync();
+    //_performSync();
   }
 
-  static void doTheSync() async
-  {
+  static void doTheSync() async {
     await performSync();
   }
 
@@ -28,7 +27,7 @@ class Sync {
         "POSTING SYNC DATA TO ${ProjectEnv.httpURL} *************************************");
     // Fetch All Unsynced BaseEntitys'
     return BaseEntity.fetch("JNL_").then((items) {
-    //return BaseEntity.fetch("JNL_").then((items) {
+      //return BaseEntity.fetch("JNL_").then((items) {
       List<Answer> answers = [];
       answers.add(Version.appNameAns);
       answers.add(Version.appBuildNumberAns);
@@ -46,11 +45,11 @@ class Sync {
         for (BaseEntity be in items) {
           String synced = be.getValue("PRI_SYNC", "FALSE");
           print("Item ${be.code} has sync = $synced");
-          if (synced == "FALSE") {
-            answers.addAll(be.getAsAnswers());
-          } else {
-            //existingCodes.add(be.code);
-          }
+          //  if (synced == "FALSE") {
+          answers.addAll(be.getAsAnswers());
+          //  } else {
+          //existingCodes.add(be.code);
+          //  }
         }
       } else {
         Answer existingAnswer =
@@ -70,7 +69,7 @@ class Sync {
       QDataAnswerMessage answerMsg = new QDataAnswerMessage(answers);
       var json = jsonEncode(answerMsg);
       // make POST request
-     // print("Posting User Data $json");
+      // print("Posting User Data $json");
       return Sync.postHTTP(ProjectEnv.httpURL, json).then((statusCode) {
         print("Sync Status Code =  $statusCode");
         return true;
