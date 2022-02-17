@@ -16,12 +16,16 @@ class AppAuthHelper {
     var result;
 
     if (ProjectEnv.token == null) {
-      result = await appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(BridgeEnvs.clientID, _redirectUrl,
-            // discoveryUrl: '${BridgeEnvs.url}/realms/${BridgeEnvs.realm}/account'
-            discoveryUrl: '${BridgeEnvs.authUrl}',
-            clientSecret: '${BridgeEnvs.credentials['secret']}'),
-      );
+      print("BridgeEnvs ${BridgeEnvs.map}");
+      print("Auth ${BridgeEnvs.authUrl}");
+      result = await appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest(BridgeEnvs.realm, "localhost", discoveryUrl: BridgeEnvs.authUrl));
+      // result = await appAuth.authorizeAndExchangeCode(
+      //   AuthorizationTokenRequest(BridgeEnvs.clientID, _redirectUrl,
+      //       // discoveryUrl: '${BridgeEnvs.url}/realms/${BridgeEnvs.realm}/account'
+      //       discoveryUrl: '${BridgeEnvs.authUrl}',
+      //       clientSecret: '${BridgeEnvs.credentials['secret']}'
+      //       ),
+      // );
       print("Result from Key Cloak :: ${result.accessToken}");
       print(
           "Autorization Additional Parameters  :: ${result.authorizationAdditionalParameters}");

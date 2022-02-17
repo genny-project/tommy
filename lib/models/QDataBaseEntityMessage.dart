@@ -56,7 +56,7 @@ class QDataBaseEntityMessage {
     this.msg_type = map["msg_type"];
     this.option = map["option"];
     if (map['items'] != null) {
-      items = new List<BaseEntity>();
+      items = [];
       map['items'].forEach((v) {
         BaseEntity be = new BaseEntity.fromMap(v);
         String beCode = be.code;

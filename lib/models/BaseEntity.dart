@@ -18,7 +18,7 @@ class BaseEntity {
   static String tablename = className.toLowerCase();
 
   String uuid = tokenData['sub']; // uniquely identiy user
-  List<EntityAttribute> baseEntityAttributes = new List<EntityAttribute>();
+  List<EntityAttribute> baseEntityAttributes = [];
   List links;
   List questions;
   String code;
@@ -84,7 +84,7 @@ class BaseEntity {
     this.questions = map["questions"];
     this.created = map["created"];
     if (map['baseEntityAttributes'] != null) {
-      this.baseEntityAttributes = new List<EntityAttribute>();
+      this.baseEntityAttributes = [];
       map['baseEntityAttributes'].forEach((v) {
         EntityAttribute ea = new EntityAttribute.fromMap(v);
         ea.baseentityCode = this.code;
@@ -197,7 +197,7 @@ class BaseEntity {
     String query =
         "SELECT distinct(be) FROM 'baseentity_attribute' ea,'baseentity' be WHERE ea.baseeentityCode LIKE '$codeFilterString%'  and ea.attributeCode = '$attributeCodeFilter' and ea.valueString = '$valueFilter' and ea.baseentityCode = be.code and uuid='$uid' ";
     return dbClient.rawQuery(query).then((map) {
-      List<BaseEntity> bes = new List<BaseEntity>();
+      List<BaseEntity> bes = [];
       for (var v in map) {
         BaseEntity be = BaseEntity.fromMap(v);
         EntityAttribute.fetchEntityAttributes(be).then((be2) {
@@ -287,7 +287,7 @@ class BaseEntity {
   }
 
   add(EntityAttribute ea) {
-    List eas = new List<EntityAttribute>();
+    List eas = [];
     for (var at in baseEntityAttributes) {
       if (at.attributeCode != ea.attributeCode) {
         eas.add(at);

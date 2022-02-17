@@ -15,7 +15,7 @@ Future<String> getData() async {
   //print(dbData[0]);
 
   //print(dbData[0]['id']);
-  var items = new List<Answer>();
+  var items = [];
   for (final ans in dbData) {
     //print("##### ans=[$ans]");
     //print("##### ans['PRI_JOURNAL_DATE']= ${ans['PRI_JOURNAL_DATE']}");

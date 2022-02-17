@@ -16,13 +16,15 @@ class BridgeEnvs {
   }
 
   static get authUrl {
+    authServerUrl = "https://keycloak.gada.io/auth";
     print("This is the realm $realm");
+    print("This is the auth server $authServerUrl");
     return "$authServerUrl/realms/$realm/.well-known/openid-configuration";
     //return authServerUrl+"/realms/"+realm+"/protocol/openid-connect/token";
   }
 
-  static var realm = "internmatch";
-  static var authServerUrl;
+  static var realm = ProjectEnv.realm;
+  static var authServerUrl = "https://keycloak.gada.io/";
   static var sslRequired;
   static var resource;
   static var credentials;

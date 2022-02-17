@@ -303,7 +303,7 @@ class EntityAttribute {
     // print("fetchNtityAttributes in ea = $query");
     return dbClient.rawQuery(query).then((mapList) {
       if (be.baseEntityAttributes == null) {
-        be.baseEntityAttributes = new List<EntityAttribute>();
+        be.baseEntityAttributes = [];
       }
       for (var v in mapList) {
         EntityAttribute ea = EntityAttribute.fromMapDB(v);

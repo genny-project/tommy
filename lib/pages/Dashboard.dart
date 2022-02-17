@@ -91,24 +91,15 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.dashboard, color: Colors.white),
-              title: new Text(
-                'Dashboard',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: 'Dashboard'
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.book, color: Colors.white),
-              title: new Text(
-                'View Journals',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: 'View Journals',
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.account_circle, color: Colors.white),
-              title: new Text(
-                'Account',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: 'Account'
             ),
           ],
         ),

@@ -109,7 +109,7 @@ class _AddJournalState extends State<AddJournal> {
       ),
       body: Form(
         key: _formKey,
-        autovalidate: _autoValidate,
+        autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: MultiPageForm(
           totalPage: 4,
           pageList: <Widget>[dateField(), taskField(), loField(), summary()],
@@ -185,7 +185,7 @@ class _AddJournalState extends State<AddJournal> {
         onChanged: (String newhour) {
           this.hour = double.parse(_hourcontroller.text);
         },
-        inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
         maxLines: 1,
         decoration: InputDecoration(
             suffixIcon: IconButton(

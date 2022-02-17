@@ -149,7 +149,7 @@ class _ViewJournalState extends State<ViewJournal> {
       final hourField = TextFormField(
           controller: _hourcontroller,
           readOnly: true,
-          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+          inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
           maxLines: 1,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 15.0),
@@ -295,7 +295,7 @@ class _ViewJournalState extends State<ViewJournal> {
 
       return Form(
         key: _formKey,
-        autovalidate: _autoValidate,
+        autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: new Container(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -364,7 +364,7 @@ class _ViewJournalState extends State<ViewJournal> {
                         this.hour = double.parse(_hourcontroller.text);
                       },
                       inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[0-9.]"))
+                        FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
                       ],
                       decoration: InputDecoration(
                           suffixIcon: IconButton(

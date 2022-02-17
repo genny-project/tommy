@@ -5,6 +5,6 @@ var gpsData;
 var gpsTime;
 void getGps() async{
   gpsTime = new DateTime.now().millisecondsSinceEpoch;
-  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   gpsData = position;
 }

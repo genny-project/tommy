@@ -78,7 +78,7 @@ class QBulkMessage {
     this.data_type = map["data_type"];
     
      if (map['messages'] != null) {
-      messages = new List<QDataBaseEntityMessage>();
+      messages = [];
       map['messages'].forEach((v) {
         messages.add(new QDataBaseEntityMessage.fromMap(v));
       });

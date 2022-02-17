@@ -14,7 +14,7 @@ class ApiHelper {
     }
 
     print("$clientClass :::: Making Api request : $url");
-    http.Response response = await http.get(url);
+    http.Response response = await http.get(Uri.parse(url));
     return response;
   }
 

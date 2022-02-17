@@ -184,7 +184,7 @@ class _SupportState extends State<Support> {
   }
 
   void _openImagePicker() async {
-    File pick = await ImagePicker.pickImage(source: ImageSource.gallery);
+    XFile pick = await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
       attachments.add(pick.path);
     });

@@ -11,7 +11,7 @@ class QDataAnswerMessage {
   String data_type = "Answer";
   String msg_type = "DATA_MSG";
 
-  List<Answer> items = new List<Answer>();
+  List<Answer> items = [];
 
   bool delete = false;
   bool replace = false;
