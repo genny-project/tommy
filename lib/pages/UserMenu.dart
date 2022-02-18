@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internmatch/utils/internmatch/ProtoConsole.dart';
 import '../models/BaseEntity.dart';
 import '../pages/AppInfo.dart';
 import '../pages/Profile.dart';
@@ -171,6 +172,17 @@ class _UserMenuState extends CustomState<UserMenu> {
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 onPressed: () {
                   Navigator.of(context).push(_sqlConsoleRoute());
+                }),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(200.0),
+                ),
+                primary: Colors.green,),
+                child: Text('protoRoute',
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProtoConsole()));
                 }),
               ])),
         ));
