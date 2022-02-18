@@ -51,11 +51,11 @@ class _SupportState extends State<Support> {
     var url = params.toString();
     if (await canLaunch(url)) {
       await launch(url);
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Success! Email sent"),
       ));
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Could not send email. Please  try again in some time"),
       ));
       throw 'Could not launch $url';
@@ -82,7 +82,7 @@ class _SupportState extends State<Support> {
 
     if (!mounted) return;
 
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(platformResponse),
     ));
   }

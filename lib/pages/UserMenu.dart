@@ -65,7 +65,7 @@ class _UserMenuState extends CustomState<UserMenu> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                FlatButton(
+                TextButton(
                     child: CircleAvatar(
                       radius: 100,
                       backgroundColor: Colors.white,
@@ -161,11 +161,12 @@ class _UserMenuState extends CustomState<UserMenu> {
                     },
                   ),
                 ),
-                RaisedButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(200.0),
                 ),
-                color: Colors.green,
+                primary: Colors.green,),
                 child: Text('sqlConsoleRoute',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 onPressed: () {

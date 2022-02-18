@@ -4,7 +4,7 @@ import '../../utils/internmatch/DatabaseHelper.dart';
 
 
 class SqlConsole extends StatefulWidget {
-  SqlConsole() {}
+  SqlConsole();
 
   @override
   _SqlConsoleState createState() => _SqlConsoleState();
@@ -48,7 +48,7 @@ class _SqlConsoleState extends State<SqlConsole> {
                       controller: myController,
                       //smartQuotesType: SmartQuotesType.disabled,
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text("Submit"),
                       onPressed: () async {
                         myController.text = myController.text.replaceAll(" be ", " 'baseentity' ");
@@ -69,7 +69,7 @@ class _SqlConsoleState extends State<SqlConsole> {
                         });
                       },
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text("Clear"),
                       onPressed: () async {
                       

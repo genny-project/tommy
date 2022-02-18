@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../models/BaseEntity.dart';
 import '../pages/CustomState.dart';
-import '../pages/Dashboard.dart';
 import '../pages/DashboardScreen.dart';
 import '../pages/InternList.dart';
 import '../utils/internmatch/UserEventHelper.dart';
-import '../models/BaseEntity.dart';
 
 class CountButton extends StatefulWidget {
   Color _color;
@@ -111,9 +111,10 @@ class _CountButtonState extends CustomState<CountButton> {
 
 Widget flatButton(color, String text, _callback, _setIndex, _tabIndex, isIntern,
     _eventHelper, context) {
-  return FlatButton(
+  return TextButton(
+    style: TextButton.styleFrom(
       shape: new CircleBorder(),
-      color: color,
+      backgroundColor: color,),
       onPressed: () {
         if (isIntern == true) {
           Navigator.of(context).push(_internRoute(_eventHelper));

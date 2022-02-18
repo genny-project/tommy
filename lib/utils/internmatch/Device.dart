@@ -1,19 +1,15 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
-import 'package:device_info/device_info.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
-import '../../ProjectEnv.dart';
-import '../../models/Answer.dart';
-import '../../models/BaseEntity.dart';
-import '../../models/QBulkMessage.dart';
-import '../../models/Token.dart';
-import './BaseEntityUtils.dart';
-import './Sync.dart';
-
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+
+import './BaseEntityUtils.dart';
+import '../../ProjectEnv.dart';
+import '../../models/Answer.dart';
+import '../../models/QBulkMessage.dart';
+import '../../models/Token.dart';
 import 'AppAuthHelper.dart';
 
 class Device {

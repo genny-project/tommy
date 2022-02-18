@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../models/BaseEntity.dart';
 import '../pages/CustomState.dart';
-import '../pages/JournalList.dart';
 import '../utils/internmatch/UserEventHelper.dart';
-import '../ProjectEnv.dart';
-import '../pages/FetchJournals.dart';
 
 class InternListBuilder extends StatefulWidget {
   UserEventHelper _eventHelper;

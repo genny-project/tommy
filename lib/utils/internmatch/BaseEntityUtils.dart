@@ -1,7 +1,7 @@
-import '../../models/BaseEntity.dart';
-import '../../models/EntityAttribute.dart';
-import './GetTokenData.dart';
 import 'package:intl/intl.dart';
+
+import './GetTokenData.dart';
+import '../../models/BaseEntity.dart';
 
 class BaseEntityUtils {
   static String getUniqueDatecode(String prefix, DateTime date) {

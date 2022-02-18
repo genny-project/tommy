@@ -68,10 +68,11 @@ class _ViewJournalState extends State<ViewJournal> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showFab = MediaQuery.of(context).viewInsets.bottom==0.0;
+    final bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return new Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: showFab?button(context, widget, triggerAutoValidate):null,
+      floatingActionButton:
+          showFab ? button(context, widget, triggerAutoValidate) : null,
       resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
       appBar: new AppBar(
@@ -84,14 +85,17 @@ class _ViewJournalState extends State<ViewJournal> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: <Widget>[
-        (status == "UNAPPROVED"|| status == "REJECTED" && widget._user.hasRole("INTERN"))
+          (status == "UNAPPROVED" ||
+                  status == "REJECTED" && widget._user.hasRole("INTERN"))
               ? Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(25.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(25.0),
+                        ),
+                        primary: Colors.green,
                       ),
-                      color: Colors.green,
                       child: Text("Update",
                           style: TextStyle(color: Colors.white, fontSize: 15)),
                       onPressed: () async {
@@ -149,7 +153,9 @@ class _ViewJournalState extends State<ViewJournal> {
       final hourField = TextFormField(
           controller: _hourcontroller,
           readOnly: true,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp("[0-9.]"))
+          ],
           maxLines: 1,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 15.0),
@@ -226,10 +232,11 @@ class _ViewJournalState extends State<ViewJournal> {
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold)),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {},
                 child: dateWidget(widget, this.date),
-                color: Colors.white,
+                style: TextButton.styleFrom(
+                backgroundColor: Colors.white,),
               ),
               SizedBox(),
               SizedBox(height: 20.0),
@@ -295,7 +302,8 @@ class _ViewJournalState extends State<ViewJournal> {
 
       return Form(
         key: _formKey,
-        autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
+        autovalidateMode:
+            _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: new Container(
             padding: const EdgeInsets.all(10.0),
             child: Container(
@@ -488,7 +496,7 @@ Future<void> _updateButton(
   await widget._baseEntityItem.persist("View Journal");
   Sync.performSync();
   //final scaffold = Scaffold.of(context);
-  _scaffoldKey.currentState.showSnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Container(
         height: 30,
@@ -504,8 +512,8 @@ Future<void> _updateButton(
     ),
   );
 
-  _scaffoldKey.currentState..hideCurrentSnackBar();
-  _scaffoldKey.currentState
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context)
       .showSnackBar(SnackBar(
         content: Text("Well done on completing your internship logbook!"),
         duration: Duration(seconds: 2),
@@ -602,11 +610,13 @@ Widget button(context, widget, triggerAutoValidate) {
             padding: const EdgeInsets.all(8.0),
             child: Tooltip(
               message: "Reject",
-              child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(200.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(200.0),
+                    ),
+                    primary: Colors.redAccent,
                   ),
-                  color: Colors.redAccent,
                   child: Text("Reject",
                       style: TextStyle(color: Colors.white, fontSize: 15)),
                   onPressed: () async {
@@ -622,11 +632,13 @@ Widget button(context, widget, triggerAutoValidate) {
             padding: const EdgeInsets.all(8.0),
             child: Tooltip(
               message: "Approve",
-              child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(200.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(200.0),
+                    ),
+                    primary: Colors.green,
                   ),
-                  color: Colors.green,
                   child: Padding(
                       padding: EdgeInsets.all(0),
                       child: Text("Approve",
@@ -635,10 +647,10 @@ Widget button(context, widget, triggerAutoValidate) {
                     showAlertMessage(message, _scaffoldKey.currentContext);
                     _scaffoldKey.currentState.showBottomSheet(
                         (feedbackContext) => Padding(
-                          padding: const EdgeInsets.only(bottom:  0.0 ),
-                          child: feedbackField("APPROVED", context,
-                              widget, feedbackContext, triggerAutoValidate),
-                        ),
+                              padding: const EdgeInsets.only(bottom: 0.0),
+                              child: feedbackField("APPROVED", context, widget,
+                                  feedbackContext, triggerAutoValidate),
+                            ),
                         elevation: 10.0);
                   }),
             ),
@@ -721,13 +733,13 @@ Widget feedbackField(
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text("Cancel"),
                     onPressed: () {
                       Navigator.of(feedbackContext).pop();
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text("Submit"),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {

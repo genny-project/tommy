@@ -77,16 +77,16 @@ class _AddJournalState extends State<AddJournal> {
     this.date = date;
     String journalCode = BaseEntityUtils.getUniqueDatecode("JNL", date);
     BaseEntityUtils.getUniqueDateName(date).then((name) async {
-    this.baseEntity = await BaseEntityUtils.createBaseEntity(journalCode, name);
-       // this.baseEntity = baseEntity;
-        this.hour = baseEntity.getValueDouble("PRI_JOURNAL_HOURS", this.hour);
-        this.task = baseEntity.getValue("PRI_JOURNAL_TASKS", "");
-        this.learningOutcome =
-            baseEntity.getValue("PRI_JOURNAL_LEARNING_OUTCOMES", "");
-        this.status = baseEntity.getValue("PRI_STATUS", "UNAPPROVED");
-        this.feedback = baseEntity.getValue("PRI_FEEDBACK", "");
-      });
-    
+      this.baseEntity =
+          await BaseEntityUtils.createBaseEntity(journalCode, name);
+      // this.baseEntity = baseEntity;
+      this.hour = baseEntity.getValueDouble("PRI_JOURNAL_HOURS", this.hour);
+      this.task = baseEntity.getValue("PRI_JOURNAL_TASKS", "");
+      this.learningOutcome =
+          baseEntity.getValue("PRI_JOURNAL_LEARNING_OUTCOMES", "");
+      this.status = baseEntity.getValue("PRI_STATUS", "UNAPPROVED");
+      this.feedback = baseEntity.getValue("PRI_FEEDBACK", "");
+    });
   }
 
   void setstates(DateTime date) {
@@ -109,7 +109,8 @@ class _AddJournalState extends State<AddJournal> {
       ),
       body: Form(
         key: _formKey,
-        autovalidateMode: _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
+        autovalidateMode:
+            _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: MultiPageForm(
           totalPage: 4,
           pageList: <Widget>[dateField(), taskField(), loField(), summary()],
@@ -127,7 +128,7 @@ class _AddJournalState extends State<AddJournal> {
 
   Future<void> _submitButton(BuildContext context) async {
     final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Container(
           height: 30,
@@ -155,10 +156,9 @@ class _AddJournalState extends State<AddJournal> {
     print("Persisting the new journal data");
     await this.baseEntity.persist("Add Journal");
     Sync.performSync();
-    
-    scaffold.hideCurrentSnackBar();
-    scaffold
-        .showSnackBar(SnackBar(
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Well done on completing your internship logbook!"),
           duration: Duration(seconds: 2),
         ))
@@ -219,9 +219,12 @@ class _AddJournalState extends State<AddJournal> {
             child: ListView(children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 0.0),
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(200.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(200.0),
+                    ),
                   ),
                   onPressed: () {
                     if (widget._enabled == true) {
@@ -255,7 +258,9 @@ class _AddJournalState extends State<AddJournal> {
                                     color: Color(ProjectEnv.projectColor),
                                   ),
                                   Text(
-                                    " " + BaseEntityUtils.getDateString(this.date),
+                                    " " +
+                                        BaseEntityUtils.getDateString(
+                                            this.date),
                                     style: TextStyle(
                                         color: Color(ProjectEnv.projectColor),
                                         fontSize: 18.0,
@@ -276,7 +281,6 @@ class _AddJournalState extends State<AddJournal> {
                       ],
                     ),
                   ),
-                  color: Colors.white,
                 ),
               ),
               SizedBox(),
@@ -305,7 +309,7 @@ class _AddJournalState extends State<AddJournal> {
 
     _taskcontroller = TextEditingController(text: this.task);
     final taskfield = TextFormField(
-      textCapitalization: TextCapitalization.sentences,
+        textCapitalization: TextCapitalization.sentences,
         validator: (value) {
           if (value.isEmpty) {
             return 'Please enter some text';

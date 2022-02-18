@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import '../ProjectEnv.dart';
-import '../models/BaseEntity.dart';
-import '../pages/ViewJournal.dart';
 import '../utils/internmatch/GetTokenData.dart';
 
 class Profile extends StatefulWidget {
@@ -270,18 +269,22 @@ class ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             child: Padding(
               padding: EdgeInsets.only(right: 10.0),
               child: Container(
-                  child: new RaisedButton(
+                  child: new ElevatedButton(
                 child: new Text("Save"),
-                textColor: Colors.white,
-                color: Colors.green,
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                  ),
+                  primary: Colors.green,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0)),
+                ),
                 onPressed: () {
                   setState(() {
                     _status = true;
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
               )),
             ),
             flex: 2,
@@ -290,18 +293,20 @@ class ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             child: Padding(
               padding: EdgeInsets.only(left: 10.0),
               child: Container(
-                  child: new RaisedButton(
+                  child: new ElevatedButton(
                 child: new Text("Cancel"),
-                textColor: Colors.white,
-                color: Colors.red,
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(color: Colors.white),
+                  primary: Colors.red,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0)),
+                ),
                 onPressed: () {
                   setState(() {
                     _status = true;
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
               )),
             ),
             flex: 2,

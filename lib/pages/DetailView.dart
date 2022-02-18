@@ -24,7 +24,7 @@ class DetailView extends StatelessWidget {
             new Padding(
               padding: const EdgeInsets.all(12.8),
             ),
-            new FlatButton(
+            new TextButton(
               onPressed: () {
                 print("Trying to connect with Backend!");
               },

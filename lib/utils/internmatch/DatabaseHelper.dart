@@ -1,17 +1,15 @@
+import 'dart:async';
 import 'dart:io';
-import '../../models/BaseEntity.dart';
-import '../../models/EntityAttribute.dart';
-import '../../models/AliasCode.dart';
-import '../../models/Token.dart';
 
-import '../../models/UserToken.dart';
-
+import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'dart:async';
-import 'package:flutter_test/flutter_test.dart';
 
+import '../../models/AliasCode.dart';
+import '../../models/BaseEntity.dart';
+import '../../models/EntityAttribute.dart';
+import '../../models/Token.dart';
 import 'GetTokenData.dart';
 
 class DatabaseHelper {

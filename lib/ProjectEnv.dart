@@ -1,8 +1,7 @@
 class ProjectEnv {
-  static var url = "https://internmatch-mobile.gada.io";
+  static var url = "https://lojing-dev.gada.io";
   //static var url = "http://local.crowtech.com.au";
   //static var url = "http://acrow2.gada.io";
-  static var realm = "internmatch";
   static var authServerUrl = "https://keycloak.gada.io/";
   static var apiVersion = "/v7";
   static var projectColor = 0xFF20a4a4;

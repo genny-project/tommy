@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/BaseEntity.dart';
+
 import '../pages/CustomState.dart';
+import '../pages/FetchJournals.dart';
+import '../pages/ViewJournal.dart';
 import '../utils/internmatch/BaseEntityUtils.dart';
 import '../utils/internmatch/Sync.dart';
 import '../utils/internmatch/UserEventHelper.dart';
-import '../ProjectEnv.dart';
-import '../pages/FetchJournals.dart';
-import '../pages/ViewJournal.dart';
 
 class ListBuilder extends StatefulWidget {
   UserEventHelper _eventHelper;
@@ -36,7 +35,7 @@ class _ListBuilderState extends CustomState<ListBuilder> {
     _refreshkey.currentState?.show(atTop: true);
     await Future.delayed(Duration(seconds: 2));
     await fetchBaseEntity(widget._valueFilter);
-    await setState(() {});
+    setState(() {});
   }
 
   @override

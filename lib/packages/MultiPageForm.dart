@@ -1,11 +1,8 @@
 // library multi_page_form;
 
 import 'package:flutter/material.dart';
-import '../models/BaseEntity.dart';
-import '../models/EntityAttribute.dart';
-import '../utils/internmatch/DatabaseHelper.dart';
+
 import '../utils/internmatch/UserEventHelper.dart';
-import '../widgets/AlertMessage.dart';
 
 class MultiPageForm extends StatefulWidget {
   UserEventHelper eventHelper;
@@ -88,11 +85,12 @@ class _MultiPageFormState extends State<MultiPageForm> {
                 children: <Widget>[
                   currentPage == 1
                       ? Container()
-                      : RaisedButton(
-                          color: Colors.green,
+                      : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(200.0),
-                          ),
+                          ),),
                           child: getPreviousButtonWrapper(
                               widget.previousButtonStyle),
                           onPressed: () {
@@ -102,11 +100,12 @@ class _MultiPageFormState extends State<MultiPageForm> {
                           },
                         ),
                   currentPage == totalPage
-                      ? RaisedButton(
-                          color: Colors.green,
+                      ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(200.0),
-                          ),
+                          ),),
                           child:
                               getSubmitButtonWrapper(widget.submitButtonStyle),
                           onPressed: () {
@@ -120,11 +119,12 @@ class _MultiPageFormState extends State<MultiPageForm> {
                               widget.triggerAutoValidate();
                             }
                           })
-                      : RaisedButton(
-                          color: Colors.green,
+                      : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
                           shape: RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(200.0),
-                          ),
+                          ),),
                           child: getNextButtonWrapper(widget.nextButtonStyle),
                           onPressed: () async {
                             //int val = await EntityAttribute.getDateCount("PRI_DATE", widget.date);

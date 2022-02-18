@@ -53,7 +53,6 @@ class EntityAttribute {
     map['valueDouble'] = this.valueDouble;
 
     map['valueBoolean'] = this.valueBoolean;
-    ;
 
     map['valueInteger'] = this.valueInteger;
     if (this.valueDate != null) {

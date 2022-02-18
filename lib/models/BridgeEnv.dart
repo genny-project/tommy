@@ -23,7 +23,7 @@ class BridgeEnvs {
     //return authServerUrl+"/realms/"+realm+"/protocol/openid-connect/token";
   }
 
-  static var realm = ProjectEnv.realm;
+  static var realm;
   static var authServerUrl = "https://keycloak.gada.io/";
   static var sslRequired;
   static var resource;
@@ -32,10 +32,15 @@ class BridgeEnvs {
   static var vertexUrl;
   static var apiUrl;
   static var url;
+  // ignore: non_constant_identifier_names
   static var ENV_GENNY_HOST;
+    // ignore: non_constant_identifier_names
   static var ENV_GENNY_INITURL;
+    // ignore: non_constant_identifier_names
   static var ENV_GENNY_BRIDGE_SERVICE;
+    // ignore: non_constant_identifier_names
   static var ENV_GENNY_BRIDGE_EVENTS;
+    // ignore: non_constant_identifier_names
   static var ENV_GENNY_BRIDGE_VERTEX;
 
   

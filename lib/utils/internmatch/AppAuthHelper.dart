@@ -8,17 +8,18 @@ import '../../ProjectEnv.dart';
 
 class AppAuthHelper {
   static FlutterAppAuth appAuth = new FlutterAppAuth();
-  static var _redirectUrl = "io.demo-app.appauth://oauth/login_success";
+  static var _redirectUrl = "io.demo-app.appauth://oauth/login_success/";
   static var refreshExpireIn;
   static var token;
   static var unixTime = (new DateTime.now()).millisecondsSinceEpoch;
   static authTokenResponse() async {
     var result;
-
     if (ProjectEnv.token == null) {
       print("BridgeEnvs ${BridgeEnvs.map}");
       print("Auth ${BridgeEnvs.authUrl}");
-      result = await appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest(BridgeEnvs.realm, "localhost", discoveryUrl: BridgeEnvs.authUrl));
+      print("Redirect url $_redirectUrl");
+      // result = await appAuth.token(TokenRequest("alyson", _redirectUrl, discoveryUrl: BridgeEnvs.authUrl));
+      result = await appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest("alyson", _redirectUrl, discoveryUrl: BridgeEnvs.authUrl));
       // result = await appAuth.authorizeAndExchangeCode(
       //   AuthorizationTokenRequest(BridgeEnvs.clientID, _redirectUrl,
       //       // discoveryUrl: '${BridgeEnvs.url}/realms/${BridgeEnvs.realm}/account'

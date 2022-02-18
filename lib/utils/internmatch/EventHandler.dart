@@ -1,20 +1,13 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import '../../models/BridgeEnv.dart';
-import '../../models/EntityAttribute.dart';
-import '../../models/Event.dart';
 
-import '../../models/BaseEntity.dart' as b;
-import '../../models/Answer.dart' as ans;
-import '../../models/QDataAnswerMessage.dart';
-import '../../models/SessionData.dart';
 import './DatabaseHelper.dart';
-import './GetTokenData.dart';
 import './MessageWrapper.dart';
-import './PushToHTTP.dart';
 import './Websocket.dart';
-
 import '../../ProjectEnv.dart';
+import '../../models/BaseEntity.dart' as b;
+import '../../models/BridgeEnv.dart';
+import '../../models/Event.dart';
+import '../../models/SessionData.dart';
 import 'Device.dart';
 
 class EventHandler {

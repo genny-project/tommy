@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../models/BaseEntity.dart';
-import '../utils/internmatch/GetTokenData.dart';
 import '../pages/AddJournal.dart';
-import '../pages/JournalList.dart';
 
 
 Widget floatingButton(context, widget, updateJournalList, BaseEntity user, _eventHelper) {
