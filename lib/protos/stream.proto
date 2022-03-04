@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "StreamProto";
+
+package stream;
+
+// The greeting service definition.
+service Stream {
+    // Sends a greeting
+    rpc Source(Empty) returns (stream Item) {}
+    rpc Sink(stream Item) returns (Empty) {}
+    rpc Pipe(stream Item) returns (stream Item) {}
+}
+
+// The request Item
+message Item {
+    string token = 1;
+    string body = 2;
+}
+
+message Empty {}

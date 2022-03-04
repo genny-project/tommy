@@ -5,7 +5,7 @@ class ProtoUtils {
   static ClientChannel getChannel() {
     ClientChannel channel = new ClientChannel(
       '10.0.2.2',
-      port: 9090,
+      port: 5154,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
     );
     return channel;

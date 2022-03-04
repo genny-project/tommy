@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:grpc/service_api.dart';
 import 'package:internmatch/generated/helloworld.pbgrpc.dart';
+import 'package:internmatch/generated/stream.pbgrpc.dart';
+import 'package:internmatch/models/SessionData.dart';
+import 'package:internmatch/utils/internmatch/GetTokenData.dart';
 import 'package:internmatch/utils/internmatch/ProtoUtils.dart';
 import '../../ProjectEnv.dart';
 
@@ -21,41 +26,108 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final stub = StreamClient(ProtoUtils.getChannel());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          appBar: new AppBar(
-            centerTitle: true,
-            title: Text("Proto Test"),
-            backgroundColor: Color(ProjectEnv.projectColor),
-            leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context)),
+      appBar: new AppBar(
+        centerTitle: true,
+        title: Text("Proto Test"),
+        backgroundColor: Color(ProjectEnv.projectColor),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context)),
+      ),
+      body: new Container(
+        child: Column(children: [
+          Text(tokenData['jti'].toString()),
+          TextButton(
+            child: Text("Pipe"),
+            onPressed: () async {
+              stub
+                  .pipe(Stream.fromIterable([
+                // Item.fromJson(jsonEncode({
+                //   "1": Session.tokenResponse.accessToken,
+                //   "2": jsonEncode({
+                //     "type": "register",
+                //     "address":
+                //         tokenData['jti'],
+                //     "headers": {}
+                //   })
+                // })),
+                Item.fromJson(jsonEncode({
+                  "1": Session.tokenResponse.accessToken,
+                  "2": jsonEncode({
+                    "event_type": "AUTH_INIT",
+                    "msg_type": "EVT_MSG",
+                    "token": Session.tokenResponse.accessToken,
+                    "data": {
+                      "code": "AUTH_INIT",
+                      "platform": {"type": "web"},
+                      "sessionId":
+                          tokenData['jti'],
+                    }
+                  })
+                }))
+              ]))
+                  .listen((value) {
+                print("Listen value $value");
+              });
+            },
           ),
-          body: new Container(
-            child: Column(children: [
-              TextButton(
-                child: Text("Say Hello"),
-                onPressed: () async {
-                  ClientChannel channel = ProtoUtils.getChannel();
-                  final stub = GreeterClient(channel);
-
-                  final name = 'world';
-
-                  try {
-                    var response =
-                        await stub.sayHello(HelloRequest()..name = name);
-                    print('Greeter client received: ${response.message}');
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Client received: ${response.writeToJson()}')));
-                    // response = await stub.sayHelloAgain(HelloRequest()..name = name);
-                  } catch (e) {
-                    print('Caught error: $e');
-                  }
-                  await channel.shutdown();
-                },
-              )
-            ]),
+          TextButton(
+            child: Text("init Stream"),
+            onPressed: () async {
+              stub.source(Empty()).listen((value) {
+                print("Source $value");
+              });
+            },
           ),
-        );
+          TextButton(
+            child: Text("Sink"),
+            onPressed: () {
+              stub.sink(Stream.fromIterable([
+                Item.fromJson(jsonEncode({
+                  "1": Session.tokenResponse.accessToken,
+                  "2": jsonEncode({
+                    "event_type": "AUTH_INIT",
+                    "msg_type": "EVT_MSG",
+                    "token": "Session.tokenResponse.accessToken",
+                    "data": {
+                      "code": "AUTH_INIT",
+                      "platform": {"type": "web"},
+                      "sessionId": Session.tokenResponse
+                          .tokenAdditionalParameters['session_state']
+                    }
+                  })
+                }))
+              ]));
+            },
+          ),
+          TextButton(
+            child: Text("Say Hello"),
+            onPressed: () async {
+              ClientChannel channel = ProtoUtils.getChannel();
+              
+              final stub = GreeterClient(channel);
+
+              final name = 'world';
+
+              try {
+                var response = await stub.sayHello(HelloRequest()..name = name);
+                print('Greeter client received: ${response.message}');
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text('Client received: ${response.writeToJson()}')));
+                // response = await stub.sayHelloAgain(HelloRequest()..name = name);
+              } catch (e) {
+                print('Caught error: $e');
+              }
+              await channel.shutdown();
+            },
+          )
+        ]),
+      ),
+    );
   }
 }

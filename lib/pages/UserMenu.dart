@@ -1,16 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:internmatch/utils/internmatch/AppAuthHelper.dart';
 import 'package:internmatch/utils/internmatch/ProtoConsole.dart';
+import 'package:web_socket_channel/io.dart';
 import '../models/BaseEntity.dart';
 import '../pages/AppInfo.dart';
 import '../pages/Profile.dart';
 import '../pages/Support.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
+import '../utils/internmatch/GetTokenData.dart';
 import '../utils/internmatch/UserEventHelper.dart';
 import '../pages/Dashboard.dart';
 import '../ProjectEnv.dart';
 import '../utils/internmatch/SqlConsole.dart';
 import 'CustomState.dart';
+import 'package:web_socket_channel/status.dart' as status;
+
 
 //var _eventhelper;
 class UserMenu extends StatefulWidget {
@@ -29,6 +36,11 @@ class _UserMenuState extends CustomState<UserMenu> {
   DateTime date = DateTime.now();
   DateFormat dateFormat = new DateFormat().addPattern("EEEE, MMMM d y");
   String versionName;
+   var channel = IOWebSocketChannel.connect(Uri.parse('wss://internmatch-dev.gada.io/frontend/5/t/websocket'), pingInterval: null);
+  void initState() {
+    super.initState();
+    
+  }
 
   Future<bool> getUser() async {
     return BaseEntity.getBaseEntityByCode("USER").then((be) {
@@ -181,7 +193,15 @@ class _UserMenuState extends CustomState<UserMenu> {
                 primary: Colors.green,),
                 child: Text('protoRoute',
                     style: TextStyle(color: Colors.white, fontSize: 15)),
-                onPressed: () {
+                onPressed: () async {
+                  // channel.sink
+                  String json = '{"type":"register","address":${tokenData['sid']},"headers":{"Authorization":"Bearer ${AppAuthHelper.token}"}}';
+                  Map<String,dynamic> jsonData = {
+                    "type":"register",
+                    "address": tokenData['sid'],
+                    "headers": {"Authorization": "Bearer ${AppAuthHelper.token}"},
+                  };
+                  print("Json $json");
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProtoConsole()));
                 }),
               ])),
