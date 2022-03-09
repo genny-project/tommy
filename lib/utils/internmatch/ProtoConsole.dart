@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:grpc/service_api.dart';
+import 'package:grpc/grpc_connection_interface.dart';
+// import 'package:grpc/service_api.dart';
 import 'package:internmatch/generated/helloworld.pbgrpc.dart';
 import 'package:internmatch/generated/stream.pbgrpc.dart';
 import 'package:internmatch/models/SessionData.dart';
@@ -19,6 +21,14 @@ class ProtoConsole extends StatefulWidget {
 class _ProtoConsoleState extends State<ProtoConsole> {
   final myController = TextEditingController();
   List data = [];
+  ErrorHandler handler = (object, stacktrace) {
+    GrpcError error = object as GrpcError;
+    print("Error code ${error.code}");
+    print(error.toString());
+    print(stacktrace);
+    // timer.cancel();
+  };
+
   @override
   void initState() {
     super.initState();
@@ -42,73 +52,91 @@ class _ProtoConsoleState extends State<ProtoConsole> {
         child: Column(children: [
           Text(tokenData['jti'].toString()),
           TextButton(
-            child: Text("Pipe"),
+            child: Text("Connect"),
             onPressed: () async {
+              print("Connecting");
+            
               stub
-                  .pipe(Stream.fromIterable([
-                // Item.fromJson(jsonEncode({
-                //   "1": Session.tokenResponse.accessToken,
-                //   "2": jsonEncode({
-                //     "type": "register",
-                //     "address":
-                //         tokenData['jti'],
-                //     "headers": {}
-                //   })
-                // })),
-                Item.fromJson(jsonEncode({
-                  "1": Session.tokenResponse.accessToken,
-                  "2": jsonEncode({
-                    "event_type": "AUTH_INIT",
-                    "msg_type": "EVT_MSG",
-                    "token": Session.tokenResponse.accessToken,
-                    "data": {
-                      "code": "AUTH_INIT",
-                      "platform": {"type": "web"},
-                      "sessionId":
-                          tokenData['jti'],
-                    }
-                  })
-                }))
-              ]))
+                  .connect(
+                      // Item.fromJson(jsonEncode({
+                      //   "1": Session.tokenResponse.accessToken,
+                      //   "2": jsonEncode({
+                      //     "type": "register",
+                      //     "address":
+                      //         tokenData['jti'],
+                      //     "headers": {}
+                      //   })
+                      // })),
+                      Item.fromJson(jsonEncode({
+                "1": Session.tokenResponse.accessToken,
+                "2": jsonEncode({
+                  "event_type": "AUTH_INIT",
+                  "msg_type": "EVT_MSG",
+                  "token": Session.tokenResponse.accessToken,
+                  "data": {
+                    "code": "AUTH_INIT",
+                    "platform": {"type": "web"},
+                    "sessionId": tokenData['jti'],
+                  }
+                })
+              })))
                   .listen((value) {
                 print("Listen value $value");
+              }).onError(handler);
+              Timer.periodic(Duration(seconds: 5), (timer) {
+                String json = jsonEncode(
+                    {"1": Session.tokenResponse.accessToken, "2": "{\"h\"}"});
+                stub.heartbeat(Item.fromJson(json));
+                print("Beat");
               });
-            },
-          ),
-          TextButton(
-            child: Text("init Stream"),
-            onPressed: () async {
-              stub.source(Empty()).listen((value) {
-                print("Source $value");
-              });
+              // stub.sink(Item.fromJson(jsonEncode({
+              //   "1": Session.tokenResponse.accessToken,
+              //   "2": jsonEncode({
+              //     "type": "send",
+              //     "address": "address.inbound",
+              //     "headers": {
+              //       "Authorization":
+              //           "Bearer ${Session.tokenResponse.accessToken}"
+              //     },
+              //     "body": {
+              //       "data": {
+              //         "data": {
+              //           "code": "QUE_DASHBOARD_VIEW",
+              //           "parentCode": "QUE_DASHBOARD_VIEW"
+              //         },
+              //         "token": Session.tokenResponse.accessToken,
+              //         "msg_type": "EVT_MSG",
+              //         "event_type": "BTN_CLICK",
+              //         "redirect": true
+              //       }
+              //     }
+              //   })
+              // })));
             },
           ),
           TextButton(
             child: Text("Sink"),
             onPressed: () {
-              stub.sink(Stream.fromIterable([
-                Item.fromJson(jsonEncode({
-                  "1": Session.tokenResponse.accessToken,
-                  "2": jsonEncode({
-                    "event_type": "AUTH_INIT",
-                    "msg_type": "EVT_MSG",
-                    "token": "Session.tokenResponse.accessToken",
-                    "data": {
-                      "code": "AUTH_INIT",
-                      "platform": {"type": "web"},
-                      "sessionId": Session.tokenResponse
-                          .tokenAdditionalParameters['session_state']
-                    }
-                  })
-                }))
-              ]));
+              stub.sink(Item.fromJson(jsonEncode({
+                "1": Session.tokenResponse.accessToken,
+                "2": jsonEncode({
+                  "event_type": "AUTH_INIT",
+                  "msg_type": "EVT_MSG",
+                  "token": Session.tokenResponse.accessToken,
+                  "data": {
+                    "code": "AUTH_INIT",
+                    "platform": {"type": "web"},
+                    "sessionId": tokenData['jti'],
+                  }
+                })
+              })));
             },
           ),
           TextButton(
             child: Text("Say Hello"),
             onPressed: () async {
               ClientChannel channel = ProtoUtils.getChannel();
-              
+
               final stub = GreeterClient(channel);
 
               final name = 'world';
