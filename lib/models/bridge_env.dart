@@ -53,8 +53,10 @@ class BridgeEnv {
 
   static bool fetchSuccess = false;
 
-
-  static Map<String, dynamic> map = {
+  /// This rather strange thing is basically just a setter.
+  /// Only use this for conversion from JSON Objects,
+  /// Pass in val, and it will set the value, assuming it is in the map
+  static Map<String, void Function(dynamic)> map = {
     'realm': (val) => realm = val,
     'ssl-required': (val) => sslRequired = val,
     'resource': (val) => resource = val,

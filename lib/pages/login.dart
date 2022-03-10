@@ -25,10 +25,10 @@ class Login extends StatelessWidget {
                 BridgeEnv.map.forEach(
                   (key, val) {
                     _log.info("Key $key");
-                    try {
-                      BridgeEnv.map[key](data[key]);
-                    } catch (e) {
-                      _log.error("Key not found $key", e);
+                    if (BridgeEnv.map.containsKey(key)) {
+                      BridgeEnv.map[key]!(data[key]);
+                    } else {
+                       _log.warning("Key not found $key");
                     }
                     
                   },
