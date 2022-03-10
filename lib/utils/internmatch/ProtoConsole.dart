@@ -21,18 +21,23 @@ class ProtoConsole extends StatefulWidget {
 class _ProtoConsoleState extends State<ProtoConsole> {
   final myController = TextEditingController();
   List data = [];
-  ErrorHandler handler = (object, stacktrace) {
-    GrpcError error = object as GrpcError;
-    print("Error code ${error.code}");
-    print(error.toString());
-    print(stacktrace);
-    // timer.cancel();
-  };
+
+  Timer timer;
+
+  ErrorHandler handler;
 
   @override
   void initState() {
     super.initState();
-    super.setState(() {});
+    super.setState(() {
+      handler = (object, stacktrace) {
+        GrpcError error = object as GrpcError;
+        print("Error code ${error.code}");
+        print(error.toString());
+        print(stacktrace);
+        timer.cancel();
+      };
+    });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -55,72 +60,29 @@ class _ProtoConsoleState extends State<ProtoConsole> {
             child: Text("Connect"),
             onPressed: () async {
               print("Connecting");
-            
+
               stub
-                  .connect(
-                      // Item.fromJson(jsonEncode({
-                      //   "1": Session.tokenResponse.accessToken,
-                      //   "2": jsonEncode({
-                      //     "type": "register",
-                      //     "address":
-                      //         tokenData['jti'],
-                      //     "headers": {}
-                      //   })
-                      // })),
-                      Item.fromJson(jsonEncode({
+                  .connect(Item.fromJson(jsonEncode({
                 "1": Session.tokenResponse.accessToken,
-                "2": jsonEncode({
-                  "event_type": "AUTH_INIT",
-                  "msg_type": "EVT_MSG",
-                  "token": Session.tokenResponse.accessToken,
-                  "data": {
-                    "code": "AUTH_INIT",
-                    "platform": {"type": "web"},
-                    "sessionId": tokenData['jti'],
-                  }
-                })
+                "2": jsonEncode({"connect": "connect"})
               })))
                   .listen((value) {
-
-                    if (value.body != "{\"h\"}") {
-                      print("Listen value ${value.body}");
-                    }
-
-                
+                if (value.body != "{\"h\"}") {
+                  print("Listen value ${value.body}");
+                }
               }).onError(handler);
-              Timer.periodic(Duration(seconds: 5), (timer) {
-                String json = jsonEncode(
-                    {"1": Session.tokenResponse.accessToken, "2": "{\"h\"}"});
-                stub.heartbeat(Item.fromJson(json));
-                print("Beat");
+              setState(() {
+                timer = Timer.periodic(Duration(seconds: 5), (timer) {
+                  String json = jsonEncode(
+                      {"1": Session.tokenResponse.accessToken, "2": "{\"h\"}"});
+                  stub.heartbeat(Item.fromJson(json));
+                  print("Beat");
+                });
               });
-              // stub.sink(Item.fromJson(jsonEncode({
-              //   "1": Session.tokenResponse.accessToken,
-              //   "2": jsonEncode({
-              //     "type": "send",
-              //     "address": "address.inbound",
-              //     "headers": {
-              //       "Authorization":
-              //           "Bearer ${Session.tokenResponse.accessToken}"
-              //     },
-              //     "body": {
-              //       "data": {
-              //         "data": {
-              //           "code": "QUE_DASHBOARD_VIEW",
-              //           "parentCode": "QUE_DASHBOARD_VIEW"
-              //         },
-              //         "token": Session.tokenResponse.accessToken,
-              //         "msg_type": "EVT_MSG",
-              //         "event_type": "BTN_CLICK",
-              //         "redirect": true
-              //       }
-              //     }
-              //   })
-              // })));
             },
           ),
           TextButton(
-            child: Text("Sink"),
+            child: Text("Auth Init"),
             onPressed: () {
               stub.sink(Item.fromJson(jsonEncode({
                 "1": Session.tokenResponse.accessToken,
@@ -138,25 +100,21 @@ class _ProtoConsoleState extends State<ProtoConsole> {
             },
           ),
           TextButton(
-            child: Text("Say Hello"),
+            child: Text("Dashboard Button"),
             onPressed: () async {
-              ClientChannel channel = ProtoUtils.getChannel();
-
-              final stub = GreeterClient(channel);
-
-              final name = 'world';
-
-              try {
-                var response = await stub.sayHello(HelloRequest()..name = name);
-                print('Greeter client received: ${response.message}');
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content:
-                        Text('Client received: ${response.writeToJson()}')));
-                // response = await stub.sayHelloAgain(HelloRequest()..name = name);
-              } catch (e) {
-                print('Caught error: $e');
-              }
-              await channel.shutdown();
+              stub.sink(Item.fromJson(jsonEncode({
+                "1": Session.tokenResponse.accessToken,
+                "2": jsonEncode({
+                  "token": Session.tokenResponse.accessToken,
+                  "msg_type": "EVT_MSG",
+                  "event_type": "BTN_CLICK",
+                  "redirect": true,
+                  "data": {
+                    "code": "QUE_DASHBOARD_VIEW",
+                    "parentCode": "QUE_DASHBOARD_VIEW"
+                  }
+                })
+              })));
             },
           )
         ]),
