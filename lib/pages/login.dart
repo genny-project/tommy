@@ -2,43 +2,46 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:tommy/genny_viewport.dart';
-import 'package:tommy/models/BridgeEnv.dart';
-import 'package:tommy/models/Session.dart';
-import 'package:tommy/utils/AppAuthHelper.dart';
+import 'package:tommy/models/bridge_env.dart';
+import 'package:tommy/models/session.dart';
+import 'package:tommy/utils/app_auth_helper.dart';
 import 'package:http/http.dart' as http;
+import 'package:tommy/utils/log.dart';
 
 class Login extends StatelessWidget {
+
+  static final Log _log = Log("Login");
+  
   const Login({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         TextButton(
             onPressed: () {
-              http.get(Uri.parse(BridgeEnvs.bridgeUrl)).then((response) async {
+              http.get(Uri.parse(BridgeEnv.bridgeUrl)).then((response) async {
                 Map<String,dynamic> data = jsonDecode(response.body);
-                BridgeEnvs.map.forEach(
+                BridgeEnv.map.forEach(
                   (key, val) {
-                    print("Key $key");
+                    _log.info("Key $key");
                     try {
-                      BridgeEnvs.map[key](data[key]);
+                      BridgeEnv.map[key](data[key]);
                     } catch (e) {
-                      print("Key not found $key");
+                      _log.error("Key not found $key", e);
                     }
                     
                   },
                 );
-                print("Value body ${data}");
+                _log.info("Value body $data");
                 Session.tokenResponse = await AppAuthHelper.authTokenResponse();
-                print("Access token ${Session.tokenResponse?.accessToken}");
+                _log.info("Access token ${Session.tokenResponse?.accessToken}");
                 if(Session.tokenResponse?.accessToken != null) {
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GennyViewport()));
                 }
               });
             },
-            child: Text("Login"))
+            child: const Text("Login"))
       ]),
     );
   }

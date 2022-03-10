@@ -3,6 +3,7 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 class Session {
   static AuthorizationTokenResponse? tokenResponse;
   static SessionState _sessionState = SessionState.loggedOut;
+  static String? token;
 
   static Map<String,dynamic> tokenData = {};
 

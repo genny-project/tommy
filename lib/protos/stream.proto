@@ -6,7 +6,7 @@ option java_outer_classname = "StreamProto";
 
 package stream;
 
-// The greeting service definition.
+
 service Stream {
     rpc Connect(Item) returns (stream Item) {}
     rpc sink(Item) returns (Empty) {}
