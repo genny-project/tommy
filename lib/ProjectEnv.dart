@@ -1,5 +1,5 @@
 class ProjectEnv {
-  static var url = "https://lojing-dev.gada.io";
+  static var url = "https://internmatch-dev.gada.io";
   //static var url = "http://local.crowtech.com.au";
   //static var url = "http://acrow2.gada.io";
   static var authServerUrl = "https://keycloak.gada.io/";

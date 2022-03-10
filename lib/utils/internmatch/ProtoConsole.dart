@@ -81,7 +81,12 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                 })
               })))
                   .listen((value) {
-                print("Listen value $value");
+
+                    if (value.body != "{\"h\"}") {
+                      print("Listen value ${value.body}");
+                    }
+
+                
               }).onError(handler);
               Timer.periodic(Duration(seconds: 5), (timer) {
                 String json = jsonEncode(
