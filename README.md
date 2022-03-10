@@ -1,18 +1,16 @@
-# Tommy
+# tommy
 
-## Info
+A new Flutter project.
 
-|           | Android                                                                       | iOS                                                                 |
-| --------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Store URL | [Play Store](https://play.google.com/store/apps/details?id=life.genny.alyson) | [App Store](https://apps.apple.com/us/app/internmatch/id1496087697) |
-| App ID    | `life.genny.alyson`                                                           | `life.genny.alysonV1`                                               |
+## Getting Started
 
-## CI/CD
+This project is a starting point for a Flutter application.
 
-|       | Android                                                                                    | iOS                                                                                      |
-| ----- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| Beta  | ![android-beta](https://github.com/genny-project/tommy/workflows/android-beta/badge.svg)   | ![ios-beta](https://github.com/genny-project/tommy/workflows/ios-beta/badge.svg)         |
-| Final | ![android-final](https://github.com/genny-project/tommy/workflows/android-final/badge.svg) | ![ios-final](https://github.com/genny-project/tommy/workflows/ios-final/badge.svg)       |
-| Tests | ![flutter-test](https://github.com/genny-project/tommy/workflows/flutter-test/badge.svg)   | ![flutter-test](https://github.com/genny-project/tommy/workflows/flutter-test/badge.svg) |
+A few resources to get you started if this is your first Flutter project:
 
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
