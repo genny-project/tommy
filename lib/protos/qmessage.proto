@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "QMessageProto";
+// option preserve_proto_field_names = true;
+
+
+package qmessage;
+import "messagedata.proto";
+import "baseentity.proto";
+import "weighteditem.proto";
+// service Stream {
+//     rpc Connect(Item) returns (stream Item) {}
+//     rpc sink(Item) returns (Empty) {}
+
+//     rpc Heartbeat(Item) returns (Empty) {}
+
+// }
+
+// The request Item
+message QMessage {
+    string token = 1;
+    string msg_type = 2 [json_name="msg_type"];
+    string option = 3;
+    string triggerCode = 4;
+    repeated string targetCodes = 5;
+    string sourceAddress = 6;
+    string sourceCode = 7;
+    string targetCode = 8;
+    string attributeCode = 9;
+    string questionCode = 10;
+    string message = 11;
+    bool redirect = 12;
+    string bridgeId = 13;
+    repeated string recipientCodeArray = 14;
+
+    //-----------------------------
+    //       Q EVENT MESSAGE
+    //-----------------------------
+    string event_type = 15 [json_name="event_type"];
+    messagedata.MessageData data = 16;
+
+    //-----------------------------
+    //       Q DATA MESSAGE
+    //-----------------------------
+    string data_type = 17;
+    bool delete = 18;
+    bool replace = 19;
+    bool shouldReplaceLinkedBaseEntities = 20;
+    string aliasCode = 21;
+
+    //-----------------------------
+    //       Q DATA BASE ENTITY MESSAGE
+    //-----------------------------
+    repeated life_genny_qwandaq_entity.BaseEntity items = 22;
+    repeated weighteditem.WeightedItem weighteditem = 23;
+    
+  
+    string parentCode = 24;
+    string linkCode = 25;
+    string linkValue = 26;
+    int64 total = 27;
+    int64 returnCount = 28;
+    life_genny_qwandaq_entity.BaseEntity sum = 29;
+    
+    bool shouldDeleteLinkedBaseEntities = 30;
+    string attribute = 31;
+    string value = 32;
+}
+message Empty {}
+

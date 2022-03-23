@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "MessageData";
+
+
+
+package messagedata;
+
+message MessageData {
+    string code = 1;
+    string parentCode = 2;
+    string rootCode = 3;
+    string targetCode = 4;
+    string sourceCode = 5;
+    int64 id = 6;
+    string value = 7;
+    string content = 8;
+
+
+    //unsure about these fields, they do not appear in messagedata on bridge, yet alyson provides them
+    map<string,string> platform = 9;
+    string sessionId = 10;
+}
+

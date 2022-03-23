@@ -1,0 +1,332 @@
+syntax = "proto3";
+package life_genny_qwandaq;
+
+import "protostuff-default.proto";
+
+import "baseentity.proto";
+
+option java_package = "life.genny.qwandaq";
+
+message Ask {
+  optional LocalDateTime created = 1;
+  optional LocalDateTime updated = 2;
+  optional int64 id = 3;
+  optional string name = 4;
+  optional string realm = 5;
+  optional Question question = 6;
+  optional string sourceCode = 7;
+  optional string targetCode = 8;
+  optional string questionCode = 9;
+  optional string attributeCode = 10;
+  optional bool mandatory = 11;
+  optional bool oneshot = 12;
+  optional bool disabled = 13;
+  optional bool hidden = 14;
+  optional bool readonly = 15;
+  optional double weight = 16;
+  optional int64 parentId = 17;
+  optional bool formTrigger = 18;
+  optional bool createOnTrigger = 19;
+  optional Ask childAsks = 20;
+  optional ContextList contextList = 21;
+}
+
+message LocalDateTime {
+  optional LocalDate date = 1;
+  optional LocalTime time = 2;
+}
+
+message LocalTime {
+  optional uint32 hour = 1;
+  optional uint32 minute = 2;
+  optional uint32 second = 3;
+  optional int32 nano = 4;
+}
+
+message ContextList {
+  repeated Context contexts = 1;
+}
+
+message Context {
+  optional LocalDateTime created = 1;
+  optional LocalDateTime updated = 2;
+  optional int64 id = 3;
+  optional string name = 4;
+  optional string realm = 5;
+  optional life_genny_qwandaq_entity.BaseEntity entity = 6;
+  optional double weight = 7;
+  optional string contextCode = 8;
+  optional string dataType = 9;
+  optional string dttCode = 10;
+  optional VisualControlType visualControlType = 11;
+}
+
+enum VisualControlType {
+  VCL_DEFAULT = 0;
+  VCL_WRAPPER = 1;
+  VCL_INPUT = 2;
+  VCL_ICON = 3;
+  VCL_LABEL = 4;
+  VCL_DESCRIPTION = 5;
+  VCL_HINT = 6;
+  VCL_ERROR = 7;
+  VCL_REQUIRED = 8;
+  VCL_DELIMITER = 9;
+  INPUT_WRAPPER = 10;
+  INPUT_FIELD = 11;
+  INPUT_ICON = 12;
+  INPUT_ITEM_WRAPPER = 13;
+  INPUT_ITEM = 14;
+  INPUT_SELECTED_WRAPPER = 15;
+  INPUT_SELECTED = 16;
+  INPUT_PLACEHOLDER = 17;
+  INPUT_BUTTON = 18;
+  GROUP = 19;
+  VCL = 20;
+  GROUP_WRAPPER = 21;
+  GROUP_LABEL = 22;
+  GROUP_DESCRIPTION = 23;
+  GROUP_INPUT = 24;
+  GROUP_HEADER_WRAPPER = 25;
+  GROUP_CLICKABLE_WRAPPER = 26;
+  GROUP_ICON = 27;
+  GROUP_CONTENT_WRAPPER = 28;
+}
+
+// message BaseEntity {
+//   optional LocalDateTime created = 1;
+//   optional LocalDateTime updated = 2;
+//   optional int64 id = 3;
+//   optional string name = 4;
+//   optional string realm = 5;
+//   optional string code = 6;
+//   optional int32 index = 7;
+//   optional EEntityStatus status = 8;
+//   repeated EntityAttribute baseEntityAttributes = 9;
+//   repeated EntityEntity links = 10;
+//   repeated EntityQuestion questions = 11;
+//   repeated AnswerLink answers = 12;
+//   optional bool fromCache = 13;
+// }
+
+// message EntityAttribute {
+//   optional string baseEntityCode = 1;
+//   optional string attributeCode = 2;
+//   optional string attributeName = 3;
+//   optional bool readonly = 4;
+//   optional string realm = 5;
+//   optional int32 index = 6;
+//   optional string feedback = 7;
+//   optional EntityAttributeId pk = 8;
+//   optional LocalDateTime created = 9;
+//   optional LocalDateTime updated = 10;
+//   optional double valueDouble = 11;
+//   optional bool valueBoolean = 12;
+//   optional int32 valueInteger = 13;
+//   optional int64 valueLong = 14;
+//   optional LocalTime valueTime = 15;
+//   optional LocalDateTime valueDateTime = 16;
+//   optional LocalDate valueDate = 17;
+//   optional string valueString = 18;
+//   optional string valueMoney = 19;
+//   optional double weight = 20;
+//   optional bool inferred = 21;
+//   optional bool privacyFlag = 22;
+//   optional bool confirmationFlag = 23;
+// }
+
+// message Money {
+//   optional DynamicObject currency = 1;
+//   optional MonetaryContext monetaryContext = 2;
+//   optional string number = 3;
+// }
+
+message EntityQuestion {
+  optional string valueString = 1;
+  optional double weight = 2;
+  optional Link link = 3;
+}
+
+message EntityAttributeId {
+  optional life_genny_qwandaq_entity.BaseEntity baseEntity = 1;
+  optional Attribute attribute = 2;
+}
+
+message Attribute {
+  optional LocalDateTime created = 1;
+  optional LocalDateTime updated = 2;
+  optional int64 id = 3;
+  optional string name = 4;
+  optional string realm = 5;
+  optional string code = 6;
+  optional int32 index = 7;
+  optional EEntityStatus status = 8;
+  optional DataType dataType = 9;
+  optional bool defaultPrivacyFlag = 10;
+  optional string description = 11;
+  optional string help = 12;
+  optional string placeholder = 13;
+  optional string defaultValue = 14;
+  optional string icon = 15;
+}
+
+enum EEntityStatus {
+  ACTIVE = 0;
+  TEST = 1;
+  TEMPORARY = 2;
+  PENDING = 3;
+  DISABLED = 4;
+  ARCHIVED = 5;
+  PENDING_DELETE = 6;
+  DELETED = 7;
+}
+
+message AnswerLink {
+  optional AnswerLinkId pk = 1;
+  optional LocalDateTime created = 2;
+  optional LocalDateTime updated = 3;
+  optional double valueDouble = 4;
+  optional int32 valueInteger = 5;
+  optional int64 valueLong = 6;
+  optional LocalDateTime valueDateTime = 7;
+  optional LocalDate valueDate = 8;
+  optional LocalTime valueTime = 9;
+  optional string valueString = 10;
+  optional bool valueBoolean = 11;
+  optional string valueMoney = 12;
+  repeated string ValueBaseEntityCodeList = 13;
+  optional bool expired = 14;
+  optional bool refused = 15;
+  optional bool inferred = 16;
+  optional double weight = 17;
+  optional int64 version = 18;
+  optional string targetCode = 19;
+  optional string sourceCode = 20;
+  optional int64 askId = 21;
+  optional string attributeCode = 22;
+}
+
+message AnswerLinkId {
+  optional life_genny_qwandaq_entity.BaseEntity source = 1;
+  optional life_genny_qwandaq_entity.BaseEntity target = 2;
+  optional Attribute attribute = 3;
+}
+
+message DataType {
+  optional string dttCode = 1;
+  optional string className = 2;
+  optional string typeName = 3;
+  optional string inputmask = 4;
+  optional string component = 5;
+  repeated Validation validationList = 6;
+}
+
+message Validation {
+  optional LocalDateTime created = 1;
+  optional LocalDateTime updated = 2;
+  optional int64 id = 3;
+  optional string name = 4;
+  optional string realm = 5;
+  optional string code = 6;
+  optional int32 index = 7;
+  optional EEntityStatus status = 8;
+  optional string regex = 9;
+  repeated string selectionBaseEntityGroupList = 10;
+  optional bool recursiveGroup = 11;
+  optional bool multiAllowed = 12;
+  optional string options = 13;
+  optional string errormsg = 14;
+}
+
+message Question {
+  optional LocalDateTime created = 1;
+  optional LocalDateTime updated = 2;
+  optional int64 id = 3;
+  optional string name = 4;
+  optional string realm = 5;
+  optional string code = 6;
+  optional int32 index = 7;
+  optional EEntityStatus status = 8;
+  repeated QuestionQuestion childQuestions = 9;
+  optional Attribute attribute = 10;
+  optional ContextList contextList = 11;
+  optional string attributeCode = 12;
+  optional bool mandatory = 13;
+  optional bool readonly = 14;
+  optional bool oneshot = 15;
+  optional string placeholder = 16;
+  optional string directions = 17;
+  optional string html = 18;
+  optional string helper = 19;
+  optional string icon = 20;
+}
+
+message EntityEntity {
+  optional Link link = 1;
+  optional string realm = 2;
+  optional EntityEntityId pk = 3;
+  optional LocalDateTime created = 4;
+  optional LocalDateTime updated = 5;
+  optional double valueDouble = 6;
+  optional bool valueBoolean = 7;
+  optional int32 valueInteger = 8;
+  optional int64 valueLong = 9;
+  optional LocalDateTime valueDateTime = 10;
+  optional LocalDate valueDate = 11;
+  optional LocalTime valueTime = 12;
+  optional string valueMoney = 13;
+  optional string valueString = 14;
+  optional double weight = 15;
+  optional int64 version = 16;
+}
+
+// message MonetaryContext {
+//   optional MapStringObject data = 1;
+// }
+
+message LocalDate {
+  optional int32 year = 1;
+  optional uint32 month = 2;
+  optional uint32 day = 3;
+}
+
+message Link {
+  optional string attributeCode = 1;
+  optional string targetCode = 2;
+  optional string sourceCode = 3;
+  optional string linkValue = 4;
+  optional double weight = 5;
+  optional string childColor = 6;
+  optional string parentColor = 7;
+  optional string rule = 8;
+}
+
+message EntityEntityId {
+  optional life_genny_qwandaq_entity.BaseEntity source = 1;
+  optional string targetCode = 2;
+  optional Attribute attribute = 3;
+}
+
+message QuestionQuestion {
+  optional QuestionQuestionId pk = 1;
+  optional LocalDateTime created = 2;
+  optional LocalDateTime updated = 3;
+  optional double weight = 4;
+  optional int64 version = 5;
+  optional bool mandatory = 6;
+  optional bool oneshot = 7;
+  optional bool disabled = 8;
+  optional bool hidden = 9;
+  optional bool readonly = 10;
+  optional string realm = 11;
+  optional bool formTrigger = 12;
+  optional bool createOnTrigger = 13;
+  optional string dependency = 14;
+  optional string icon = 15;
+}
+
+message QuestionQuestionId {
+  optional Question source = 1;
+  optional string targetCode = 2;
+  optional string sourceCode = 3;
+}

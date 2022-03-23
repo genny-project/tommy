@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "QBulkMessageProto";
+
+package qbulkmessage;
+
+import "qdataaskmessage.proto";
+import "qmessage.proto";
+
+message QBulkMessage {
+    string token = 1;
+    string data_type = 2;
+    repeated qmessage.QMessage messages = 3;
+    repeated life_genny_qwandaq_message.QDataAskMessage asks = 4;
+}

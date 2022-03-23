@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geoff/utils/networking/auth/session.dart';
+import 'package:geoff/utils/system/log.dart';
 import 'package:grpc/grpc_connection_interface.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
-import 'package:tommy/models/session.dart';
 import 'package:tommy/projectstyle.dart';
-import 'package:tommy/utils/log.dart';
 import 'package:tommy/utils/proto_utils.dart';
 
 class ProtoConsole extends StatefulWidget {
@@ -63,7 +63,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
 
             stub
                 .connect(Item.fromJson(jsonEncode({
-              "1": Session.tokenResponse!.accessToken,
+              "1": Session.tokenResponse.accessToken,
               "2": jsonEncode({"connect": "connect"})
             })))
                 .listen((value) {
@@ -74,7 +74,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
             setState(() {
               timer = Timer.periodic(heartbeatDuration, (timer) {
                 String json = jsonEncode(
-                    {"1": Session.tokenResponse!.accessToken, "2": "{\"h\"}"});
+                    {"1": Session.tokenResponse.accessToken, "2": "{\"h\"}"});
                 stub.heartbeat(Item.fromJson(json));
               });
             });
@@ -84,11 +84,11 @@ class _ProtoConsoleState extends State<ProtoConsole> {
           child: const Text("Auth Init"),
           onPressed: () {
             stub.sink(Item.fromJson(jsonEncode({
-              "1": Session.tokenResponse!.accessToken,
+              "1": Session.tokenResponse.accessToken,
               "2": jsonEncode({
                 "event_type": "AUTH_INIT",
                 "msg_type": "EVT_MSG",
-                "token": Session.tokenResponse!.accessToken,
+                "token": Session.tokenResponse.accessToken,
                 "data": {
                   "code": "AUTH_INIT",
                   "platform": {"type": "web"},
@@ -102,9 +102,9 @@ class _ProtoConsoleState extends State<ProtoConsole> {
           child: const Text("Dashboard Button"),
           onPressed: () async {
             stub.sink(Item.fromJson(jsonEncode({
-              "1": Session.tokenResponse!.accessToken,
+              "1": Session.tokenResponse.accessToken,
               "2": jsonEncode({
-                "token": Session.tokenResponse!.accessToken,
+                "token": Session.tokenResponse.accessToken,
                 "msg_type": "EVT_MSG",
                 "event_type": "BTN_CLICK",
                 "redirect": true,

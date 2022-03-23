@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "WeightedObjectProto";
+
+package weighteditem;
+import "baseentity.proto";
+
+message WeightedItem {
+    life_genny_qwandaq_entity.BaseEntity item = 1;
+    double weight = 2;
+}

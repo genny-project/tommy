@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "life.genny.bridge.model.grpc";
+option java_outer_classname = "QMessageProto";
+
+import "messagedata.proto";
+
+package qeventmessage;
+
+message QEventMessage {
+    string event_type = 1;
+    // MessageData message = 2;
+    messagedata.MessageData data = 2;
+    
+}
+message Empty {}

@@ -3,7 +3,7 @@
 class ProjectEnv {
   static const String baseUrl = "https://internmatch-dev.gada.io";
 
-  static const String authServerUrl = "https://keycloak.gada.io/";
+  static const String authServerUrl = "https://keycloak.gada.io/auth";
   static const String apiVersion = "/v7";
   static const String projectName = "InternMatch";
   

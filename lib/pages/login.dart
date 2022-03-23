@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geoff/utils/networking/auth/app_auth_helper.dart';
+import 'package:geoff/utils/networking/auth/session.dart';
+import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/genny_viewport.dart';
-import 'package:tommy/models/bridge_env.dart';
-import 'package:tommy/models/session.dart';
-import 'package:tommy/utils/app_auth_helper.dart';
+import 'package:tommy/projectenv.dart';
+import 'package:tommy/utils/bridge_env.dart';
 import 'package:http/http.dart' as http;
-import 'package:tommy/utils/log.dart';
 
 class Login extends StatelessWidget {
-
   static final Log _log = Log("Login");
-  
+
   const Login({Key? key}) : super(key: key);
 
   @override
@@ -21,24 +21,33 @@ class Login extends StatelessWidget {
         TextButton(
             onPressed: () {
               http.get(Uri.parse(BridgeEnv.bridgeUrl)).then((response) async {
-                Map<String,dynamic> data = jsonDecode(response.body);
+                Map<String, dynamic> data = jsonDecode(response.body);
+                _log.info("Bridge Data $data");
                 BridgeEnv.map.forEach(
                   (key, val) {
                     _log.info("Key $key");
-                    if (BridgeEnv.map.containsKey(key)) {
+                    if (data.containsKey(key)) {
                       BridgeEnv.map[key]!(data[key]);
                     } else {
-                       _log.warning("Key not found $key");
+                      _log.warning("Key not found $key");
                     }
-                    
                   },
                 );
                 _log.info("Value body $data");
-                Session.tokenResponse = await AppAuthHelper.authTokenResponse();
-                _log.info("Access token ${Session.tokenResponse?.accessToken}");
-                if(Session.tokenResponse?.accessToken != null) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GennyViewport()));
-                }
+                await AppAuthHelper.login(
+                        authServerUrl: ProjectEnv.authServerUrl,
+                        realm: BridgeEnv.realm,
+                        clientId: "alyson",
+                        redirectUrl:
+                            "io.demo-app.appauth://oauth/login_success/")
+                    .then((response) {
+                  if (Session.onToken(response!)) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const GennyViewport()));
+                  }
+                });
+                _log.info("Access token ${Session.tokenResponse.accessToken}");
+                if (Session.tokenResponse.accessToken != null) {}
               });
             },
             child: const Text("Login"))
