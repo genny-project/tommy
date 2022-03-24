@@ -39,7 +39,7 @@ class Login extends StatelessWidget {
                         realm: BridgeEnv.realm,
                         clientId: "alyson",
                         redirectUrl:
-                            "io.demo-app.appauth://oauth/login_success/")
+                            "life.genny.tommy.appauth://oauth/login_success/")
                     .then((response) {
                   if (Session.onToken(response!)) {
                     Navigator.of(context).push(MaterialPageRoute(

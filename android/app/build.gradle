@@ -50,7 +50,7 @@ android {
         versionName flutterVersionName
         manifestPlaceholders = [
                 'applicationName' : 'io.flutter.app.FlutterApplication',
-                'appAuthRedirectScheme': 'io.demo-app.appauth'
+                'appAuthRedirectScheme': 'life.genny.tommy.appauth'
         ]
     }
 
