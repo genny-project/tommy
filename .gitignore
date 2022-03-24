@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+.env
 
 # IntelliJ related
 *.iml
@@ -46,3 +47,5 @@ app.*.map.json
 /android/app/release
 
 .vscode
+
+/lib/generated/
