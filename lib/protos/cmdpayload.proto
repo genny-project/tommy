@@ -1,0 +1,8 @@
+message CmdPayload {
+    required string cmd_type = 1 [json_name="cmd_type"];
+    required string code = 2;
+    required string sourceCode = 3;
+    required string targetCode = 4;
+    required bool exec = 5;
+    repeated string targetCodes = 6;
+}
