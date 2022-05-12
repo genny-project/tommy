@@ -166,20 +166,27 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   },
                 ),
               ),
-              Switch(
-                  value: askSwitch,
-                  onChanged: (v) {
-                    setState(() {
-                      askSwitch = v;
-                      askSwitch
-                          ? searchResults = widget.handler.be.where((item) {
-                              return item.toString().contains(search);
-                            }).toList()
-                          : searchResults = widget.handler.askData.values.where((item) {
-                              return item.toString().contains(search);
-                            }).toList();
-                    });
-                  })
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  !askSwitch ? Text("ASK") : Text("BE"),
+                  Switch(
+                    
+                      value: askSwitch,
+                      onChanged: (v) {
+                        setState(() {
+                          askSwitch = v;
+                          askSwitch
+                              ? searchResults = widget.handler.beData.values.where((item) {
+                                  return item.toString().contains(search);
+                                }).toList()
+                              : searchResults = widget.handler.askData.values.where((item) {
+                                  return item.toString().contains(search);
+                                }).toList();
+                        });
+                      }),
+                ],
+              )
             ],
           ),
           Expanded(
@@ -204,9 +211,10 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                             });
                           },
                           icon: Icon(Icons.copy)),
-                      Text(searchResults[index]
-                          .toString()
-                          .replaceAll(search, search.toUpperCase()))
+                          makeBold(searchResults[index].toString(), search)
+                      // Text(searchResults[index]
+                      //     .toString()
+                      //     .replaceAll(search, search.toUpperCase()))
                     ]));
                     // asks.forEach((ask) {
                     //   ask.childAsks.forEach((childAsk) {});
@@ -272,5 +280,20 @@ class _ProtoConsoleState extends State<ProtoConsole> {
         ],
       ),
     );
+  }
+  RichText makeBold(String content, String search) {
+    List<String> contentSplit = content.split(search);
+    List<TextSpan> textWidgets = [];
+    int i = 0;
+    for (String string in contentSplit) {
+      textWidgets.add(TextSpan(text: string, style: const TextStyle(color: Colors.black)));
+      if (i != contentSplit.length-1) {
+        textWidgets.add(TextSpan(text: search, style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.red)));
+      }
+      i++;
+    }
+    return RichText(text: TextSpan(
+      children: textWidgets));
+    
   }
 }

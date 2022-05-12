@@ -1,3 +1,4 @@
+syntax = "proto2";
 message CmdPayload {
     required string cmd_type = 1 [json_name="cmd_type"];
     required string code = 2;

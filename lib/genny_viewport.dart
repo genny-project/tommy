@@ -29,13 +29,10 @@ class GennyViewport extends StatefulWidget {
 class _GennyViewportState extends State<GennyViewport> {
   static final Log _log = Log("Viewport");
   BridgeHandler handler = BridgeHandler(BridgeHandler.initialiseState());
-
-  List<Map<String, dynamic>> beData = [];
-
+  BaseEntity root = BaseEntity.create();
   List<Widget> widgets = [];
   late Timer timer;
-
-  Drawer drawer = Drawer();
+  final _formKey = GlobalKey<FormFieldState>();
   final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
   @override
@@ -50,14 +47,8 @@ class _GennyViewportState extends State<GennyViewport> {
             ..token = Session.tokenResponse.accessToken!
             ..body = jsonEncode({'connect': 'connect'}))
           .listen((item) async {
-        if (item.body.contains("PCM")) {
-          _log.info("Got PCM ${item.body}");
-          Clipboard.setData(ClipboardData(text: item.body));
-        }
         if (item.body != "{\"h\"}") {
-          _log.info("Got item ${jsonDecode(item.body)['data_type']}");
-          if (jsonDecode(item.body)['data_type'] == null) {
-            _log.info("Item null " + item.body);
+          if (jsonDecode(item.body)['data_type'] == "crunk") {
             widgets.add(Padding(
               padding: const EdgeInsets.symmetric(vertical: 50),
               child: Text(
@@ -68,30 +59,15 @@ class _GennyViewportState extends State<GennyViewport> {
           }
 
           handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
-            // widgets.add(Text(be.name));
-            List<Widget> cardChildren = [];
-            if (be.code == "PCM_SIDEBAR") {
-              _log.info("Got Sidebar");
+            if (be.code == "PCM_ROOT") {
+              _log.info("Found root");
               setState(() {
-                drawer = handler.createDrawer(be);
+                root = be;
               });
-            }
-            for (EntityAttribute attribute in be.baseEntityAttributes) {
-              if (attribute.attributeCode.startsWith("PRI_")) {
-                // widgets.add(TextFormField(
-                //   decoration:
-                //       InputDecoration(labelText: attribute.attribute.name),
-                //   initialValue: attribute.valueString,
-                // ));
-              } else {
-                // cardChildren.add(Text(attribute.attributeName + " " + attribute.valueString));
-              }
-              // widgets.add(Card(child: Column(
-              //   children: cardChildren,
-              // ),));
             }
             setState(() {});
           }), askCallback: ((askmsg) {
+            print("Ask callback");
             for (Ask ask in askmsg.items) {
               widgets.add(Text(
                 ask.questionCode,
@@ -103,52 +79,6 @@ class _GennyViewportState extends State<GennyViewport> {
             }
             setState(() {});
           }));
-          // if (jsonDecode(item.body)['data_type'] == 'BaseEntity') {
-          //   JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          //   Map<String, dynamic> json = jsonDecode(item.body);
-          //   BaseEntity baseEntity = BaseEntity.create();
-          //   EntityAttribute attribute = EntityAttribute.create();
-          //   // attribute.mergeFromProto3Json(jsonDecode(item.body));
-          //   // attribute.mergeFromJson(item.body);
-          //   attribute.mergeFromProto3Json(
-          //       jsonDecode(item.body)['items'][0]['baseEntityAttributes'][0]);
-          //   baseEntity.mergeFromProto3Json(json, ignoreUnknownFields: true);
-          //   _log.info("BaseEntity $baseEntity");
-          //   // baseEntitites.add(attribute);
-          //   await prefs.setString(
-          //       baseEntity.code, baseEntity.writeToBuffer().toString());
-
-          //   // beData.add(encoder.convert(json));
-          // } else if (jsonDecode(item.body)['data_type'] == "QBulkMessage") {
-          //   // _log.info("QBulkMessage item ${item.body}");
-          //   beData.add(jsonDecode(item.body));
-          //   QBulkMessage message = QBulkMessage.create();
-          //   message.mergeFromProto3Json(jsonDecode(item.body),
-          //       ignoreUnknownFields: true);
-          //   handler.qb.add(message);
-          //   for (QMessage qmessage in message.messages) {
-          //     for (BaseEntity baseEntity in qmessage.items) {
-          //       setState(() {
-          //         handler.be.add(baseEntity);
-          //       });
-          //     }
-          //   }
-          // } else if (jsonDecode(item.body)['data_type'] == "Ask") {
-          //   QDataAskMessage ask = QDataAskMessage.create();
-          //   ask.mergeFromProto3Json(jsonDecode(item.body));
-          //   ask.items.forEach((ask) {
-          //     if (ask.name == "Sidebar") {
-          //       _log.log("Creating Drawer for sidebar");
-          //       setState(() {
-          //         drawer = BridgeHandler.createDrawer(ask, setState(() {}));
-          //       });
-          //     }
-          //   });
-          //   setState(() {
-          //     handler.ask.add(ask);
-          //     _log.log("Added ask, current length ${handler.ask.length}");
-          //   });
-          // }
         }
       });
 
@@ -181,23 +111,7 @@ class _GennyViewportState extends State<GennyViewport> {
         stub.heartbeat(Item.fromJson(json));
         // _log.info("Beat");
       });
-      Item other = Item.fromJson(jsonEncode({
-        "1": Session.tokenResponse.accessToken,
-        "2": jsonEncode({
-          "event_type": "AUTH_INIT",
-          "msg_type": "EVT_MSG",
-          "token": Session.tokenResponse.accessToken,
-          "data": {
-            "code": "AUTH_INIT",
-            "platform": {"type": "web"},
-            "sessionId": Session.tokenData['jti'],
-          }
-        })
-      }));
       _log.info("Auth init data ${authInit.toProto3Json()}}");
-      _log.info("Othe init data $other");
-      _log.info(
-          "Identical ${(authInit.writeToJson().length)}  ${other.writeToJson().length}");
       // var r = {"msgype":"EVT_MSG","eventType":"AUTH_INIT","data":{"code":"AUTH_INIT","platform":{"type":"web"},"sessionId":"2cd42df2-87f4-4122-b3a2-6170a3076bf8"}};
       // var l = {"event_type":"AUTH_INIT","msg_type":"EVT_MSG","data":{"code":"AUTH_INIT","platform":{"type":"web"},"sessionId":"2cd42df2-87f4-4122-b3a2-6170a3076bf8"}};
       stub.sink(authInit);
@@ -220,76 +134,118 @@ class _GennyViewportState extends State<GennyViewport> {
 
   @override
   Widget build(BuildContext context) {
+    return root.baseEntityAttributes.isNotEmpty == true
+        ? rootScaffold(root)
+        : const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+    // return Scaffold(
+    //   // appBar: AppBar(
+    //   //   actions: [
+    //   //     IconButton(
+    //   //         onPressed: () {
+    //   //           Navigator.of(context).push(MaterialPageRoute(
+    //   //               builder: ((context) => ProtoConsole(handler))));
+    //   //         },
+    //   //         icon: const Icon(Icons.graphic_eq))
+    //   //   ],
+    //   //   title: const Text("main page"),
+    //   // )
+    //   appBar: getAppBar(),
+    //   drawer: getDrawer(),
+    //   body: Column(
+    //     children: [
+    //       IconButton(
+    //           onPressed: () {
+    //             Navigator.of(context).push(MaterialPageRoute(
+    //                 builder: ((context) => ProtoConsole(handler))));
+    //           },
+    //           icon: const Icon(Icons.graphic_eq)),
+    //       Text(handler.state.DISPLAY),
+    //       Expanded(
+    //         child: ListView.builder(
+    //             itemCount: widgets.length,
+    //             itemBuilder: ((context, index) {
+    //               return widgets[index];
+    //             })),
+    //       )
+    //     ],
+    //   ),
+    // );
+  }
+
+  Scaffold rootScaffold(BaseEntity root) {
+
     return Scaffold(
-      // appBar: AppBar(
-      //   actions: [
-      //     IconButton(
-      //         onPressed: () {
-      //           Navigator.of(context).push(MaterialPageRoute(
-      //               builder: ((context) => ProtoConsole(handler))));
-      //         },
-      //         icon: const Icon(Icons.graphic_eq))
-      //   ],
-      //   title: const Text("main page"),
-      // )
-      appBar: getAppBar(),
-      drawer: getDrawer(),
-      body: Column(
-        children: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: ((context) => ProtoConsole(handler))));
-              },
-              icon: const Icon(Icons.graphic_eq)),
-          Text(handler.state.DISPLAY),
-          Expanded(
-            child: ListView.builder(
-                itemCount: widgets.length,
-                itemBuilder: ((context, index) {
-                  return widgets[index];
-                })),
-          )
-        ],
-      ),
-    );
+        appBar: getAppBar(),
+        drawer: getDrawer(),
+        body: Column(
+          children: [
+            TextFormField(
+              key: _formKey,
+              initialValue: "Test", validator: handler.createValidator(handler.findAttribute(handler.findByCode("PCM_TEST1"), "PRI_NAME")), onChanged: (text){
+                _formKey.currentState!.validate();
+              },),
+            Column(
+              children: widgets,
+            ),
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => ProtoConsole(handler))));
+                },
+                icon: const Icon(Icons.graphic_eq)),
+            Column(children: widgets,),
+            Flexible(
+              child: ListView.builder(
+                  itemCount: handler.beData.length,
+                  itemBuilder: ((context, index) {
+                    return Text((handler.beData.values.toList()
+                          ..sort((((BaseEntity a, BaseEntity b) {
+                            return a.index.compareTo(b.index);
+                          }))))[index].name
+                        .toString());
+                  })),
+            ),
+            Text(root.baseEntityAttributes
+                .singleWhere(
+                    (attribute) => attribute.valueString == "PCM_DASHBOARD",
+                    orElse: () => EntityAttribute.create())
+                .toString())
+          ],
+        ));
   }
 
   Drawer getDrawer() {
+    BaseEntity? root = handler.findByCode("PCM_ROOT");
+    BaseEntity? be = handler.findByCode(handler.findAttribute(root, "PRI_LOC2").valueString);
     return Drawer(
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: handler.be
-                .firstWhere((be) => be.code == "PCM_SIDEBAR", orElse: () {
-                  return BaseEntity.create();
-                })
+            itemCount: be
                 .baseEntityAttributes
                 .length,
             itemBuilder: (context, index) {
-              BaseEntity be =
-                  handler.be.firstWhere((be) => be.code == "PCM_SIDEBAR");
               List<Widget> buttons = [];
-
-              // be.baseEntityAttributes
               be.baseEntityAttributes.sort(((a, b) {
                 return a.weight.compareTo(b.weight);
               }));
               EntityAttribute attribute = be.baseEntityAttributes[index];
-
+              _log.log("Getting ask with attribute ${attribute.valueString}");
               Ask? ask = handler.askData[attribute.valueString];
+
               if (ask != null) {
-                if (attribute.valueString.endsWith("_GRP")) {
-                  for (Ask ask in ask.childAsks) {
-                    buttons.add(ListTile(
-                      onTap: () {
-                        handler.evt(ask.questionCode);
-                        Navigator.pop(context);
-                      },
-                      title: Text(ask.name),
-                    ));
-                  }
+                // if (ask.childAsks.isNotEmpty) {
+                for (Ask ask in ask.childAsks) {
+                  buttons.add(ListTile(
+                    onTap: () {
+                      handler.evt(ask.questionCode);
+                      Navigator.pop(context);
+                    },
+                    title: Text(ask.name),
+                  ));
                 }
-                return attribute.valueString.endsWith("_GRP")
+                return ask.childAsks.isNotEmpty
                     ? ExpansionTile(
                         leading: Container(
                           width: 50,
@@ -298,6 +254,14 @@ class _GennyViewportState extends State<GennyViewport> {
                                 (ask.question.icon),
                             height: 30,
                             width: 30,
+                            placeholderBuilder: (context) {
+                              return Center(
+                                child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    child: CircularProgressIndicator()),
+                              );
+                            },
                           ),
                         ),
                         title: Text(ask.name),
@@ -312,6 +276,14 @@ class _GennyViewportState extends State<GennyViewport> {
                                 ask.question.icon,
                             height: 30,
                             width: 30,
+                            placeholderBuilder: (context) {
+                              return Center(
+                                child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    child: CircularProgressIndicator()),
+                              );
+                            },
                           ),
                         ),
                         onTap: () {
@@ -320,30 +292,35 @@ class _GennyViewportState extends State<GennyViewport> {
                         },
                         title: Text(ask.name));
               }
-              return SizedBox();
+              return ListTile(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("The ASK could not be loaded.")));
+                },
+                leading: Icon(Icons.error, color: Colors.red,), title: Text(attribute.valueString),);
             }));
   }
 
   AppBar getAppBar() {
     List<Widget> actions = [];
     Widget title = SizedBox();
-    BaseEntity? be =
-        handler.be.firstWhere((be) => be.code == "PCM_HEADER", orElse: (() {
-      return BaseEntity.create();
-    }));
-
+    BaseEntity? root = handler.findByCode("PCM_ROOT");
+    BaseEntity? be = handler.findByCode(handler.findAttribute(root, "PRI_LOC1").valueString);
+    print("Be is ${be.baseEntityAttributes}");
     be.baseEntityAttributes.sort(((a, b) => a.weight.compareTo(b.weight)));
-    be.baseEntityAttributes.forEach((attribute) {
+    print("Be length ${be.baseEntityAttributes.length}");
+    for (var attribute in be.baseEntityAttributes) {
+      print("Attribute ${attribute.valueString}");
+      print("Askdata length ${handler.askData.keys.length}");
       Ask? ask = handler.askData[attribute.valueString];
+      print("Ask $ask");
       if (ask != null) {
-        if (attribute.valueString.endsWith("_GRP")) {
+        if (ask.childAsks.isNotEmpty) {
           List<PopupMenuEntry<String>> buttons = [];
-          if (ask != null) {
-            for (Ask ask in ask.childAsks) {
-              buttons.add(PopupMenuItem(
-                  value: ask.questionCode, child: Text(ask.name)));
-            }
+          for (Ask ask in ask.childAsks) {
+            buttons.add(
+                PopupMenuItem(value: ask.questionCode, child: Text(ask.name)));
           }
+
           actions.add(Container(
               height: 20,
               width: 50,
@@ -368,11 +345,21 @@ class _GennyViewportState extends State<GennyViewport> {
             ),
           );
         }
+      } else {
+        actions.add(
+                IconButton(
+                  onPressed: (){
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The ASK could not be loaded. ${attribute.valueString}")));
+                  },
+                  icon: Icon(Icons.error, color: Colors.red,)));
       }
-    });
+    }
+    print("GOT APPBAR TITLE $title");
+    print("GOT APPBAR ACTIONS $actions");
     return AppBar(
       title: title,
-      centerTitle: true,
+      centerTitle: false,
       actions: actions,
     );
   }

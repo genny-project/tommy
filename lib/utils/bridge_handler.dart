@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
 import 'package:minio/models.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/generated/baseentity.pbjson.dart';
 import 'package:tommy/generated/cmdpayload.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
+import 'package:tommy/generated/msgpayload.pb.dart';
 import 'package:tommy/generated/qbulkmessage.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
@@ -27,18 +30,24 @@ class BridgeHandler {
 
   static AppState initialiseState() {
     return AppState(
-    DISPLAY: 'DASHBOARD',
-     DRAWER: 'NONE',
-  DIALOG :'NONE',
-  TOAST:null,
-  DASHBOARD_COUNTS:null,
-  NOTES:'',
-  DUPLICATE_EMAILS:'',
-  lastSentMessage:{'time': '', 'data': { 'data': { 'code': 'QUE_DASHBOARD_VIEW' } } },
-  lastReceivedMessage:{},
-  highlightedQuestion:'');
-  // ..bufferDropdownOptions = []
+        DISPLAY: 'DASHBOARD',
+        DRAWER: 'NONE',
+        DIALOG: 'NONE',
+        TOAST: null,
+        DASHBOARD_COUNTS: null,
+        NOTES: '',
+        DUPLICATE_EMAILS: '',
+        lastSentMessage: {
+          'time': '',
+          'data': {
+            'data': {'code': 'QUE_DASHBOARD_VIEW'}
+          }
+        },
+        lastReceivedMessage: {},
+        highlightedQuestion: '');
+    // ..bufferDropdownOptions = []
   }
+
   dynamic getType(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
@@ -76,16 +85,18 @@ class BridgeHandler {
   void handleData(Map<String, dynamic> data,
       {required Function(QDataAskMessage ask) askCallback,
       required Function(BaseEntity be) beCallback}) {
+    // _log.info("Data msg_type ${data['msg_type']}");
+    print("Got data ${data.toString().length} $data");
     if (data['msg_type'] == "CMD_MSG") {
-      CmdPayload payload = CmdPayload.create();
-      payload.mergeFromProto3Json(data, ignoreUnknownFields: true);
+      CmdPayload payload = CmdPayload.create()
+        ..mergeFromProto3Json(data, ignoreUnknownFields: true);
       _log.info("CMD PAYLOAD ${payload.cmdType}");
       handleCmd(payload);
       //handle command
     } else {
       //assume data message {CHECK FOR BULK}
-
       if (data['total'] == -1) {
+        print("total -1 ${data}");
         QMessage qMessage = QMessage.create();
         qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (BaseEntity baseEntity in qMessage.items) {
@@ -98,203 +109,173 @@ class BridgeHandler {
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
         qb.add(message);
         message.messages.forEach((message) {
-          message.items.forEach((baseentity) {
-            handleMsg(data, beCallback, askCallback);
+          Map<String, dynamic> json =
+              message.toProto3Json() as Map<String, dynamic>;
+          _log.info("the type is ${json['dataType']}");
+          message.items.forEach((be) {
+            handleBE(be, beCallback);
           });
+          // handleMsg(json, beCallback, askCallback);
         });
       } else {
         handleMsg(data, beCallback, askCallback);
       }
     }
+  }
 
-  } 
-  void handleCmd(CmdPayload payload
-  ){
+  void handleCmd(CmdPayload payload) {
     _log.info("Got Cmd ${payload}");
     cmdMachine(payload);
   }
+
   void handleMsg(
-    Map<String,dynamic> data,
+    Map<String, dynamic> data,
     beCallback,
     askCallback,
   ) {
-    if(data['data_type'] == 'BaseEntity') {
-      BaseEntity be = BaseEntity.create()..mergeFromProto3Json(data, ignoreUnknownFields: true);
-      beData[be.name] = be;
-      beCallback(be);
-    }
-    else if (data['data_type'] == "Ask") {
-      QDataAskMessage askmsg = QDataAskMessage.create()..mergeFromProto3Json(data);
-      for(Ask ask in askmsg.items){
-        for(Ask ask in ask.childAsks){
+    if (data['data_type'] == 'BaseEntity') {
+      BaseEntity be = BaseEntity.create()
+        ..mergeFromProto3Json(data, ignoreUnknownFields: true);
+      handleBE(be, beCallback);
+    } else if (data['data_type'] == "Ask") {
+      print("Got ask!! $data");
+      Clipboard.setData(ClipboardData(text: data.toString()));
+      try {
+        QDataAskMessage askmsg = QDataAskMessage.create()
+          ..mergeFromProto3Json(data, ignoreUnknownFields: true);
+        askCallback(askmsg);
+        for (Ask ask in askmsg.items) {
+          for (Ask ask in ask.childAsks) {
+            askData[ask.questionCode] = ask;
+          }
           askData[ask.questionCode] = ask;
         }
-        askData[ask.questionCode] = ask;
-      }
-      
-      
-    }
-
-  }
-
-  Drawer createDrawer(BaseEntity be) {
-    List<Widget> children = [];
-    Drawer drawer = Drawer(
-      child: SafeArea(
-          child: ListView(
-        children: children,
-      )),
-    );
-
-    for (EntityAttribute attribute in be.baseEntityAttributes) {
-      List<ExpansionPanel> listItems = [];
-      List<Widget> buttons = [];
-      buttons.add(ListTile(title: Text(attribute.attributeName)));
-      Ask? ask;
-      if (attribute.valueString.startsWith("QUE_")) {
-        ask = askData[attribute.valueString];
-      }
-      askData[attribute.valueString];
-      print("Full asks ${askData}");
-      print(
-          "Got asks with value ${attribute.valueString}${askData[attribute.valueString]}");
-      // print("Got ask ${ask.firstWhere((element) {return element.attributeCode == attribute.attributeName;})}");
-      // childAsk.childAsks.forEach((element) {
-      //     listItems.add();
-      // });
-      if (askData[attribute.valueString] == 5) {
-        children.add(ExpansionTile(
-          leading: Container(
-            width: 50,
-            child: SvgPicture.network(
-              "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
-                  attribute.attribute.icon,
-              height: 30,
-              width: 30,
-            ),
-          ),
-          title: Text(ask.toString()),
-          children: buttons,
-        ));
-        // content.children.add(DropdownButton(
-        //   icon: SvgPicture.network(
-        //     "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
-        //         childAsk.question.icon,
-        //     height: 30,
-        //     width: 30,
-        //   ),
-        //   items: dropdownItems,
-        //   onChanged: (value) {
-        //     print("On changed $value");
-        //   },
-        // ));
-      } else {
-        children.add(
-          ListTile(
-              // style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              leading: Container(
-                width: 50,
-                child: SvgPicture.network(
-                  "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
-                      (ask?.question.icon ?? "yeah lmao"),
-                  height: 30,
-                  width: 30,
-                ),
-              ),
-              title: Text(ask?.name ??
-                  "ATT ${attribute.attributeName} ${attribute.attributeCode}")),
-        );
+      } catch (e) {
+        Clipboard.setData(ClipboardData(text: data.toString()));
+        _log.error("FAILED TO MERGE $data");
       }
     }
-    return drawer;
   }
 
+  void handleBE(BaseEntity be, beCallback) {
+    beData[be.code] = be;
+    beCallback(be);
+  }
 
-void displayMachine(CmdPayload payload) {
-  _log.info("Displaying - $payload");
-  switch(payload.code) {
-    case "DRAWER:DETAIL":{
-      break;
-    }
-    case "DIALOG_FORM": {
-      break;
-    }
-    default: {
-      _log.info("Default");
-      state.DISPLAY = payload.code;
-      state.DIALOG = 'NONE';
-      state.DRAWER = 'NONE';
-      state.DUPLICATE_EMAILS = '';
+  void displayMachine(CmdPayload payload) {
+    _log.info("Displaying - $payload");
+    switch (payload.code) {
+      case "DRAWER:DETAIL":
+        {
+          break;
+        }
+      case "DIALOG_FORM":
+        {
+          break;
+        }
+      default:
+        {
+          _log.info("Default");
+          state.DISPLAY = payload.code;
+          state.DIALOG = 'NONE';
+          state.DRAWER = 'NONE';
+          state.DUPLICATE_EMAILS = '';
+        }
     }
   }
-// const displayMachine: {
-//   [key: string]: Function
-// } = {
-//   'DRAWER:DETAIL': (state: AppState) => (state['DRAWER'] = 'DETAIL'),
-//   DIALOG_FORM: (state: AppState) => (state['DIALOG'] = 'FORM'),
-//   NONE: (state: AppState) => {
-//     state.DIALOG = 'NONE'
-//     state.DRAWER = 'NONE'
-//     state.DUPLICATE_EMAILS = ''
-//   },
-//   DEFAULT: (state: AppState, { code }: CmdPayload) => {
-//     state['DISPLAY'] = code
 
-//     state.DIALOG = 'NONE'
-//     state.DRAWER = 'NONE'
-//     state.DUPLICATE_EMAILS = ''
-//   },
-// }
+  void cmdMachine(CmdPayload payload) {
+    switch (payload.cmdType) {
+      case "DISPLAY":
+        {
+          displayMachine(payload);
+          break;
+        }
+      case "TOAST":
+        {
+          break;
+        }
+      case "LOGOUT":
+        {
+          break;
+        }
+      case "DOWNLOAD_FILE":
+        {
+          break;
+        }
+      case "NOTES":
+        {
+          break;
+        }
+      default:
+        {
+          break;
+        }
+    }
+    // DISPLAY: (state: AppState, { code }: CmdPayload) => {
+    //   displayMachine[code]
+    //     ? displayMachine[code](state, { code })
+    //     : displayMachine.DEFAULT(state, { code })
 
-}
-
-void cmdMachine(CmdPayload payload) {
-  switch (payload.cmdType) {
-    case "DISPLAY": {
-      displayMachine(payload);
-      break;
-    }
-    case "TOAST": {
-      break;
-    }
-    case "LOGOUT": {
-      break;
-    }
-    case "DOWNLOAD_FILE": {
-      break;
-    }
-    case "NOTES": {
-      break;
-    }
-    default: {
-      break;
-    }
+    //   clearStateHandler(state, code)
+    // },
+    // TOAST: (state: AppState, payload: CmdPayload) => (state['TOAST'] = payload),
+    // LOGOUT: (_: AppState, { exec }: CmdPayload) => {
+    //   exec && (keycloak as any).logout()
+    // },
+    // DOWNLOAD_FILE: (state: AppState, { code, exec }: CmdPayload) => {
+    //   if (exec) window.open(code)
+    //   state.DOWNLOAD_FILE = code
+    // },
+    // NOTES: (state: AppState, { code }: CmdPayload) => {
+    //   state['DRAWER'] = 'NOTES'
+    //   state['NOTES'] = code
+    // },
+    // DEFAULT: (state: AppState, { targetCodes, code, cmd_type }: CmdPayload) => {
+    //   if (targetCodes) {
+    //     if (!equals(state[cmd_type], targetCodes)) state[cmd_type] = targetCodes
+    //   } else {
+    //     state[cmd_type] = code
+    //   }
+    // },
   }
-  // DISPLAY: (state: AppState, { code }: CmdPayload) => {
-  //   displayMachine[code]
-  //     ? displayMachine[code](state, { code })
-  //     : displayMachine.DEFAULT(state, { code })
 
-  //   clearStateHandler(state, code)
-  // },
-  // TOAST: (state: AppState, payload: CmdPayload) => (state['TOAST'] = payload),
-  // LOGOUT: (_: AppState, { exec }: CmdPayload) => {
-  //   exec && (keycloak as any).logout()
-  // },
-  // DOWNLOAD_FILE: (state: AppState, { code, exec }: CmdPayload) => {
-  //   if (exec) window.open(code)
-  //   state.DOWNLOAD_FILE = code
-  // },
-  // NOTES: (state: AppState, { code }: CmdPayload) => {
-  //   state['DRAWER'] = 'NOTES'
-  //   state['NOTES'] = code
-  // },
-  // DEFAULT: (state: AppState, { targetCodes, code, cmd_type }: CmdPayload) => {
-  //   if (targetCodes) {
-  //     if (!equals(state[cmd_type], targetCodes)) state[cmd_type] = targetCodes
-  //   } else {
-  //     state[cmd_type] = code
-  //   }
-  // },
+  BaseEntity findByCode(String code) {
+    return be.firstWhere((be) => be.code == code, orElse: () {
+      throw ArgumentError("Could not find BaseEntity", code);
+    });
+  }
+
+  /// Find a baseEntityAttribute from a [BaseEntity] object where the
+  /// [BaseEntity.attributeCode] is equal to `attributeName`
+  EntityAttribute findAttribute(BaseEntity entity, String attributeName) {
+    entity.baseEntityAttributes.forEach((element) {
+      print(element.attributeCode);
+    });
+    if (entity.baseEntityAttributes.isEmpty) {
+      throw ArgumentError(
+          "The entity provided contains no attributes", entity.code);
+    }
+    try {
+      EntityAttribute attribute = entity.baseEntityAttributes
+          .firstWhere((attribute) => attribute.attributeCode == attributeName);
+      return attribute;
+    } catch (e) {
+      // result = BaseEntity.create()..code = "NONE";
+      throw ArgumentError("The Attribute does not exist", attributeName);
+    }
+    // return result;
+  }
+
+  String? Function(String?) createValidator(EntityAttribute attribute) {
+    String regex = attribute.attribute.dataType.validationList.first.regex;
+    print("Got regex $regex");
+    RegExp regExp = RegExp(regex);
+    return (string){
+      if(!regExp.hasMatch(string!)) {
+        return "Does not match regex";
+      }
+    };
+  }
 }
-}
+

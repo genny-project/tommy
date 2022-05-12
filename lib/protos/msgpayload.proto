@@ -1,0 +1,41 @@
+syntax = "proto2";
+import "any.proto";
+// import "baseentity.proto";
+// import "ask.proto";
+message PayloadItem {
+    map<string, google.protobuf.Any> item = 1;
+}
+
+message MsgPayload {
+
+    repeated PayloadItem items = 1;
+    required string data_type = 2;
+    optional string aliasCode = 3;
+    optional string parentCode = 4;
+    optional bool replace = 5;
+    repeated string targetCodes = 6;
+    optional string linkedApps = 7;
+    optional string code = 8;
+    optional string questionCode = 9;
+    optional string linkCode = 10;
+    // required string cmd_type = 1 [json_name="cmd_type"];
+    // required string code = 2;
+    // required string sourceCode = 3;
+    // required string targetCode = 4;
+    // required bool exec = 5;
+    // repeated string targetCodes = 6;
+}
+
+// export interface MsgPayload {
+//     items: Items
+//     data_type: string
+//     aliasCode?: string
+//     parentCode?: string
+//     replace: boolean
+//     targetCodes?: Array<TargetCode>
+//     linkedApps?: string
+//     code?: string
+//     questionCode?: string
+//     linkCode?: 'LNK_CORE'
+//   }
+  
