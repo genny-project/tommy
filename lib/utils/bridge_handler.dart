@@ -16,15 +16,17 @@ import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/models/state.dart';
 import 'package:tommy/projectenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class BridgeHandler {
   BridgeHandler(this.state);
   AppState state;
-  final stub = StreamClient(ProtoUtils.getChannel());
+
+  static final stub = StreamClient(ProtoUtils.getChannel());
   final Log _log = Log("BridgeHandler");
   Map<String, BaseEntity> beData = {};
-  Map<String, Ask> askData = {};
-  List<BaseEntity> be = [];
+  static Map<String, Ask> askData = {};
+  static List<BaseEntity> be = [];
   List<QBulkMessage> qb = [];
   // List<QDataAskMessage> ask = [];
 
@@ -68,7 +70,7 @@ class BridgeHandler {
     return;
   }
 
-  void evt(String code) {
+  static void evt(String code) {
     stub.sink(Item.create()
       ..token = Session.token
       ..body = jsonEncode((QMessage.create()
@@ -86,7 +88,6 @@ class BridgeHandler {
       {required Function(QDataAskMessage ask) askCallback,
       required Function(BaseEntity be) beCallback}) {
     // _log.info("Data msg_type ${data['msg_type']}");
-    print("Got data ${data.toString().length} $data");
     if (data['msg_type'] == "CMD_MSG") {
       CmdPayload payload = CmdPayload.create()
         ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -96,12 +97,11 @@ class BridgeHandler {
     } else {
       //assume data message {CHECK FOR BULK}
       if (data['total'] == -1) {
-        print("total -1 ${data}");
         QMessage qMessage = QMessage.create();
         qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (BaseEntity baseEntity in qMessage.items) {
           beData[baseEntity.name] = baseEntity;
-          this.be.add(baseEntity);
+          be.add(baseEntity);
           beCallback(baseEntity);
         }
       } else if (data['data_type'] == "QBulkMessage") {
@@ -134,12 +134,21 @@ class BridgeHandler {
     askCallback,
   ) {
     if (data['data_type'] == 'BaseEntity') {
-      BaseEntity be = BaseEntity.create()
-        ..mergeFromProto3Json(data, ignoreUnknownFields: true);
-      handleBE(be, beCallback);
+      // BaseEntity be = BaseEntity.create()
+      //   ..mergeFromProto3Json(data, ignoreUnknownFields: true);
+      print("Data for qMessage $data");
+      try {
+        QMessage qMessage = QMessage.create()
+          ..mergeFromProto3Json(data, ignoreUnknownFields: true);
+        for (BaseEntity be in qMessage.items) {
+          beData[be.name] = be;
+          handleBE(be, beCallback);
+        }
+      } catch (e) {
+        print("Could not create qMessage. $e");
+      }
     } else if (data['data_type'] == "Ask") {
-      print("Got ask!! $data");
-      Clipboard.setData(ClipboardData(text: data.toString()));
+      print("got an ask ${data}");
       try {
         QDataAskMessage askmsg = QDataAskMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -151,14 +160,15 @@ class BridgeHandler {
           askData[ask.questionCode] = ask;
         }
       } catch (e) {
-        Clipboard.setData(ClipboardData(text: data.toString()));
         _log.error("FAILED TO MERGE $data");
       }
     }
   }
 
-  void handleBE(BaseEntity be, beCallback) {
-    beData[be.code] = be;
+  void handleBE(BaseEntity entity, beCallback) {
+    be.add(entity);
+    // beData[be.code] = be;
+
     beCallback(be);
   }
 
@@ -240,18 +250,24 @@ class BridgeHandler {
     // },
   }
 
-  BaseEntity findByCode(String code) {
+  static BaseEntity findByCode(String code) {
     return be.firstWhere((be) => be.code == code, orElse: () {
       throw ArgumentError("Could not find BaseEntity", code);
     });
   }
 
+  static Ask findBySourceCode(String code) {
+    return askData.values.firstWhere((ask) => ask.sourceCode == code,
+        orElse: () {
+      throw ArgumentError("Could not find ask", code);
+    });
+  }
+
   /// Find a baseEntityAttribute from a [BaseEntity] object where the
   /// [BaseEntity.attributeCode] is equal to `attributeName`
-  EntityAttribute findAttribute(BaseEntity entity, String attributeName) {
-    entity.baseEntityAttributes.forEach((element) {
-      print(element.attributeCode);
-    });
+  static EntityAttribute findAttribute(
+      BaseEntity entity, String attributeName) {
+    entity.baseEntityAttributes.forEach((element) {});
     if (entity.baseEntityAttributes.isEmpty) {
       throw ArgumentError(
           "The entity provided contains no attributes", entity.code);
@@ -271,11 +287,48 @@ class BridgeHandler {
     String regex = attribute.attribute.dataType.validationList.first.regex;
     print("Got regex $regex");
     RegExp regExp = RegExp(regex);
-    return (string){
-      if(!regExp.hasMatch(string!)) {
+    return (string) {
+      if (!regExp.hasMatch(string!)) {
         return "Does not match regex";
       }
     };
   }
-}
 
+  Widget getPcmWidget(EntityAttribute attribute) {
+    BaseEntity be = findByCode(attribute.valueString);
+    print("Getting template from be $be");
+    // Ask ask = findByCode(findBySourceCode(attribute.valueString).questionCode);
+    EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
+    print("got attribute $templateAttribute");
+    return TemplateHandler.getTemplate(templateAttribute.valueString, be);
+    EntityAttribute questionAttribute = findAttribute(be, "PRI_QUESTION_CODE");
+    Ask ask = askData[questionAttribute.valueString]!;
+    return typeSwitch(ask.childAsks[0]);
+  }
+
+  Widget typeSwitch(Ask ask) {
+    switch (ask.question.attribute.dataType.dttCode) {
+      case "DTT_IMAGE":
+        {
+          return Image.network(
+            getPrimary(ask.question.attribute.code).valueString,
+            headers: {"Authorization": "Bearer ${Session.token}"},
+          );
+        }
+      default:
+        {
+          return Text(ask.question.attribute.dataType.dttCode);
+        }
+    }
+  }
+
+  static BaseEntity getProject() {
+    String realm =
+        Session.tokenData['iss'].toString().split("/").last.toUpperCase();
+    return findByCode("PRJ_" + realm);
+  }
+
+  static EntityAttribute getPrimary(String code) {
+    return findAttribute(getProject(), code);
+  }
+}

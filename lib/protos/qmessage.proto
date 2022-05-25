@@ -34,6 +34,7 @@ message QMessage {
     bool redirect = 12;
     string bridgeId = 13;
     repeated string recipientCodeArray = 14;
+    string pcmCode = 33;
 
     //-----------------------------
     //       Q EVENT MESSAGE

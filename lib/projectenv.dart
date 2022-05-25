@@ -2,7 +2,8 @@
 
 class ProjectEnv {
   // static const String baseUrl = "https://internmatch-dev.gada.io";
-  static const String baseUrl = "http://10.0.2.2:8088";
+  // static const String baseUrl = "http://internmatch.genny.life";
+  static const String baseUrl = "http://lojing.genny.life";
   // static const String baseUrl = "http://alyson7.genny.life";
   static const String authServerUrl = "https://keycloak.gada.io/auth";
   static const String apiVersion = "/v7";

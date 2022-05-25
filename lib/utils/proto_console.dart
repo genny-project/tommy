@@ -51,6 +51,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   List<dynamic> searchResults = [];
   String search = "";
   bool askSwitch = false;
+  bool verbose = true;
   final stub = StreamClient(ProtoUtils.getChannel());
   @override
   Widget build(BuildContext context) {
@@ -117,9 +118,13 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   },
                 ),
               ),
+
+              //{"items":[{"askId":349572,"processId":"4e580190-43f7-4842-9b0f-4080734f5d6f","attributeCode":"PRI_SUBMIT","sourceCode":"PER_086CDF1F-A98F-4E73-9825-0A4CFE2BB943","targetCode":"PER_34EB0455-1DC0-4121-80ED-90C0B9EEA413","code":"QUE_SUBMIT","identifier":"QUE_SUBMIT","weight":1,"value":"","inferred":false}],"token":"Usage: ./gettoken-cache.sh <product code>","msg_type":"DATA_MSG","event_type":false,"redirect":false,"data_type":"Answer"}
+              //rememeber this god damn
+
               Expanded(
                 child: TextButton(
-                  child: const Text("Dashboard Button"),
+                  child: const Text("processquestions"),
                   onPressed: () async {
                     stub.sink(Item.fromJson(jsonEncode({
                       "1": Session.tokenResponse.accessToken,
@@ -129,8 +134,13 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                         "event_type": "BTN_CLICK",
                         "redirect": true,
                         "data": {
-                          "code": "QUE_DASHBOARD_VIEW",
-                          "parentCode": "QUE_DASHBOARD_VIEW"
+                          "code": "processquestions",
+                          "parentCode": "processquestions"
+                          // "questionCode":
+                          // "targetCode":
+                          // "pcmCode": 
+                          // "usrTokenString":
+                          // "target code pcm code user target string"
                         }
                       })
                     })));
@@ -156,10 +166,11 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     this.search = search;
                     setState(() {
                       askSwitch
-                          ? searchResults = widget.handler.be.where((item) {
+                          ? searchResults = BridgeHandler.be.where((item) {
                               return item.toString().contains(search);
                             }).toList()
-                          : searchResults = widget.handler.askData.values.where((item) {
+                          : searchResults =
+                              BridgeHandler.askData.values.where((item) {
                               return item.toString().contains(search);
                             }).toList();
                     });
@@ -171,20 +182,29 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                 children: [
                   !askSwitch ? Text("ASK") : Text("BE"),
                   Switch(
-                    
                       value: askSwitch,
                       onChanged: (v) {
                         setState(() {
                           askSwitch = v;
                           askSwitch
-                              ? searchResults = widget.handler.beData.values.where((item) {
+                              ? searchResults =
+                                  widget.handler.beData.values.where((item) {
                                   return item.toString().contains(search);
                                 }).toList()
-                              : searchResults = widget.handler.askData.values.where((item) {
+                              : searchResults =
+                                  BridgeHandler.askData.values.where((item) {
                                   return item.toString().contains(search);
                                 }).toList();
                         });
                       }),
+                  Switch(
+                      value: verbose,
+                      onChanged: (v) {
+                        BridgeHandler.getProject();
+                        setState(() {
+                          verbose = v;
+                        });
+                      })
                 ],
               )
             ],
@@ -196,10 +216,10 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   itemCount: searchResults.length,
                   itemBuilder: ((context, index) {
                     List<Widget> widgets = [];
-                    BaseEntity be = widget.handler.be[index];
+                    // BaseEntity be = widget.handler.be[index];
                     // QDataAskMessage msg = widget.handler.ask[index];
                     // List<Ask> asks = msg.items;
-                    List<EntityAttribute> at = be.baseEntityAttributes;
+                    // List<EntityAttribute> at = be.baseEntityAttributes;
                     widgets.add(Column(children: [
                       IconButton(
                           onPressed: () {
@@ -211,7 +231,11 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                             });
                           },
                           icon: Icon(Icons.copy)),
-                          makeBold(searchResults[index].toString(), search)
+                      Text(searchResults[index].name.toString()),
+                      verbose
+                          ? makeBold(searchResults[index].toString(), search)
+                          : askSwitch ? makeBold(
+                              searchResults[index].code.toString(), search) : makeBold(searchResults[index].question.code.toString(), search),
                       // Text(searchResults[index]
                       //     .toString()
                       //     .replaceAll(search, search.toUpperCase()))
@@ -257,23 +281,23 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     //   //   Text(at.toString())
                     //   // ],));
                     // }
-                    for (EntityAttribute attribute in at) {
-                      // widgets.add(Text(attribute.toString()));
-                      // if (attribute.attributeCode == "COL_PRI_IMAGE_URL") {
-                      //   if (be.toProto3Json().toString().contains("http")) {
-                      //     widgets.add(Text(be.toProto3Json().toString()));
-                      //   }
-                      //   // widgets.add(Text(be.toProto3Json().toString()));
-                      //   widgets.add(
-                      //     Image.network(attribute.valueString),
-                      //   );
-                      // }
-                    }
+                    // for (EntityAttribute attribute in at) {
+                    //   // widgets.add(Text(attribute.toString()));
+                    //   // if (attribute.attributeCode == "COL_PRI_IMAGE_URL") {
+                    //   //   if (be.toProto3Json().toString().contains("http")) {
+                    //   //     widgets.add(Text(be.toProto3Json().toString()));
+                    //   //   }
+                    //   //   // widgets.add(Text(be.toProto3Json().toString()));
+                    //   //   widgets.add(
+                    //   //     Image.network(attribute.valueString),
+                    //   //   );
+                    //   // }
+                    // }
                     return Container(
                       child: Column(children: widgets),
                     );
-                    return Text(
-                        widget.handler.be[index].toProto3Json().toString());
+                    // return Text(
+                    //     widget.handler.be[index].toProto3Json().toString());
                   })),
             ),
           ),
@@ -281,19 +305,22 @@ class _ProtoConsoleState extends State<ProtoConsole> {
       ),
     );
   }
+
   RichText makeBold(String content, String search) {
     List<String> contentSplit = content.split(search);
     List<TextSpan> textWidgets = [];
     int i = 0;
     for (String string in contentSplit) {
-      textWidgets.add(TextSpan(text: string, style: const TextStyle(color: Colors.black)));
-      if (i != contentSplit.length-1) {
-        textWidgets.add(TextSpan(text: search, style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.red)));
+      textWidgets.add(
+          TextSpan(text: string, style: const TextStyle(color: Colors.black)));
+      if (i != contentSplit.length - 1) {
+        textWidgets.add(TextSpan(
+            text: search,
+            style: const TextStyle(
+                fontWeight: FontWeight.w900, color: Colors.red)));
       }
       i++;
     }
-    return RichText(text: TextSpan(
-      children: textWidgets));
-    
+    return RichText(text: TextSpan(children: textWidgets));
   }
 }
