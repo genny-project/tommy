@@ -1,21 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
-import 'package:minio/models.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/baseentity.pbjson.dart';
 import 'package:tommy/generated/cmdpayload.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
-import 'package:tommy/generated/msgpayload.pb.dart';
 import 'package:tommy/generated/qbulkmessage.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/models/state.dart';
-import 'package:tommy/projectenv.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tommy/utils/template_handler.dart';
 
 class BridgeHandler {
@@ -108,15 +102,15 @@ class BridgeHandler {
         QBulkMessage message = QBulkMessage.create();
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
         qb.add(message);
-        message.messages.forEach((message) {
+        for (QMessage message in message.messages) {
           Map<String, dynamic> json =
               message.toProto3Json() as Map<String, dynamic>;
           _log.info("the type is ${json['dataType']}");
-          message.items.forEach((be) {
+          for (BaseEntity be in message.items) {
             handleBE(be, beCallback);
-          });
+          }
           // handleMsg(json, beCallback, askCallback);
-        });
+        }
       } else {
         handleMsg(data, beCallback, askCallback);
       }
@@ -134,9 +128,6 @@ class BridgeHandler {
     askCallback,
   ) {
     if (data['data_type'] == 'BaseEntity') {
-      // BaseEntity be = BaseEntity.create()
-      //   ..mergeFromProto3Json(data, ignoreUnknownFields: true);
-      print("Data for qMessage $data");
       try {
         QMessage qMessage = QMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -145,10 +136,9 @@ class BridgeHandler {
           handleBE(be, beCallback);
         }
       } catch (e) {
-        print("Could not create qMessage. $e");
+        _log.error("Could not create qMessage. $e");
       }
     } else if (data['data_type'] == "Ask") {
-      print("got an ask ${data}");
       try {
         QDataAskMessage askmsg = QDataAskMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -222,32 +212,6 @@ class BridgeHandler {
           break;
         }
     }
-    // DISPLAY: (state: AppState, { code }: CmdPayload) => {
-    //   displayMachine[code]
-    //     ? displayMachine[code](state, { code })
-    //     : displayMachine.DEFAULT(state, { code })
-
-    //   clearStateHandler(state, code)
-    // },
-    // TOAST: (state: AppState, payload: CmdPayload) => (state['TOAST'] = payload),
-    // LOGOUT: (_: AppState, { exec }: CmdPayload) => {
-    //   exec && (keycloak as any).logout()
-    // },
-    // DOWNLOAD_FILE: (state: AppState, { code, exec }: CmdPayload) => {
-    //   if (exec) window.open(code)
-    //   state.DOWNLOAD_FILE = code
-    // },
-    // NOTES: (state: AppState, { code }: CmdPayload) => {
-    //   state['DRAWER'] = 'NOTES'
-    //   state['NOTES'] = code
-    // },
-    // DEFAULT: (state: AppState, { targetCodes, code, cmd_type }: CmdPayload) => {
-    //   if (targetCodes) {
-    //     if (!equals(state[cmd_type], targetCodes)) state[cmd_type] = targetCodes
-    //   } else {
-    //     state[cmd_type] = code
-    //   }
-    // },
   }
 
   static BaseEntity findByCode(String code) {
@@ -267,7 +231,6 @@ class BridgeHandler {
   /// [BaseEntity.attributeCode] is equal to `attributeName`
   static EntityAttribute findAttribute(
       BaseEntity entity, String attributeName) {
-    entity.baseEntityAttributes.forEach((element) {});
     if (entity.baseEntityAttributes.isEmpty) {
       throw ArgumentError(
           "The entity provided contains no attributes", entity.code);
@@ -285,7 +248,6 @@ class BridgeHandler {
 
   String? Function(String?) createValidator(EntityAttribute attribute) {
     String regex = attribute.attribute.dataType.validationList.first.regex;
-    print("Got regex $regex");
     RegExp regExp = RegExp(regex);
     return (string) {
       if (!regExp.hasMatch(string!)) {
@@ -296,14 +258,8 @@ class BridgeHandler {
 
   Widget getPcmWidget(EntityAttribute attribute) {
     BaseEntity be = findByCode(attribute.valueString);
-    print("Getting template from be $be");
-    // Ask ask = findByCode(findBySourceCode(attribute.valueString).questionCode);
     EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
-    print("got attribute $templateAttribute");
     return TemplateHandler.getTemplate(templateAttribute.valueString, be);
-    EntityAttribute questionAttribute = findAttribute(be, "PRI_QUESTION_CODE");
-    Ask ask = askData[questionAttribute.valueString]!;
-    return typeSwitch(ask.childAsks[0]);
   }
 
   Widget typeSwitch(Ask ask) {

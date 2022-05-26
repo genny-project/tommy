@@ -2,22 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/geoff.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/baseentity.pbjson.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
-import 'package:tommy/generated/qbulkmessage.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 // import 'package:tommy/utils/log.dart';
 import 'package:tommy/utils/proto_console.dart';
-import 'package:minio/minio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tommy/utils/template_handler.dart';
 // import 'package:tommy/utils/proto_utils.dart';
 
@@ -50,7 +45,6 @@ class _GennyViewportState extends State<GennyViewport> {
             ..body = jsonEncode({'connect': 'connect'}))
           .listen((item) async {
         if (item.body != "{\"h\"}") {
-          print("Got message ${item.body}");
           handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
             if (be.code == "PCM_ROOT") {
               _log.info("Found root");
@@ -175,151 +169,26 @@ class _GennyViewportState extends State<GennyViewport> {
   }
 
   Widget getBody() {
-    BaseEntity be = BridgeHandler.findByCode("PCM_INTERN_PROFILE_DETAIL_VIEW");
-    // Ask ask = BridgeHandler.askData['QUE_INTERN_GRP']!;
     return ListView(
       children: [
         IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: ((context) => ProtoConsole(handler))));
+                  builder: ((context) => ProtoConsole())));
             },
             icon: const Icon(Icons.graphic_eq)),
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
           child: Column(
             children: [
               Flexible(
                 child: ListView.builder(
-                  itemCount: BridgeHandler.askData.values.length,
+                  itemCount: BridgeHandler.askData.values.where((element) => element.processId != "no-idq",).length,
                   // shrinkWrap: true,
                   itemBuilder: ((context, index) {
-                    Ask returnAsk = BridgeHandler.askData.values.elementAt(index);
+                    Ask returnAsk = BridgeHandler.askData.values.where((element) => element.processId != "no-idq",).elementAt(index);
                     controllers.add(TextEditingController());
-                    return TemplateHandler.getField(returnAsk);
-                    return TextField(
-                      controller: controllers[index],
-                      onEditingComplete: () {
-                        print("Value ${controllers[index]}");
-                        Ask returnAsk = BridgeHandler.askData.values.elementAt(index);
-                        // ask.processId = "4e580190-43f7-4842-9b0f-4080734f5d6f";
-                        Map<String, dynamic> data = {
-                          "code": "processquestions",
-                          "parentCode": "processquestions",
-                          "items": [
-                            {
-                              "askId": returnAsk.id.toInt(),
-                              "processId":returnAsk.processId,
-                              "attributeCode": returnAsk.attributeCode,
-                              "sourceCode": returnAsk.sourceCode,
-                              "targetCode": returnAsk.targetCode,
-                              "code": returnAsk.questionCode,
-                              "identifier": returnAsk.questionCode,
-                              "weight": 1,
-                              "value": "ask.childAsks[index]",
-                              "inferred": false
-                            }
-                          ],
-                          "token": Session.tokenResponse.accessToken!,
-                          "msg_type": "DATA_MSG",
-                          "event_type": false,
-                          "redirect": false,
-                          "data_type": "Answer"
-                        };
-                        // MayRest.userToken = Session.tokenResponse.accessToken;
-                        // MayRest.get("http://alyson2.genny.life:7580/processquestions/" + returnAsk.processId).then((value) => print(value.body));
-                        // stub.sink(Item.fromJson(jsonEncode({
-                        //   "1": Session.tokenResponse.accessToken,
-                        //   "2": jsonEncode({
-                        //     "items": [
-                        //       {
-                        //         "askId": returnAsk.id.toInt(),
-                        //         "processId":
-                        //             "4e580190-43f7-4842-9b0f-4080734f5d6f",
-                        //         "attributeCode": returnAsk.attributeCode,
-                        //         "sourceCode": returnAsk.sourceCode,
-                        //         "targetCode": returnAsk.targetCode,
-                        //         "code": returnAsk.questionCode,
-                        //         "identifier": returnAsk.questionCode,
-                        //         "weight": 1,
-                        //         "value": controllers[index].text,
-                        //         "inferred": false,
-                        //         "questionCode": returnAsk.questionCode,
-                        //         "pcmCode": BridgeHandler.be.first.code
-                        //       }
-                        //     ],
-                        //     "token": Session.tokenResponse.accessToken,
-                        //     "msg_type": "DATA_MSG",
-                        //     "event_type": false,
-                        //     "redirect": false,
-                        //     "data_type": "Answer",
-                        //     // "data": data,
-                        //   })
-                        // })));
-                        print("Return ask $returnAsk");
-                        print("PCMCODE " + returnAsk.question.attribute.code);
-                        Item answer = Item.create()
-                          ..token = Session.token
-                          ..body = jsonEncode({
-                            "event_type": false,
-                            "msg_type": "DATA_MSG",
-                            "token": Session.tokenResponse.accessToken!,
-                            "items": [
-                              {
-                                "questionCode": returnAsk.questionCode,
-                                "sourceCode": returnAsk.sourceCode,
-                                "targetCode": returnAsk.targetCode,
-                                "askId": returnAsk.id.toInt(),
-                                "pcmCode": returnAsk.question.attribute.code,
-                                "attributeCode": returnAsk.question.attributeCode,
-                                "processId":returnAsk.processId,
-                                // "attributeCode": returnAsk.attributeCode,
-                                // "code": "QUE_SUBMIT",
-                                // "identifier": "QUE_SUBMIT",
-                                // "weight": 1,
-                                "value": controllers[index].text,
-                                // "inferred": false
-                              }
-                            ]
-                          });
-
-                        print("Loggg $answer");
-                        stub.sink(answer);
-                        // stub.sink(Item.fromJson(jsonEncode({
-                        //   "1": Session.tokenResponse.accessToken,
-                        //   "2": jsonEncode({
-                        //     "items": [
-                        //       {
-                        //         "askId": returnAsk.id.toInt(),
-                        //         "processId":
-                        //             "4e580190-43f7-4842-9b0f-4080734f5d6f",
-                        //         "attributeCode": returnAsk.attributeCode,
-                        //         "sourceCode": returnAsk.sourceCode,
-                        //         "targetCode": returnAsk.targetCode,
-                        //         "code": "QUE_SUBMIT",
-                        //         "identifier": "QUE_SUBMIT",
-                        //         "weight": 1,
-                        //         "value": controllers[index].text,
-                        //         "inferred": false
-                        //       }
-                        //     ],
-                        //     "data": {
-                        //       "code": "QUE_SUBMIT",
-                        //       "platform": {"type": "web"},
-                        //       "sessionId": Session.tokenData['jti'],
-                        //     },
-                        //     "code": "QUE_SUBMIT",
-                        //     "token": Session.tokenResponse.accessToken,
-                        //     "msg_type": "DATA_MSG",
-                        //     "event_type": "QUE_SUBMIT",
-                        //     "redirect": false,
-                        //     "data_type": "Answer",
-                        //   })
-                        // })));
-                      },
-                      decoration: InputDecoration(
-                          hintText: index.toString() + " " + BridgeHandler.askData.values.elementAt(index).name + " " + BridgeHandler.askData.values.elementAt(index).question.attribute.dataType.component.toString(),
-                    ));
+                    return TemplateHandler.getField(returnAsk, context);
                   }),
                 ),
               ),
@@ -329,51 +198,6 @@ class _GennyViewportState extends State<GennyViewport> {
         // Text(be.baseEntityAttributes.toString()),
       ],
     );
-  }
-
-  Scaffold rrootScaffold(BaseEntity root) {
-    return Scaffold(
-        appBar: getAppBar(),
-        drawer: getDrawer(),
-        body: Column(
-          children: [
-            TextFormField(
-              key: _formKey,
-              initialValue: "Test",
-              validator: handler.createValidator(BridgeHandler.findAttribute(
-                  BridgeHandler.findByCode("PCM_TEST1"), "PRI_NAME")),
-              onChanged: (text) {
-                _formKey.currentState!.validate();
-              },
-            ),
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => ProtoConsole(handler))));
-                },
-                icon: const Icon(Icons.graphic_eq)),
-            Column(
-              children: widgets,
-            ),
-            Flexible(
-              child: ListView.builder(
-                  itemCount: handler.beData.length,
-                  itemBuilder: ((context, index) {
-                    return Text((handler.beData.values.toList()
-                          ..sort((((BaseEntity a, BaseEntity b) {
-                            return a.index.compareTo(b.index);
-                          }))))[index]
-                        .name
-                        .toString());
-                  })),
-            ),
-            Text(root.baseEntityAttributes
-                .singleWhere(
-                    (attribute) => attribute.valueString == "PCM_DASHBOARD",
-                    orElse: () => EntityAttribute.create())
-                .toString())
-          ],
-        ));
   }
 
   Drawer getDrawer() {
@@ -419,7 +243,7 @@ class _GennyViewportState extends State<GennyViewport> {
                 }
                 return ask.childAsks.isNotEmpty
                     ? ExpansionTile(
-                        leading: Container(
+                        leading: SizedBox(
                           width: 50,
                           child: SvgPicture.network(
                             "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
@@ -427,8 +251,8 @@ class _GennyViewportState extends State<GennyViewport> {
                             height: 30,
                             width: 30,
                             placeholderBuilder: (context) {
-                              return Center(
-                                child: Container(
+                              return const Center(
+                                child: SizedBox(
                                     height: 30,
                                     width: 30,
                                     child: CircularProgressIndicator()),
@@ -449,8 +273,8 @@ class _GennyViewportState extends State<GennyViewport> {
                             height: 30,
                             width: 30,
                             placeholderBuilder: (context) {
-                              return Center(
-                                child: Container(
+                              return const Center(
+                                child: SizedBox(
                                     height: 30,
                                     width: 30,
                                     child: CircularProgressIndicator()),

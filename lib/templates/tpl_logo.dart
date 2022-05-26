@@ -9,10 +9,7 @@ class Logo extends StatelessWidget {
   Logo({required this.entity});
   @override
   Widget build(BuildContext context) {
-    print("ValueString " + BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString);
     Ask ask = BridgeHandler.askData[BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString]!;
-    print("Ask is $ask");
-    print("Entity is $entity");
     return TextButton(
       // iconSize: 50,
       onPressed: (() {

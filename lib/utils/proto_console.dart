@@ -6,17 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:grpc/grpc_connection_interface.dart';
-import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qbulkmessage.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/projectstyle.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_utils.dart';
 
 class ProtoConsole extends StatefulWidget {
-  BridgeHandler handler;
-  ProtoConsole(this.handler, {Key? key}) : super(key: key);
+  ProtoConsole({Key? key}) : super(key: key);
 
   @override
   _ProtoConsoleState createState() => _ProtoConsoleState();
@@ -138,7 +134,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           "parentCode": "processquestions"
                           // "questionCode":
                           // "targetCode":
-                          // "pcmCode": 
+                          // "pcmCode":
                           // "usrTokenString":
                           // "target code pcm code user target string"
                         }
@@ -188,7 +184,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           askSwitch = v;
                           askSwitch
                               ? searchResults =
-                                  widget.handler.beData.values.where((item) {
+                                  BridgeHandler.be.where((item) {
                                   return item.toString().contains(search);
                                 }).toList()
                               : searchResults =
@@ -234,8 +230,12 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                       Text(searchResults[index].name.toString()),
                       verbose
                           ? makeBold(searchResults[index].toString(), search)
-                          : askSwitch ? makeBold(
-                              searchResults[index].code.toString(), search) : makeBold(searchResults[index].question.code.toString(), search),
+                          : askSwitch
+                              ? makeBold(
+                                  searchResults[index].code.toString(), search)
+                              : makeBold(
+                                  searchResults[index].question.code.toString(),
+                                  search),
                       // Text(searchResults[index]
                       //     .toString()
                       //     .replaceAll(search, search.toUpperCase()))
@@ -293,9 +293,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     //   //   );
                     //   // }
                     // }
-                    return Container(
-                      child: Column(children: widgets),
-                    );
+                    return Column(children: widgets);
                     // return Text(
                     //     widget.handler.be[index].toProto3Json().toString());
                   })),

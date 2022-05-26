@@ -21,7 +21,6 @@ class Login extends StatelessWidget {
         TextButton(
             onPressed: () {
               http.get(Uri.parse(BridgeEnv.bridgeUrl)).then((response) async {
-                print("Response body ${response.body}");
                 Map<String, dynamic> data = jsonDecode(response.body);
                 _log.info("Bridge Data $data");
                 BridgeEnv.map.forEach(

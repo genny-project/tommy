@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class AppState {
   AppState(
       {required this.DISPLAY,
@@ -9,7 +11,7 @@ class AppState {
       required this.DUPLICATE_EMAILS,
       this.lastSentMessage,
       this.lastReceivedMessage,
-      required this.highlightedQuestion}) {}
+      required this.highlightedQuestion});
   // [key; String]; String | object | Array<String> | null
   String DISPLAY;
   String DRAWER;
