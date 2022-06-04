@@ -41,13 +41,13 @@ class Login extends StatelessWidget {
                         redirectUrl:
                             "life.genny.tommy.appauth://oauth/login_success/")
                     .then((response) {
-                  if (Session.onToken(response!)) {
+                  if (response) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const GennyViewport()));
                   }
                 });
-                _log.info("Access token ${Session.tokenResponse.accessToken}");
-                if (Session.tokenResponse.accessToken != null) {}
+                _log.info("Access token ${Session.tokenResponse!.accessToken}");
+                if (Session.tokenResponse!.accessToken != null) {}
               });
             },
             child: const Text("Login"))

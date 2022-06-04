@@ -10,6 +10,7 @@ import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/models/state.dart';
+import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
 class BridgeHandler {
@@ -18,9 +19,9 @@ class BridgeHandler {
 
   static final stub = StreamClient(ProtoUtils.getChannel());
   final Log _log = Log("BridgeHandler");
-  Map<String, BaseEntity> beData = {};
+  static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
-  static List<BaseEntity> be = [];
+  // static List<BaseEntity> be = [];
   List<QBulkMessage> qb = [];
   // List<QDataAskMessage> ask = [];
 
@@ -66,9 +67,9 @@ class BridgeHandler {
 
   static void evt(String code) {
     stub.sink(Item.create()
-      ..token = Session.token
+      ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
-            ..token = Session.tokenResponse.accessToken!
+            ..token = Session.tokenResponse!.accessToken!
             ..msgType = "EVT_MSG"
             ..eventType = "BTN_CLICK"
             ..redirect = true
@@ -76,6 +77,45 @@ class BridgeHandler {
               ..code = code
               ..parentCode = code))
           .toProto3Json()));
+  }
+
+  static void answer(Ask ask, dynamic value) {
+    Item answer = Item.create()
+      ..token = Session.token!
+      ..body = jsonEncode({
+        "event_type": "QUE_ANSWER",
+        "msg_type": "DATA_MSG",
+        "token": Session.tokenResponse!.accessToken!,
+        "items": [
+          {
+            "questionCode": ask.questionCode,
+            "sourceCode": ask.sourceCode,
+            "targetCode": ask.targetCode,
+            "askId": ask.id.toInt(),
+            "pcmCode": ask.question.attribute.code,
+            "attributeCode": ask.question.attributeCode,
+            "processId": ask.processId,
+            "value": value,
+          }
+        ]
+      });
+    stub.sink(answer);
+  }
+
+  static void submit(Ask ask) {
+    Item submit = Item.create()
+      ..token = Session.token!
+      ..body = jsonEncode((QMessage.create()
+            ..eventType = "QUE_SUBMIT"
+            ..msgType = "EVT_MSG"
+            ..token = Session.tokenResponse!.accessToken!
+            ..data = (MessageData.create()
+              ..code = "QUE_SUBMIT"
+              ..platform.addAll({"type": "web"})
+              ..sessionId = Session.tokenData['jti']
+              ..processId = ask.processId))
+          .toProto3Json());
+    stub.sink(submit);
   }
 
   void handleData(Map<String, dynamic> data,
@@ -94,9 +134,10 @@ class BridgeHandler {
         QMessage qMessage = QMessage.create();
         qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (BaseEntity baseEntity in qMessage.items) {
-          beData[baseEntity.name] = baseEntity;
-          be.add(baseEntity);
-          beCallback(baseEntity);
+          handleBE(baseEntity, beCallback);
+          // beData[baseEntity.name] = baseEntity;
+          // be.add(baseEntity);
+          // beCallback(baseEntity);
         }
       } else if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
@@ -131,8 +172,10 @@ class BridgeHandler {
       try {
         QMessage qMessage = QMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
+        _log.info("Created qmessage");
+        _log.info("Data ${data.keys.toList()}");
         for (BaseEntity be in qMessage.items) {
-          beData[be.name] = be;
+
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -144,10 +187,11 @@ class BridgeHandler {
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
         askCallback(askmsg);
         for (Ask ask in askmsg.items) {
-          for (Ask ask in ask.childAsks) {
-            askData[ask.questionCode] = ask;
-          }
-          askData[ask.questionCode] = ask;
+          handleAsk(ask, askCallback);
+          // for (Ask ask in ask.childAsks) {
+          //   askData[ask.questionCode] = ask;
+          // }
+          // askData[ask.questionCode] = ask;
         }
       } catch (e) {
         _log.error("FAILED TO MERGE $data");
@@ -156,10 +200,21 @@ class BridgeHandler {
   }
 
   void handleBE(BaseEntity entity, beCallback) {
-    be.add(entity);
+    beData[entity.code] = entity;
+    // be.add(entity);
     // beData[be.code] = be;
 
-    beCallback(be);
+    beCallback(entity);
+  }
+
+  void handleAsk(Ask ask, askCallback) {
+    askData[ask.question.code] = ask;
+    if (ask.childAsks.isNotEmpty) {
+      print("got child asks");
+      for (Ask ask in ask.childAsks) {
+        handleAsk(ask, askCallback);
+      }
+    }
   }
 
   void displayMachine(CmdPayload payload) {
@@ -214,10 +269,17 @@ class BridgeHandler {
     }
   }
 
+
+  //TODO: this function may not be necessary anymore due to BeData changes
+  //worth having just for error handling at this point
   static BaseEntity findByCode(String code) {
-    return be.firstWhere((be) => be.code == code, orElse: () {
+    BaseEntity entity;
+    try {
+      entity = beData[code]!;
+      return entity;
+    } catch (e) {
       throw ArgumentError("Could not find BaseEntity", code);
-    });
+    }
   }
 
   static Ask findBySourceCode(String code) {
@@ -240,14 +302,12 @@ class BridgeHandler {
           .firstWhere((attribute) => attribute.attributeCode == attributeName);
       return attribute;
     } catch (e) {
-      // result = BaseEntity.create()..code = "NONE";
       throw ArgumentError("The Attribute does not exist", attributeName);
     }
-    // return result;
   }
 
-  String? Function(String?) createValidator(EntityAttribute attribute) {
-    String regex = attribute.attribute.dataType.validationList.first.regex;
+  static String? Function(String?) createValidator(Ask ask) {
+    String regex = ask.question.attribute.dataType.validationList.first.regex;
     RegExp regExp = RegExp(regex);
     return (string) {
       if (!regExp.hasMatch(string!)) {
@@ -256,10 +316,17 @@ class BridgeHandler {
     };
   }
 
-  Widget getPcmWidget(EntityAttribute attribute) {
+  static Widget getPcmWidget(EntityAttribute attribute) {
     BaseEntity be = findByCode(attribute.valueString);
     EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
-    return TemplateHandler.getTemplate(templateAttribute.valueString, be);
+    print(templateAttribute.valueString);
+    Widget entityWidget;
+    try {
+      entityWidget = TemplateHandler.getTemplate(templateAttribute.valueString, be);
+    } catch (e) {
+      throw ArgumentError(e);
+    }
+    return entityWidget;
   }
 
   Widget typeSwitch(Ask ask) {

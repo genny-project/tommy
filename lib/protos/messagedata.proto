@@ -19,8 +19,10 @@ message MessageData {
     string content = 8;
 
 
+
     //unsure about these fields, they do not appear in messagedata on bridge, yet alyson provides them
     map<string,string> platform = 9;
     string sessionId = 10;
+    string processId = 11;
 }
 

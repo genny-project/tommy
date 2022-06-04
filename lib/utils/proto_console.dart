@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geoff/geoff.dart';
 import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:grpc/grpc_connection_interface.dart';
@@ -74,7 +75,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
 
                     stub
                         .connect(Item.fromJson(jsonEncode({
-                      "1": Session.tokenResponse.accessToken,
+                      "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({"connect": "connect"})
                     })))
                         .listen((value) {
@@ -85,7 +86,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     setState(() {
                       timer = Timer.periodic(heartbeatDuration, (timer) {
                         String json = jsonEncode({
-                          "1": Session.tokenResponse.accessToken,
+                          "1": Session.tokenResponse!.accessToken,
                           "2": "{\"h\"}"
                         });
                         stub.heartbeat(Item.fromJson(json));
@@ -99,11 +100,11 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   child: const Text("Auth Init"),
                   onPressed: () {
                     stub.sink(Item.fromJson(jsonEncode({
-                      "1": Session.tokenResponse.accessToken,
+                      "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({
                         "event_type": "AUTH_INIT",
                         "msg_type": "EVT_MSG",
-                        "token": Session.tokenResponse.accessToken,
+                        "token": Session.tokenResponse!.accessToken,
                         "data": {
                           "code": "AUTH_INIT",
                           "platform": {"type": "web"},
@@ -117,15 +118,14 @@ class _ProtoConsoleState extends State<ProtoConsole> {
 
               //{"items":[{"askId":349572,"processId":"4e580190-43f7-4842-9b0f-4080734f5d6f","attributeCode":"PRI_SUBMIT","sourceCode":"PER_086CDF1F-A98F-4E73-9825-0A4CFE2BB943","targetCode":"PER_34EB0455-1DC0-4121-80ED-90C0B9EEA413","code":"QUE_SUBMIT","identifier":"QUE_SUBMIT","weight":1,"value":"","inferred":false}],"token":"Usage: ./gettoken-cache.sh <product code>","msg_type":"DATA_MSG","event_type":false,"redirect":false,"data_type":"Answer"}
               //rememeber this god damn
-
               Expanded(
                 child: TextButton(
                   child: const Text("processquestions"),
                   onPressed: () async {
                     stub.sink(Item.fromJson(jsonEncode({
-                      "1": Session.tokenResponse.accessToken,
+                      "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({
-                        "token": Session.tokenResponse.accessToken,
+                        "token": Session.tokenResponse!.accessToken,
                         "msg_type": "EVT_MSG",
                         "event_type": "BTN_CLICK",
                         "redirect": true,
@@ -162,7 +162,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     this.search = search;
                     setState(() {
                       askSwitch
-                          ? searchResults = BridgeHandler.be.where((item) {
+                          ? searchResults = BridgeHandler.beData.values.where((item) {
                               return item.toString().contains(search);
                             }).toList()
                           : searchResults =
@@ -184,7 +184,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           askSwitch = v;
                           askSwitch
                               ? searchResults =
-                                  BridgeHandler.be.where((item) {
+                                  BridgeHandler.beData.values.where((item) {
                                   return item.toString().contains(search);
                                 }).toList()
                               : searchResults =
