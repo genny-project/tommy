@@ -13,22 +13,18 @@ class BridgeEnv {
   }
 
   static get logoutUrl {
-    _log.info("This is the realm[" + realm + "]");
-    return authServerUrl +
-        "/realms/" +
-        realm +
-        "/protocol/openid-connect/logout";
+    _log.info("This is the realm[$clientID]");
+    return "$ENV_KEYCLOAK_REDIRECTURI/realms/$clientID/protocol/openid-connect/logout";
   }
 
   static get authUrl {
-    authServerUrl = "https://keycloak.gada.io/auth";
-    _log.info("This is the realm $realm");
-    _log.info("This is the auth server $authServerUrl");
-    return "$authServerUrl/realms/$realm/.well-known/openid-configuration";
+    ENV_KEYCLOAK_REDIRECTURI = "https://keycloak.gada.io/auth";
+    _log.info("This is the realm $clientID");
+    _log.info("This is the auth server $ENV_KEYCLOAK_REDIRECTURI");
+    return "$ENV_KEYCLOAK_REDIRECTURI/realms/$clientID/.well-known/openid-configuration";
   }
 
   static late String realm;
-  static late String authServerUrl = "https://keycloak.gada.io/";
   static late String sslRequired;
   static late String resource;
   static late Map<String, dynamic> credentials;
@@ -37,7 +33,7 @@ class BridgeEnv {
   static late String apiUrl;
   static late String url;
 
-  
+  static late String ENV_KEYCLOAK_REDIRECTURI;
   // ignore: non_constant_identifier_names
   static late String ENV_GENNY_HOST;
   // ignore: non_constant_identifier_names
@@ -48,8 +44,8 @@ class BridgeEnv {
   static late String ENV_GENNY_BRIDGE_EVENTS;
     // ignore: non_constant_identifier_names
   static late String ENV_GENNY_BRIDGE_VERTEX;
-
-  
+    // ignore: non_constant_identifier_names
+  static late String ENV_MEDIA_PROXY_URL;
 
   static bool fetchSuccess = false;
 
@@ -65,10 +61,12 @@ class BridgeEnv {
     'api_url': (val) => apiUrl = val,
     'url': (val) => url = val,
     'clientId': (val) => clientID = val,
+    'ENV_KEYCLOAK_REDIRECTURI': (val) => ENV_KEYCLOAK_REDIRECTURI = val,
     'ENV_GENNY_HOST': (val) => ENV_GENNY_HOST = val,
     'ENV_GENNY_INITURL': (val) => ENV_GENNY_INITURL = val,
     'ENV_GENNY_BRIDGE_SERVICE': (val) => ENV_GENNY_BRIDGE_SERVICE = val,
     'ENV_GENNY_BRIDGE_EVENTS': (val) => ENV_GENNY_BRIDGE_EVENTS = val,
     'ENV_GENNY_BRIDGE_VERTEX': (val) => ENV_GENNY_BRIDGE_VERTEX = val,
+    'ENV_MEDIA_PROXY_URL': (val) => ENV_MEDIA_PROXY_URL = val,
   };
 }

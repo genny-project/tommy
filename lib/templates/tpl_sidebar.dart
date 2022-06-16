@@ -1,57 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
+import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 class Sidebar extends StatelessWidget {
   late final BaseEntity entity;
-
-  Sidebar({required this.entity});
+  final Log _log = Log("TPL_SIDEBAR");
+  Sidebar({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     Ask ask = BridgeHandler.askData[
         BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString]!;
     EntityAttribute attribute = entity.baseEntityAttributes.firstWhere(
         (attribute) => attribute.attributeCode == "PRI_QUESTION_CODE");
+    print("Attribute ${ask.childAsks.length}");
     return Drawer(
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: BridgeHandler
-                .askData[attribute.valueString]?.question.childQuestions.length,
-            // itemCount: 5,
+            itemCount:
+                BridgeHandler.askData[attribute.valueString]?.childAsks.length,
             itemBuilder: (context, index) {
-              List<QuestionQuestion>? questions = BridgeHandler
-                  .askData[attribute.valueString]?.question.childQuestions;
+              List<Ask>? childAsks =
+                  BridgeHandler.askData[attribute.valueString]?.childAsks;
               List<Widget> buttons = [];
-              questions!.sort(((QuestionQuestion a, QuestionQuestion b) {
+
+              childAsks!.sort(((Ask a, Ask b) {
                 return a.weight.compareTo(b.weight);
               }));
-              // EntityAttribute attribute = be.baseEntityAttributes[index];
-              Ask? ask = BridgeHandler.askData[questions[index].pk.targetCode];
+              // Ask? ask = BridgeHandler.askData[[index].targetCode];
+              Ask? ask = childAsks[index];
+              print("Ask child asks ${ask.childAsks.length}");
               if (ask != null) {
-                // if (ask.childAsks.isNotEmpty) {
-
-                for (QuestionQuestion question in ask.question.childQuestions) {
-                  Ask questionAsk = BridgeHandler.askData[question.pk.targetCode]!;
-                  buttons.add(ListTile(
-                    onTap: () {
-                      BridgeHandler.evt(questionAsk.questionCode);
-                      Navigator.pop(context);
-                    },
-                    title: Text(questionAsk.name),
-                  ));
+                for (Ask ask in ask.childAsks) {
+                  try {
+                    // Ask questionAsk =
+                    //     BridgeHandler.askData[ask.targetCode]!;
+                    buttons.add(ListTile(
+                      onTap: () {
+                        BridgeHandler.evt(ask.questionCode);
+                        Navigator.pop(context);
+                      },
+                      title: Text(ask.name),
+                    ));
+                  } catch (e) {
+                    _log.error("Could not find question target $e");
+                  }
                 }
-                // if (ask.question.attribute.dataType.dttCode != "DTT_EVENT") {
-                //   return Text(
-                //       "Not event - ${ask.name} ${ask.question.attribute.dataType.dttCode}");
-                // }
+                print(
+                    "Image url ${BridgeEnv.ENV_MEDIA_PROXY_URL + '/' + (ask.question.icon)}");
+                print("Child Asks ${ask.childAsks}");
                 return ask.childAsks.isNotEmpty
                     ? ExpansionTile(
                         leading: SizedBox(
                           width: 50,
                           child: SvgPicture.network(
-                            "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
+                            BridgeEnv.ENV_MEDIA_PROXY_URL +
+                                '/' +
                                 (ask.question.icon),
                             height: 30,
                             width: 30,
@@ -73,10 +80,12 @@ class Sidebar extends StatelessWidget {
                         leading: Container(
                           width: 50,
                           child: SvgPicture.network(
-                            "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
+                            BridgeEnv.ENV_MEDIA_PROXY_URL +
+                                '/' +
                                 ask.question.icon,
                             height: 30,
                             width: 30,
+                            color: Colors.orange,
                             placeholderBuilder: (context) {
                               return const Center(
                                 child: SizedBox(
@@ -91,7 +100,7 @@ class Sidebar extends StatelessWidget {
                           BridgeHandler.evt(ask.questionCode);
                           Navigator.pop(context);
                         },
-                        title: Text(ask.name + " " + ask.attributeCode + " " + questions[index].weight.toString()));
+                        title: Text(ask.name));
               }
               return attribute.valueString.startsWith("QUE")
                   ? ListTile(
@@ -100,7 +109,7 @@ class Sidebar extends StatelessWidget {
                             const SnackBar(
                                 content: Text("The ASK could not be loaded.")));
                       },
-                      leading: Icon(
+                      leading: const Icon(
                         Icons.error,
                         color: Colors.red,
                       ),

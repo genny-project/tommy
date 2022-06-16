@@ -23,13 +23,14 @@ dependencies:
   flutter_svg: ^1.0.3
   shared_preferences: ^2.0.13
   geoff:
+    # path: /home/joseph/development/geoff
     git: 
       url: https://github.com/Kibibibit/geoff
-      ref: main
+      ref: c5e7a8f3ebfc74bb3f273e48340c1c422867398a
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 flutter:
   assets:
     - .env

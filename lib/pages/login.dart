@@ -33,11 +33,12 @@ class Login extends StatelessWidget {
                     }
                   },
                 );
-                _log.info("Value body $data");
+                _log.info("Value body ${BridgeEnv.realm}");
+                _log.info("Keycloak URI ${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}");
                 await AppAuthHelper.login(
-                        authServerUrl: ProjectEnv.authServerUrl,
+                        authServerUrl: BridgeEnv.ENV_KEYCLOAK_REDIRECTURI,
                         realm: BridgeEnv.realm,
-                        clientId: "alyson",
+                        clientId: BridgeEnv.clientID,
                         redirectUrl:
                             "life.genny.tommy.appauth://oauth/login_success/")
                     .then((response) {

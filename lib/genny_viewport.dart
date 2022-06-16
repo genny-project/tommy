@@ -10,6 +10,7 @@ import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
+import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 // import 'package:tommy/utils/log.dart';
 import 'package:tommy/utils/proto_console.dart';
@@ -28,13 +29,22 @@ class _GennyViewportState extends State<GennyViewport> {
   BridgeHandler handler = BridgeHandler(BridgeHandler.initialiseState());
   BaseEntity root = BaseEntity.create();
   List<Widget> widgets = [];
+  FocusNode focus = FocusNode();
+  late TemplateHandler templateHandler;
   late Timer timer;
   final _formKey = GlobalKey<FormFieldState>();
   final stub = StreamClient(ProtoUtils.getChannel());
-  List<TextEditingController> controllers = [];
   late SharedPreferences prefs;
+
+  @override
+  void dispose() {
+    super.dispose();
+    focus.dispose();
+  }
+
   @override
   void initState() {
+    templateHandler = TemplateHandler();
     super.initState();
     SharedPreferences.getInstance().then((pr) {
       setState(() {
@@ -71,7 +81,8 @@ class _GennyViewportState extends State<GennyViewport> {
 
       _log.info("Connected. Attempting Auth Init");
       Item authInit = Item.create()
-        ..token = Session.token!..body = jsonEncode((QMessage.create()
+        ..token = Session.token!
+        ..body = jsonEncode((QMessage.create()
               ..eventType = "AUTH_INIT"
               ..msgType = "EVT_MSG"
               ..token = Session.tokenResponse!.accessToken!
@@ -105,7 +116,8 @@ class _GennyViewportState extends State<GennyViewport> {
 
       //{"type":"send","address":"address.inbound","headers":{"Authorization":"Bearer suffice","msg_type":"EVT_MSG","event_type":"BTN_CLICK","redirect":true}}}
       stub.sink(Item.create()
-        ..token = Session.token!..body = jsonEncode((QMessage.create()
+        ..token = Session.token!
+        ..body = jsonEncode((QMessage.create()
               ..token = Session.tokenResponse!.accessToken!
               ..msgType = "EVT_MSG"
               ..eventType = "BTN_CLICK"
@@ -170,48 +182,28 @@ class _GennyViewportState extends State<GennyViewport> {
   Widget getBody() {
     return ListView(
       children: [
-        Text(BridgeHandler.findAttribute(root, 'PRI_LOC3').valueString.toString()),
-        Container(
-          height: 100,
-          width: 100,
-          child: BridgeHandler.getPcmWidget(BridgeHandler.findAttribute(root, 'PRI_LOC3'))),
         IconButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: ((context) => ProtoConsole())));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ProtoConsole()));
             },
-            icon: const Icon(Icons.graphic_eq)),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: Column(
-            children: [
-              Flexible(
-                child: ListView.builder(
-                  itemCount: BridgeHandler.askData.values.where((element) => element.processId != "no-idq",).length,
-                  // shrinkWrap: true,
-                  itemBuilder: ((context, index) {
-                    Ask returnAsk = BridgeHandler.askData.values.where((element) => element.processId != "no-idq",).elementAt(index);
-                    controllers.add(TextEditingController());
-                    return TemplateHandler.getField(returnAsk, context);
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Text(be.baseEntityAttributes.toString()),
+            icon: Icon(Icons.graphic_eq)),
+        BridgeHandler.getPcmWidget(
+            BridgeHandler.findAttribute(root, 'PRI_LOC3')),
       ],
     );
+
+    // Text(be.baseEntityAttributes.toString()),
   }
 
   Widget getDrawer() {
     BaseEntity? root = BridgeHandler.findByCode("PCM_ROOT");
     BaseEntity? be = BridgeHandler.findByCode(
         BridgeHandler.findAttribute(root, "PRI_LOC2").valueString);
-
     EntityAttribute attribute = be.baseEntityAttributes.firstWhere(
         (attribute) => attribute.attributeCode == "PRI_QUESTION_CODE");
-    return BridgeHandler.getPcmWidget(BridgeHandler.findAttribute(root, "PRI_LOC2"));
+    return BridgeHandler.getPcmWidget(
+        BridgeHandler.findAttribute(root, "PRI_LOC2"));
   }
 
   AppBar getAppBar() {
@@ -223,50 +215,38 @@ class _GennyViewportState extends State<GennyViewport> {
     be.baseEntityAttributes.sort(((a, b) => a.weight.compareTo(b.weight)));
     for (var attribute in be.baseEntityAttributes) {
       Ask? ask = BridgeHandler.askData[attribute.valueString];
-      if (attribute.valueString.startsWith("PCM_")) {
-        actions.add(BridgeHandler.getPcmWidget(attribute));
-      } else {
-        if (ask != null) {
-          if (ask.childAsks.isNotEmpty) {
-            List<PopupMenuEntry<String>> buttons = [];
-            for (Ask ask in ask.childAsks) {
-              buttons.add(PopupMenuItem(
-                  value: ask.questionCode, child: Text(ask.name)));
-            }
-            actions.add(Container(
-                height: 20,
-                width: 50,
-                child: PopupMenuButton<String>(
-                    onSelected: (String result) {
-                      setState(() {
-                        _log.info("Handling event - $result");
-                        BridgeHandler.evt(result);
-                      });
-                    },
-                    itemBuilder: (BuildContext context) => buttons)));
-          } else {
-            title = IconButton(
-              onPressed: () {
-                BridgeHandler.evt(attribute.valueString);
-              },
-              icon: SvgPicture.network(
-                "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
-                    (ask.question.icon),
-                height: 30,
-                width: 30,
-              ),
-            );
-          }
-        } else {
-          // actions.add(
-          //         IconButton(
-          //           onPressed: (){
-          //             ScaffoldMessenger.of(context).clearSnackBars();
-          //             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The ASK could not be loaded. ${attribute.valueString}")));
-          //           },
-          //           icon: Icon(Icons.error, color: Colors.red,)));
-        }
-      }
+      actions.add(TemplateHandler.AttributeWidget(attribute, context));
+      // if (ask != null) {
+      //   if (ask.childAsks.isNotEmpty) {
+      //     List<PopupMenuEntry<String>> buttons = [];
+      //     for (Ask ask in ask.childAsks) {
+      //       buttons.add(
+      //           PopupMenuItem(value: ask.questionCode, child: Text(ask.name)));
+      //     }
+      //     actions.add(Container(
+      //         height: 20,
+      //         width: 50,
+      //         child: PopupMenuButton<String>(
+      //             onSelected: (String result) {
+      //               setState(() {
+      //                 _log.info("Handling event - $result");
+      //                 BridgeHandler.evt(result);
+      //               });
+      //             },
+      //             itemBuilder: (BuildContext context) => buttons)));
+      //   } else {
+      //     title = IconButton(
+      //       onPressed: () {
+      //         BridgeHandler.evt(attribute.valueString);
+      //       },
+      //       icon: SvgPicture.network(
+      //         "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/${ask.question.icon}",
+      //         height: 30,
+      //         width: 30,
+      //       ),
+      //     );
+      //   }
+      // }
     }
     return AppBar(
       title: title,

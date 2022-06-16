@@ -15,6 +15,8 @@ class Logo extends StatelessWidget {
       onPressed: (() {
         BridgeHandler.evt(ask.childAsks[1].question.attribute.code);
       }),
-      child: Image.network(BridgeHandler.getPrimary(ask.childAsks[0].question.attribute.code).valueString));
+      child: Image.network(
+        
+        BridgeHandler.getPrimary(ask.childAsks[0].question.attribute.code).valueString,));
   }
 }

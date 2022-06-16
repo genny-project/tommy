@@ -9,7 +9,9 @@ import 'package:tommy/generated/qbulkmessage.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
+import 'package:tommy/main.dart';
 import 'package:tommy/models/state.dart';
+import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
@@ -21,9 +23,6 @@ class BridgeHandler {
   final Log _log = Log("BridgeHandler");
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
-  // static List<BaseEntity> be = [];
-  List<QBulkMessage> qb = [];
-  // List<QDataAskMessage> ask = [];
 
   static AppState initialiseState() {
     return AppState(
@@ -42,7 +41,6 @@ class BridgeHandler {
         },
         lastReceivedMessage: {},
         highlightedQuestion: '');
-    // ..bufferDropdownOptions = []
   }
 
   dynamic getType(EntityAttribute attribute) {
@@ -83,7 +81,7 @@ class BridgeHandler {
     Item answer = Item.create()
       ..token = Session.token!
       ..body = jsonEncode({
-        "event_type": "QUE_ANSWER",
+        "event_type": false,
         "msg_type": "DATA_MSG",
         "token": Session.tokenResponse!.accessToken!,
         "items": [
@@ -121,7 +119,6 @@ class BridgeHandler {
   void handleData(Map<String, dynamic> data,
       {required Function(QDataAskMessage ask) askCallback,
       required Function(BaseEntity be) beCallback}) {
-    // _log.info("Data msg_type ${data['msg_type']}");
     if (data['msg_type'] == "CMD_MSG") {
       CmdPayload payload = CmdPayload.create()
         ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -135,14 +132,10 @@ class BridgeHandler {
         qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (BaseEntity baseEntity in qMessage.items) {
           handleBE(baseEntity, beCallback);
-          // beData[baseEntity.name] = baseEntity;
-          // be.add(baseEntity);
-          // beCallback(baseEntity);
         }
       } else if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
-        qb.add(message);
         for (QMessage message in message.messages) {
           Map<String, dynamic> json =
               message.toProto3Json() as Map<String, dynamic>;
@@ -150,7 +143,6 @@ class BridgeHandler {
           for (BaseEntity be in message.items) {
             handleBE(be, beCallback);
           }
-          // handleMsg(json, beCallback, askCallback);
         }
       } else {
         handleMsg(data, beCallback, askCallback);
@@ -175,7 +167,6 @@ class BridgeHandler {
         _log.info("Created qmessage");
         _log.info("Data ${data.keys.toList()}");
         for (BaseEntity be in qMessage.items) {
-
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -188,10 +179,6 @@ class BridgeHandler {
         askCallback(askmsg);
         for (Ask ask in askmsg.items) {
           handleAsk(ask, askCallback);
-          // for (Ask ask in ask.childAsks) {
-          //   askData[ask.questionCode] = ask;
-          // }
-          // askData[ask.questionCode] = ask;
         }
       } catch (e) {
         _log.error("FAILED TO MERGE $data");
@@ -201,16 +188,18 @@ class BridgeHandler {
 
   void handleBE(BaseEntity entity, beCallback) {
     beData[entity.code] = entity;
-    // be.add(entity);
-    // beData[be.code] = be;
-
+    if (entity.code.startsWith('PRJ_')) handlePRJ(entity);
     beCallback(entity);
+  }
+
+  void handlePRJ(BaseEntity entity) {
+    _log.info("Got project ${entity.code}");
+    MyApp.changeTheme(getTheme());
   }
 
   void handleAsk(Ask ask, askCallback) {
     askData[ask.question.code] = ask;
     if (ask.childAsks.isNotEmpty) {
-      print("got child asks");
       for (Ask ask in ask.childAsks) {
         handleAsk(ask, askCallback);
       }
@@ -269,7 +258,6 @@ class BridgeHandler {
     }
   }
 
-
   //TODO: this function may not be necessary anymore due to BeData changes
   //worth having just for error handling at this point
   static BaseEntity findByCode(String code) {
@@ -302,13 +290,17 @@ class BridgeHandler {
           .firstWhere((attribute) => attribute.attributeCode == attributeName);
       return attribute;
     } catch (e) {
-      throw ArgumentError("The Attribute does not exist", attributeName);
+      // _log.info("String SSS!");
+      // throw ArgumentError("The Attribute does not exist", attributeName);
+      return EntityAttribute();
     }
   }
 
   static String? Function(String?) createValidator(Ask ask) {
-    String regex = ask.question.attribute.dataType.validationList.first.regex;
-    RegExp regExp = RegExp(regex);
+    print("Validation ${ask.question.attribute.dataType.validationList}");
+    List validationList = ask.question.attribute.dataType.validationList;
+    String? regex = validationList.isNotEmpty ? validationList.first.regex : "";
+    RegExp regExp = RegExp(regex!);
     return (string) {
       if (!regExp.hasMatch(string!)) {
         return "Does not match regex";
@@ -319,10 +311,10 @@ class BridgeHandler {
   static Widget getPcmWidget(EntityAttribute attribute) {
     BaseEntity be = findByCode(attribute.valueString);
     EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
-    print(templateAttribute.valueString);
     Widget entityWidget;
     try {
-      entityWidget = TemplateHandler.getTemplate(templateAttribute.valueString, be);
+      entityWidget =
+          TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
       throw ArgumentError(e);
     }
@@ -345,13 +337,57 @@ class BridgeHandler {
     }
   }
 
+  static ThemeData getTheme() {
+    BaseEntity project = getProject();
+    print(ThemeData.dark().colorScheme);
+    Color getColor(String code) {
+      return Color(int.parse(
+          "ff" + findAttribute(project, code).valueString.substring(1),
+          radix: 16));
+    }
+
+    return ThemeData(
+      // canvasColor: Colors.red,
+      drawerTheme:
+          DrawerThemeData(backgroundColor: getColor('PRI_COLOR_BACKGROUND')),
+      colorScheme: ColorScheme(
+          background: getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
+          onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
+          surface: getColor('PRI_COLOR_SURFACE'),
+          onSurface: getColor('PRI_COLOR_SURFACE_ON'),
+          primary: getColor('PRI_COLOR_PRIMARY'),
+          onPrimary: getColor('PRI_COLOR_PRIMARY_ON'),
+          error: getColor('PRI_COLOR_ERROR_ON'),
+          onError: getColor('PRI_COLOR_ERROR_ON'),
+          brightness: Brightness.light,
+          secondary: Colors.blue,
+          onSecondary: Colors.green),
+      // backgroundColor: getColor('PRI_COLOR_SURFACE'),
+      // primaryColor: getColor('PRI_COLOR_PRIMARY')
+    );
+  }
+
   static BaseEntity getProject() {
-    String realm =
-        Session.tokenData['iss'].toString().split("/").last.toUpperCase();
+    // String realm =
+    //     Session.tokenData['iss'].toString().split("/").last.toUpperCase();
+    String realm = BridgeEnv.clientID.toUpperCase();
+    print("Getting project $realm");
     return findByCode("PRJ_" + realm);
   }
 
+  static BaseEntity? getUser() {
+    return beData[beData.keys.lastWhere((key) => key.startsWith("PER_"))];
+  }
+
   static EntityAttribute getPrimary(String code) {
-    return findAttribute(getProject(), code);
+    EntityAttribute attribute;
+    try {
+      attribute = findAttribute(getProject(), code);
+    } catch (e) {
+      attribute = EntityAttribute.create()
+        ..attributeCode = "ERR"
+        ..valueString = e.toString();
+    }
+    return attribute;
   }
 }
