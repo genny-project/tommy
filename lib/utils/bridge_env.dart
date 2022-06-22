@@ -1,5 +1,7 @@
 
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/projectenv.dart';
 
@@ -9,7 +11,7 @@ class BridgeEnv {
 
   static get bridgeUrl {
     _log.info("${ProjectEnv.baseUrl}/api/events/init?url=${ProjectEnv.baseUrl}");
-    return ProjectEnv.baseUrl + "/api/events/init?url=" + ProjectEnv.baseUrl;
+    return "${ProjectEnv.baseUrl}/api/events/init?url=${ProjectEnv.baseUrl}";
   }
 
   static get logoutUrl {
@@ -34,19 +36,12 @@ class BridgeEnv {
   static late String url;
 
   static late String ENV_KEYCLOAK_REDIRECTURI;
-  // ignore: non_constant_identifier_names
   static late String ENV_GENNY_HOST;
-  // ignore: non_constant_identifier_names
   static late String ENV_GENNY_INITURL;
-    // ignore: non_constant_identifier_names
   static late String ENV_GENNY_BRIDGE_SERVICE;
-    // ignore: non_constant_identifier_names
   static late String ENV_GENNY_BRIDGE_EVENTS;
-    // ignore: non_constant_identifier_names
   static late String ENV_GENNY_BRIDGE_VERTEX;
-    // ignore: non_constant_identifier_names
   static late String ENV_MEDIA_PROXY_URL;
-
   static bool fetchSuccess = false;
 
   /// This rather strange thing is basically just a setter.

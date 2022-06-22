@@ -1,11 +1,9 @@
-syntax = "proto3";
-package life_genny_qwandaq;
-
-import "protostuff-default.proto";
+syntax = "proto2";
+package life_genny_qwandaq_ask;
 
 import "baseentity.proto";
 
-option java_package = "life.genny.qwandaq";
+option java_package = "life.genny.qwandaq.ask";
 
 message Ask {
   optional LocalDateTime created = 1;
@@ -27,8 +25,11 @@ message Ask {
   optional int64 parentId = 17;
   optional bool formTrigger = 18;
   optional bool createOnTrigger = 19;
-  optional Ask childAsks = 20;
+  repeated Ask childAsks = 20;
   optional ContextList contextList = 21;
+  optional string value = 22;
+  optional string processId = 23;
+  optional string pcmCode = 24;
 }
 
 message LocalDateTime {
@@ -161,7 +162,7 @@ message Attribute {
   optional string code = 6;
   optional int32 index = 7;
   optional EEntityStatus status = 8;
-  optional DataType dataType = 9;
+  optional life_genny_qwandaq_entity.DataType dataType = 9;
   optional bool defaultPrivacyFlag = 10;
   optional string description = 11;
   optional string help = 12;
@@ -213,14 +214,14 @@ message AnswerLinkId {
   optional Attribute attribute = 3;
 }
 
-message DataType {
-  optional string dttCode = 1;
-  optional string className = 2;
-  optional string typeName = 3;
-  optional string inputmask = 4;
-  optional string component = 5;
-  repeated Validation validationList = 6;
-}
+// message DataType {
+//   optional string dttCode = 1;
+//   optional string className = 2;
+//   optional string typeName = 3;
+//   optional string inputmask = 4;
+//   optional string component = 5;
+//   repeated Validation validationList = 6;
+// }
 
 message Validation {
   optional LocalDateTime created = 1;

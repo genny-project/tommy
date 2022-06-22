@@ -6,11 +6,11 @@ import 'package:tommy/pages/login.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
   @override
   State<MyApp> createState() => _MyAppState();
   static StreamController<ThemeData> streamController =
@@ -25,18 +25,15 @@ class _MyAppState extends State<MyApp> {
   ThemeData appTheme = ThemeData.light();
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     subscription.cancel();
   }
   
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
-      subscription = MyApp.streamController.stream.listen((event) {
-        print("Got event!");
+      subscription = MyApp.streamController.stream.listen((event) { 
         setState(() {
           appTheme = event;
         });

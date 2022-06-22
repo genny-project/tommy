@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/geoff.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
-import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 // import 'package:tommy/utils/log.dart';
 import 'package:tommy/utils/proto_console.dart';
@@ -32,7 +31,6 @@ class _GennyViewportState extends State<GennyViewport> {
   FocusNode focus = FocusNode();
   late TemplateHandler templateHandler;
   late Timer timer;
-  final _formKey = GlobalKey<FormFieldState>();
   final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
 
@@ -67,7 +65,7 @@ class _GennyViewportState extends State<GennyViewport> {
           }), askCallback: ((askmsg) {
             for (Ask ask in askmsg.items) {
               widgets.add(Text(
-                ask.name + " " + ask.questionCode,
+                "${ask.name} ${ask.questionCode}",
                 style: const TextStyle(color: Colors.blue),
               ));
               if (ask.name == "Avatar") {}
@@ -91,30 +89,14 @@ class _GennyViewportState extends State<GennyViewport> {
                 ..platform.addAll({"type": "web"})
                 ..sessionId = Session.tokenData['jti']))
             .toProto3Json());
-
-      // jsonEncode({
-      //   "msgType": "EVT_MSG",
-      //   "eventType": "AUTH_INIT",
-      //   "token": Session.tokenResponse!.accessToken,
-      //   "data": {
-      //     "code": 'AUTH_INIT',
-      //     "platform": {"type": "web"},
-      //     "sessionId": Session.tokenData['jti'],
-      //   }
-      // });
       timer = Timer.periodic(const Duration(seconds: 5), (timer) {
         String json = jsonEncode(
             {"1": Session.tokenResponse!.accessToken, "2": "{\"h\"}"});
         stub.heartbeat(Item.fromJson(json));
-        // _log.info("Beat");
       });
       _log.info("Auth init data ${authInit.toProto3Json()}}");
-      // var r = {"msgype":"EVT_MSG","eventType":"AUTH_INIT","data":{"code":"AUTH_INIT","platform":{"type":"web"},"sessionId":"2cd42df2-87f4-4122-b3a2-6170a3076bf8"}};
-      // var l = {"event_type":"AUTH_INIT","msg_type":"EVT_MSG","data":{"code":"AUTH_INIT","platform":{"type":"web"},"sessionId":"2cd42df2-87f4-4122-b3a2-6170a3076bf8"}};
       stub.sink(authInit);
       _log.info("Attempting Get Dashboard View");
-
-      //{"type":"send","address":"address.inbound","headers":{"Authorization":"Bearer suffice","msg_type":"EVT_MSG","event_type":"BTN_CLICK","redirect":true}}}
       stub.sink(Item.create()
         ..token = Session.token!
         ..body = jsonEncode((QMessage.create()
@@ -136,39 +118,6 @@ class _GennyViewportState extends State<GennyViewport> {
         : const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
-    // return Scaffold(
-    //   // appBar: AppBar(
-    //   //   actions: [
-    //   //     IconButton(
-    //   //         onPressed: () {
-    //   //           Navigator.of(context).push(MaterialPageRoute(
-    //   //               builder: ((context) => ProtoConsole(handler))));
-    //   //         },
-    //   //         icon: const Icon(Icons.graphic_eq))
-    //   //   ],
-    //   //   title: const Text("main page"),
-    //   // )
-    //   appBar: getAppBar(),
-    //   drawer: getDrawer(),
-    //   body: Column(
-    //     children: [
-    //       IconButton(
-    //           onPressed: () {
-    //             Navigator.of(context).push(MaterialPageRoute(
-    //                 builder: ((context) => ProtoConsole(handler))));
-    //           },
-    //           icon: const Icon(Icons.graphic_eq)),
-    //       Text(handler.state.DISPLAY),
-    //       Expanded(
-    //         child: ListView.builder(
-    //             itemCount: widgets.length,
-    //             itemBuilder: ((context, index) {
-    //               return widgets[index];
-    //             })),
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 
   Scaffold rootScaffold(BaseEntity root) {
@@ -185,9 +134,9 @@ class _GennyViewportState extends State<GennyViewport> {
         IconButton(
             onPressed: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => ProtoConsole()));
+                  MaterialPageRoute(builder: (context) => const ProtoConsole()));
             },
-            icon: Icon(Icons.graphic_eq)),
+            icon: const Icon(Icons.graphic_eq)),
         BridgeHandler.getPcmWidget(
             BridgeHandler.findAttribute(root, 'PRI_LOC3')),
       ],
@@ -198,60 +147,15 @@ class _GennyViewportState extends State<GennyViewport> {
 
   Widget getDrawer() {
     BaseEntity? root = BridgeHandler.findByCode("PCM_ROOT");
-    BaseEntity? be = BridgeHandler.findByCode(
-        BridgeHandler.findAttribute(root, "PRI_LOC2").valueString);
-    EntityAttribute attribute = be.baseEntityAttributes.firstWhere(
-        (attribute) => attribute.attributeCode == "PRI_QUESTION_CODE");
     return BridgeHandler.getPcmWidget(
         BridgeHandler.findAttribute(root, "PRI_LOC2"));
   }
 
-  AppBar getAppBar() {
-    List<Widget> actions = [];
-    Widget title = SizedBox();
+  PreferredSizeWidget getAppBar() {
     BaseEntity? root = BridgeHandler.findByCode("PCM_ROOT");
-    BaseEntity? be = BridgeHandler.findByCode(
-        BridgeHandler.findAttribute(root, "PRI_LOC1").valueString);
-    be.baseEntityAttributes.sort(((a, b) => a.weight.compareTo(b.weight)));
-    for (var attribute in be.baseEntityAttributes) {
-      Ask? ask = BridgeHandler.askData[attribute.valueString];
-      actions.add(TemplateHandler.AttributeWidget(attribute, context));
-      // if (ask != null) {
-      //   if (ask.childAsks.isNotEmpty) {
-      //     List<PopupMenuEntry<String>> buttons = [];
-      //     for (Ask ask in ask.childAsks) {
-      //       buttons.add(
-      //           PopupMenuItem(value: ask.questionCode, child: Text(ask.name)));
-      //     }
-      //     actions.add(Container(
-      //         height: 20,
-      //         width: 50,
-      //         child: PopupMenuButton<String>(
-      //             onSelected: (String result) {
-      //               setState(() {
-      //                 _log.info("Handling event - $result");
-      //                 BridgeHandler.evt(result);
-      //               });
-      //             },
-      //             itemBuilder: (BuildContext context) => buttons)));
-      //   } else {
-      //     title = IconButton(
-      //       onPressed: () {
-      //         BridgeHandler.evt(attribute.valueString);
-      //       },
-      //       icon: SvgPicture.network(
-      //         "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/${ask.question.icon}",
-      //         height: 30,
-      //         width: 30,
-      //       ),
-      //     );
-      //   }
-      // }
-    }
-    return AppBar(
-      title: title,
-      centerTitle: false,
-      actions: actions,
-    );
+    return PreferredSize(
+        preferredSize: AppBar().preferredSize,
+        child: BridgeHandler.getPcmWidget(
+            BridgeHandler.findAttribute(root, "PRI_LOC1")));
   }
 }

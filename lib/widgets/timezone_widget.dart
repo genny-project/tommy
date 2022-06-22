@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:geoff/utils/timezones.dart';
+import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 class TimezoneWidget extends StatefulWidget {
-  late final BaseEntity entity;
-  Ask ask;
-  TimezoneWidget({required this.entity, required this.ask});
+  final BaseEntity entity;
+  final Ask ask;
+  const TimezoneWidget({Key? key, required this.entity, required this.ask}) : super(key: key);
 
   @override
   State<TimezoneWidget> createState() => _TimezoneWidgetState();
 }
 
 class _TimezoneWidgetState extends State<TimezoneWidget> {
+  // ignore: unused_field
   final Log _log = Log("TPL_Timezone");
   String value = "";
   @override
@@ -35,7 +37,7 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
       title: TextButton(
         child: Row(
           children: [
-            Text(value.length > 0 ? "Time Zone: ${value}" : "Time Zone"),
+            Text(value.isNotEmpty ? "Time Zone: $value" : "Time Zone"),
           ],
         ),
         onPressed: () {
@@ -43,9 +45,9 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
               context: context,
               builder: ((context) {
                 return SimpleDialog(
-                  title: Text("Select Time Zone"),
+                  title: const Text("Select Time Zone"),
                   children: [
-                    Container(
+                    SizedBox(
                       height: MediaQuery.of(context).size.width,
                       width: MediaQuery.of(context).size.width,
                       child: ListView.builder(

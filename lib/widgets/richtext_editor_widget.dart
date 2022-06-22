@@ -1,31 +1,19 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
-import 'package:geoff/utils/timezones.dart';
-import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
-// class RichtextEditor extends StatefulWidget {
-//   Ask ask;
-//   RichtextEditor({required this.ask});
-
-//   @override
-//   State<RichtextEditor> createState() => _RichtextEditorState();
-// }
-
 class RichtextEditor extends StatefulWidget {
-  RichtextEditor({required this.ask});
-  Ask ask = new Ask();
-
-  // FocusNode focus;
+  const RichtextEditor({Key? key, required this.ask}) : super(key: key);
+  final Ask ask;
 
   @override
   State<RichtextEditor> createState() => _RichtextEditorState();
 }
 
 class _RichtextEditorState extends State<RichtextEditor> {
+  // ignore: unused_field
   final Log _log = Log("RichtextEditor");
   late TextEditingController _controller;
   String answerValue = "";
@@ -44,7 +32,7 @@ class _RichtextEditorState extends State<RichtextEditor> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             side: BorderSide(color: Colors.black, width: 2)),
         title: Column(
@@ -54,7 +42,6 @@ class _RichtextEditorState extends State<RichtextEditor> {
             ),
             Focus(
               onFocusChange: ((value) {
-                print("Focus has changed $value");
                 answerValue = _controller.text;
                 if (!value) {
                   BridgeHandler.answer(widget.ask, answerValue);
@@ -80,7 +67,6 @@ class _RichtextEditorState extends State<RichtextEditor> {
 
                 // focusNode: FocusManager.instance.primaryFocus,
                 onChanged: (value) {
-                  print("Value ${_controller.text}");
                   BridgeHandler.findAttribute(
                   BridgeHandler.findByCode(widget.ask.targetCode),
                   widget.ask.attributeCode)
@@ -88,7 +74,6 @@ class _RichtextEditorState extends State<RichtextEditor> {
                   answerValue = value;
                   // BridgeHandler.answer(ask, value);
                 },
-                decoration: InputDecoration(),
                 minLines: 5,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,

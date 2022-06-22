@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
 import 'package:tommy/widgets/genny_container_widget.dart';
 
 class DetailView extends StatelessWidget {
-  late final BaseEntity entity;
-
-  DetailView({required this.entity});
+  final BaseEntity entity;
+  const DetailView({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     entity.baseEntityAttributes.sort((a, b) {
@@ -35,7 +33,6 @@ class DetailView extends StatelessWidget {
               ],
             );
           } else if(value.startsWith("_LNK")) {
-            print(value);
             EntityAttribute lnkAttribute = BridgeHandler.findAttribute(BridgeHandler.getUser()!, TemplateHandler.fixLnkAndPri(value));
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

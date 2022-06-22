@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 
 class Card extends StatefulWidget {
-  late final EntityAttribute attribute;
-  Card(this.attribute);
+  final EntityAttribute attribute;
+  const Card(this.attribute, {Key? key}) : super(key: key);
   @override
   State<Card> createState() => _CardState();
 }
@@ -11,14 +11,10 @@ class Card extends StatefulWidget {
 class _CardState extends State<Card> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Container(
-      child: 
-      Row(children: [
-        Text(widget.attribute.attributeName),
-        
-      ],)
-    );
+    return Row(children: [
+      Text(widget.attribute.attributeName),
+      
+    ],);
   }
 }
 

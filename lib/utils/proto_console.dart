@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
-import 'package:geoff/utils/networking/auth/session.dart';
-import 'package:geoff/utils/system/log.dart';
 import 'package:grpc/grpc_connection_interface.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/projectstyle.dart';
@@ -13,10 +11,10 @@ import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_utils.dart';
 
 class ProtoConsole extends StatefulWidget {
-  ProtoConsole({Key? key}) : super(key: key);
+  const ProtoConsole({Key? key}) : super(key: key);
 
   @override
-  _ProtoConsoleState createState() => _ProtoConsoleState();
+  State<ProtoConsole> createState() => _ProtoConsoleState();
 }
 
 class _ProtoConsoleState extends State<ProtoConsole> {
@@ -115,9 +113,6 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   },
                 ),
               ),
-
-              //{"items":[{"askId":349572,"processId":"4e580190-43f7-4842-9b0f-4080734f5d6f","attributeCode":"PRI_SUBMIT","sourceCode":"PER_086CDF1F-A98F-4E73-9825-0A4CFE2BB943","targetCode":"PER_34EB0455-1DC0-4121-80ED-90C0B9EEA413","code":"QUE_SUBMIT","identifier":"QUE_SUBMIT","weight":1,"value":"","inferred":false}],"token":"Usage: ./gettoken-cache.sh <product code>","msg_type":"DATA_MSG","event_type":false,"redirect":false,"data_type":"Answer"}
-              //rememeber this god damn
               Expanded(
                 child: TextButton(
                   child: const Text("processquestions"),
@@ -151,7 +146,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
           Row(
             children: [
               IconButton(
-                  icon: Icon(Icons.copy),
+                  icon: const Icon(Icons.copy),
                   onPressed: (() {
                     Clipboard.setData(
                         ClipboardData(text: searchResults.toString()));
@@ -162,7 +157,8 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     this.search = search;
                     setState(() {
                       askSwitch
-                          ? searchResults = BridgeHandler.beData.values.where((item) {
+                          ? searchResults =
+                              BridgeHandler.beData.values.where((item) {
                               return item.toString().contains(search);
                             }).toList()
                           : searchResults =
@@ -176,7 +172,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  !askSwitch ? Text("ASK") : Text("BE"),
+                  !askSwitch ? const Text("ASK") : const Text("BE"),
                   Switch(
                       value: askSwitch,
                       onChanged: (v) {
@@ -206,16 +202,12 @@ class _ProtoConsoleState extends State<ProtoConsole> {
             ],
           ),
           Expanded(
-            child: Container(
+            child: SizedBox(
               height: 400,
               child: ListView.builder(
                   itemCount: searchResults.length,
                   itemBuilder: ((context, index) {
                     List<Widget> widgets = [];
-                    // BaseEntity be = widget.handler.be[index];
-                    // QDataAskMessage msg = widget.handler.ask[index];
-                    // List<Ask> asks = msg.items;
-                    // List<EntityAttribute> at = be.baseEntityAttributes;
                     widgets.add(Column(children: [
                       IconButton(
                           onPressed: () {
@@ -223,10 +215,10 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                                     text: searchResults[index].toString()))
                                 .then((_) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Item Copied")));
+                                  const SnackBar(content: Text("Item Copied")));
                             });
                           },
-                          icon: Icon(Icons.copy)),
+                          icon: const Icon(Icons.copy)),
                       Text(searchResults[index].name.toString()),
                       verbose
                           ? makeBold(searchResults[index].toString(), search)
@@ -236,66 +228,8 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                               : makeBold(
                                   searchResults[index].question.code.toString(),
                                   search),
-                      // Text(searchResults[index]
-                      //     .toString()
-                      //     .replaceAll(search, search.toUpperCase()))
                     ]));
-                    // asks.forEach((ask) {
-                    //   ask.childAsks.forEach((childAsk) {});
-                    //   widgets.add(Container(
-                    //       padding: EdgeInsets.symmetric(vertical: 30),
-                    //       child: Text(ask.toString())));
-                    // });
-                    // widgets.add(Text(
-                    //   be.code.toString(),
-                    //   style: TextStyle(fontWeight: FontWeight.bold),
-                    // ));
-                    // widgets.add(Text(be.name));
-                    // if (be.code.startsWith("PER_")) {
-                    //   at.forEach((attribute) {
-                    //     List<Widget> children = [];
-                    //     if (attribute.attributeName == "ImageUrl") {
-                    //       children.add(Text(
-                    //         attribute.attributeName,
-                    //         style: TextStyle(fontWeight: FontWeight.bold),
-                    //       ));
-
-                    //       children.add(Image.network(
-                    //         "https://internmatch-dev.gada.io/imageproxy/200x200,fit/https://internmatch-dev.gada.io/web/public/" +
-                    //             attribute.valueString,
-                    //         width: MediaQuery.of(context).size.width,
-                    //       ));
-                    //     } else {
-                    //       children.add(Text(
-                    //         attribute.attributeCode,
-                    //         style: TextStyle(fontWeight: FontWeight.bold),
-                    //       ));
-                    //       children
-                    //           .add(Text(attribute.valueString.toString()));
-                    //     }
-                    //     widgets.add(Column(children: children));
-                    //     // children.add(Text(attribute.attributeName.toString()));
-                    //     // children.add(Text(attribute.valueString));
-                    //   });
-                    //   // widgets.add(Column(children: [
-                    //   //   Text(at.toString())
-                    //   // ],));
-                    // }
-                    // for (EntityAttribute attribute in at) {
-                    //   // widgets.add(Text(attribute.toString()));
-                    //   // if (attribute.attributeCode == "COL_PRI_IMAGE_URL") {
-                    //   //   if (be.toProto3Json().toString().contains("http")) {
-                    //   //     widgets.add(Text(be.toProto3Json().toString()));
-                    //   //   }
-                    //   //   // widgets.add(Text(be.toProto3Json().toString()));
-                    //   //   widgets.add(
-                    //   //     Image.network(attribute.valueString),
-                    //   //   );
-                    //   // }
-                    // }
                     return Column(children: widgets);
-                    // return Text(
-                    //     widget.handler.be[index].toProto3Json().toString());
                   })),
             ),
           ),

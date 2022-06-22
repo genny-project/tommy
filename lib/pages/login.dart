@@ -5,7 +5,6 @@ import 'package:geoff/utils/networking/auth/app_auth_helper.dart';
 import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/genny_viewport.dart';
-import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:http/http.dart' as http;
 

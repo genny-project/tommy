@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
+import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/cmdpayload.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
@@ -24,6 +25,10 @@ class BridgeHandler {
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
 
+  /*-----------------------------------
+    Should rethink this appstate function, a carryover from attempting to emulate Alyson
+    PCM_ROOT handles all of this way better
+  -----------------------------------*/
   static AppState initialiseState() {
     return AppState(
         DISPLAY: 'DASHBOARD',
@@ -77,11 +82,12 @@ class BridgeHandler {
           .toProto3Json()));
   }
 
+  //TODO: replace json body with MessageData object
   static void answer(Ask ask, dynamic value) {
-    Item answer = Item.create()
+    Item answerItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode({
-        "event_type": false,
+        // "event_type": false,
         "msg_type": "DATA_MSG",
         "token": Session.tokenResponse!.accessToken!,
         "items": [
@@ -97,9 +103,10 @@ class BridgeHandler {
           }
         ]
       });
-    stub.sink(answer);
+    stub.sink(answerItem);
   }
 
+  //like this
   static void submit(Ask ask) {
     Item submit = Item.create()
       ..token = Session.token!
@@ -122,18 +129,21 @@ class BridgeHandler {
     if (data['msg_type'] == "CMD_MSG") {
       CmdPayload payload = CmdPayload.create()
         ..mergeFromProto3Json(data, ignoreUnknownFields: true);
-      _log.info("CMD PAYLOAD ${payload.cmdType}");
       handleCmd(payload);
-      //handle command
     } else {
-      //assume data message {CHECK FOR BULK}
-      if (data['total'] == -1) {
-        QMessage qMessage = QMessage.create();
-        qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
-        for (BaseEntity baseEntity in qMessage.items) {
-          handleBE(baseEntity, beCallback);
-        }
-      } else if (data['data_type'] == "QBulkMessage") {
+      /*--------------------------------------------
+        Probably vestigal, it used to be the only way to distinguish a PCM message from an ordinary message
+        Unsure if this is still the case on internmatch, but it is absolutely unnecessary on lojing
+      --------------------------------------------*/
+      // // // if (data['total'] == -1) {
+      // // //   QMessage qMessage = QMessage.create();
+      // // //   qMessage.mergeFromProto3Json(data, ignoreUnknownFields: true);
+      // // //   for (BaseEntity baseEntity in qMessage.items) {
+      // // //     handleBE(baseEntity, beCallback);
+      // // //   }
+      // // // }
+
+      if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (QMessage message in message.messages) {
@@ -150,16 +160,15 @@ class BridgeHandler {
     }
   }
 
-  void handleCmd(CmdPayload payload) {
-    _log.info("Got Cmd ${payload}");
+  Future<void> handleCmd(CmdPayload payload) async {
     cmdMachine(payload);
   }
 
-  void handleMsg(
+  Future<void> handleMsg(
     Map<String, dynamic> data,
     beCallback,
     askCallback,
-  ) {
+  ) async {
     if (data['data_type'] == 'BaseEntity') {
       try {
         QMessage qMessage = QMessage.create()
@@ -186,7 +195,7 @@ class BridgeHandler {
     }
   }
 
-  void handleBE(BaseEntity entity, beCallback) {
+  Future<void> handleBE(BaseEntity entity, beCallback) async {
     beData[entity.code] = entity;
     if (entity.code.startsWith('PRJ_')) handlePRJ(entity);
     beCallback(entity);
@@ -197,7 +206,7 @@ class BridgeHandler {
     MyApp.changeTheme(getTheme());
   }
 
-  void handleAsk(Ask ask, askCallback) {
+  Future<void> handleAsk(Ask ask, askCallback) async {
     askData[ask.question.code] = ask;
     if (ask.childAsks.isNotEmpty) {
       for (Ask ask in ask.childAsks) {
@@ -206,6 +215,10 @@ class BridgeHandler {
     }
   }
 
+  /*------
+    more carryovers from alyson
+    nested PCMs and root is far more elegant than this
+  ------*/
   void displayMachine(CmdPayload payload) {
     _log.info("Displaying - $payload");
     switch (payload.code) {
@@ -228,6 +241,7 @@ class BridgeHandler {
     }
   }
 
+  //quod superius macroprosopus, quod inferius microprosopus
   void cmdMachine(CmdPayload payload) {
     switch (payload.cmdType) {
       case "DISPLAY":
@@ -258,8 +272,6 @@ class BridgeHandler {
     }
   }
 
-  //TODO: this function may not be necessary anymore due to BeData changes
-  //worth having just for error handling at this point
   static BaseEntity findByCode(String code) {
     BaseEntity entity;
     try {
@@ -296,8 +308,10 @@ class BridgeHandler {
     }
   }
 
+  ///Creates a text field validation function from the validation list of an [Ask] object
+  ///
+  ///Presently only contains Regex functionality
   static String? Function(String?) createValidator(Ask ask) {
-    print("Validation ${ask.question.attribute.dataType.validationList}");
     List validationList = ask.question.attribute.dataType.validationList;
     String? regex = validationList.isNotEmpty ? validationList.first.regex : "";
     RegExp regExp = RegExp(regex!);
@@ -305,6 +319,7 @@ class BridgeHandler {
       if (!regExp.hasMatch(string!)) {
         return "Does not match regex";
       }
+      return null;
     };
   }
 
@@ -316,7 +331,9 @@ class BridgeHandler {
       entityWidget =
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
-      throw ArgumentError(e);
+      throw ArgumentError(
+          "Could not get PCM widget ${templateAttribute.valueString} $e",
+          be.code);
     }
     return entityWidget;
   }
@@ -339,17 +356,21 @@ class BridgeHandler {
 
   static ThemeData getTheme() {
     BaseEntity project = getProject();
-    print(ThemeData.dark().colorScheme);
     Color getColor(String code) {
       return Color(int.parse(
-          "ff" + findAttribute(project, code).valueString.substring(1),
+          "ff${findAttribute(project, code).valueString.substring(1)}",
           radix: 16));
     }
 
     return ThemeData(
       // canvasColor: Colors.red,
+      appBarTheme: const AppBarTheme(
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+      ),
+
       drawerTheme:
-          DrawerThemeData(backgroundColor: getColor('PRI_COLOR_BACKGROUND')),
+          DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
       colorScheme: ColorScheme(
           background: getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
           onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
@@ -371,8 +392,7 @@ class BridgeHandler {
     // String realm =
     //     Session.tokenData['iss'].toString().split("/").last.toUpperCase();
     String realm = BridgeEnv.clientID.toUpperCase();
-    print("Getting project $realm");
-    return findByCode("PRJ_" + realm);
+    return findByCode("PRJ_$realm");
   }
 
   static BaseEntity? getUser() {

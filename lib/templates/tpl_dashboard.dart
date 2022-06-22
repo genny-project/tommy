@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/widgets/genny_container_widget.dart';
 
 class Dashboard extends StatelessWidget {
-  late final BaseEntity entity;
+  final BaseEntity entity;
   final Log _log = Log("TPL_DASHBOARD");
-  Dashboard({required this.entity});
+  Dashboard({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GennyContainer(

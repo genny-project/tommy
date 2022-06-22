@@ -28,32 +28,34 @@ message LocalDateTime {
 }
 
 message EntityAttribute {
-  optional string baseEntityCode = 1;
-  optional string attributeCode = 2;
-  optional string attributeName = 3;
-  optional bool readonly = 4;
-  optional string realm = 5;
-  optional int32 index = 6;
-  optional string feedback = 7;
-  optional EntityAttributeId pk = 8;
+  optional string name = 1;
+  optional string baseEntityCode = 2;
+  optional string attributeCode = 3;
+  optional string attributeName = 4;
+  optional bool readonly = 5;
+  optional string realm = 6;
+  optional int32 index = 7;
+  optional string feedback = 8;
+  optional EntityAttributeId pk = 9;
   //edited from LocalDateTime
-  optional string created = 9;
-  optional string updated = 10;
-  optional double valueDouble = 11;
-  optional bool valueBoolean = 12;
-  optional int32 valueInteger = 13;
-  optional int64 valueLong = 14;
-  optional string valueTime = 15;
-  optional string valueDateTime = 16;
-  optional string valueDate = 17;
-  optional string valueString = 18;
-  optional double valueMoney = 19;
-  optional double weight = 20;
-  optional bool inferred = 21;
-  optional bool privacyFlag = 22;
-  optional bool confirmationFlag = 23;
+  optional string created = 10;
+  optional string updated = 11;
+  optional double valueDouble = 12;
+  optional bool valueBoolean = 13;
+  optional int32 valueInteger = 14;
+  optional int64 valueLong = 15;
+  optional string valueTime = 16;
+  optional string valueDateTime = 17;
+  optional string valueDate = 18;
+  optional string valueString = 19;
+  optional double valueMoney = 20;
+  optional double weight = 21;
+  optional bool inferred = 22;
+  optional bool privacyFlag = 23;
+  optional bool confirmationFlag = 24;
 //   optional string value = 24;
-  optional Attribute attribute = 24;
+  optional Attribute attribute = 25; 
+  optional string description = 26;
 }
 
 // message Money {

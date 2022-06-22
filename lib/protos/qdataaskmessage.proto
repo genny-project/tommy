@@ -2,8 +2,8 @@ syntax = "proto2";
 
 package life_genny_qwandaq_message;
 
-import "protostuff-default.proto";
 import "baseentity.proto";
+import "ask.proto";
 
 option java_package = "life.genny.qwandaq.message";
 
@@ -27,34 +27,34 @@ message QDataAskMessage {
   optional bool replace = 17;
   optional bool shouldDeleteLinkedBaseEntities = 18;
   optional string aliasCode = 19;
-  repeated Ask items = 20;
+  repeated life_genny_qwandaq_ask.Ask items = 20;
 
 }
 
-message Ask {
-  optional string created = 1;
-  optional string updated = 2;
-  optional int64 id = 3;
-  optional string name = 4;
-  optional string realm = 5;
-  optional Question question = 6;
-  optional string sourceCode = 7;
-  optional string targetCode = 8;
-  optional string questionCode = 9;
-  optional string attributeCode = 10;
-  optional bool mandatory = 11;
-  optional bool oneshot = 12;
-  optional bool disabled = 13;
-  optional bool hidden = 14;
-  optional bool readonly = 15;
-  optional double weight = 16;
-  optional int64 parentId = 17;
-  optional bool formTrigger = 18;
-  optional bool createOnTrigger = 19;
-  repeated Ask childAsks = 20;
-  optional ContextList contextList = 21;
-  optional string processId = 22;
-}
+// message Ask {
+//   optional string created = 1;
+//   optional string updated = 2;
+//   optional int64 id = 3;
+//   optional string name = 4;
+//   optional string realm = 5;
+//   optional Question question = 6;
+//   optional string sourceCode = 7;
+//   optional string targetCode = 8;
+//   optional string questionCode = 9;
+//   optional string attributeCode = 10;
+//   optional bool mandatory = 11;
+//   optional bool oneshot = 12;
+//   optional bool disabled = 13;
+//   optional bool hidden = 14;
+//   optional bool readonly = 15;
+//   optional double weight = 16;
+//   optional int64 parentId = 17;
+//   optional bool formTrigger = 18;
+//   optional bool createOnTrigger = 19;
+//   repeated Ask childAsks = 20;
+//   optional ContextList contextList = 21;
+//   optional string processId = 22;
+// }
 
 message LocalTime {
   optional uint32 hour = 1;
@@ -167,7 +167,7 @@ message Attribute {
   optional string code = 6;
   optional int32 index = 7;
   optional EEntityStatus status = 8;
-  optional DataType dataType = 9;
+  optional life_genny_qwandaq_entity.DataType dataType = 9;
   optional bool defaultPrivacyFlag = 10;
   optional string description = 11;
   optional string help = 12;
@@ -219,14 +219,14 @@ message AnswerLinkId {
   optional Attribute attribute = 3;
 }
 
-message DataType {
-  optional string dttCode = 1;
-  optional string className = 2;
-  optional string typeName = 3;
-  optional string inputmask = 4;
-  optional string component = 5;
-  repeated Validation validationList = 6;
-}
+// message DataType {
+//   optional string dttCode = 1;
+//   optional string className = 2;
+//   optional string typeName = 3;
+//   optional string inputmask = 4;
+//   optional string component = 5;
+//   repeated Validation validationList = 6;
+// }
 
 message Validation {
   optional string created = 1;

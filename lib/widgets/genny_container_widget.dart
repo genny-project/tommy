@@ -1,17 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:geoff/utils/system/log.dart';
-import 'package:geoff/utils/timezones.dart';
-import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
-import 'package:tommy/utils/bridge_handler.dart';
-
 class GennyContainer extends StatelessWidget {
-  Widget child;
-  double? width;
-  double? height;
-  GennyContainer({required this.child, this.width, this.height, Key? key}) : super(key: key);
+  final Widget child;
+  final double? width;
+  final double? height;
+  const GennyContainer({required this.child, this.width, this.height, Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(

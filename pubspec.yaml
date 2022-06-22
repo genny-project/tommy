@@ -22,12 +22,16 @@ dependencies:
   minio: ^3.5.0
   flutter_svg: ^1.0.3
   shared_preferences: ^2.0.13
+  cached_network_image: ^3.2.1
+  intl: ^0.17.0
   geoff:
     # path: /home/joseph/development/geoff
     git: 
       url: https://github.com/Kibibibit/geoff
       ref: c5e7a8f3ebfc74bb3f273e48340c1c422867398a
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.1
