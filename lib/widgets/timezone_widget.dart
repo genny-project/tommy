@@ -3,7 +3,6 @@ import 'package:geoff/utils/system/log.dart';
 import 'package:geoff/utils/timezones.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 class TimezoneWidget extends StatefulWidget {

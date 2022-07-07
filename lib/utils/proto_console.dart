@@ -26,9 +26,20 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   late Timer timer;
 
   final Duration heartbeatDuration = const Duration(seconds: 5);
+  void refresh() {
+    setState(() {
+      searchResults = dataTypes[page].values.where((item) {
+        return item.toString().contains(search);
+      }).toList();
+    });
+  }
 
   late ErrorHandler errorHandler;
-
+  List<dynamic> dataTypes = [
+    BridgeHandler.beData,
+    BridgeHandler.askData,
+    BridgeHandler.attributeData
+  ];
   @override
   void initState() {
     super.initState();
@@ -46,6 +57,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   List<dynamic> searchResults = [];
   String search = "";
   bool askSwitch = false;
+  int page = 0;
   bool verbose = true;
   final stub = StreamClient(ProtoUtils.getChannel());
   @override
@@ -140,6 +152,38 @@ class _ProtoConsoleState extends State<ProtoConsole> {
               ),
             ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Radio(
+                  value: 0,
+                  groupValue: page,
+                  onChanged: (_) {
+                    setState(() {
+                      page = 0;
+                      refresh();
+                    });
+                  }),
+              Radio(
+                  value: 1,
+                  groupValue: page,
+                  onChanged: (_) {
+                    setState(() {
+                      page = 1;
+                      refresh();
+                    });
+                  }),
+              Radio(
+                  value: 2,
+                  groupValue: page,
+                  onChanged: (_) {
+                    setState(() {
+                      page = 2;
+                      refresh();
+                    });
+                  }),
+            ],
+          ),
           Text(
             'Data - Count ${searchResults.length}',
           ),
@@ -156,15 +200,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   onChanged: (search) {
                     this.search = search;
                     setState(() {
-                      askSwitch
-                          ? searchResults =
-                              BridgeHandler.beData.values.where((item) {
-                              return item.toString().contains(search);
-                            }).toList()
-                          : searchResults =
-                              BridgeHandler.askData.values.where((item) {
-                              return item.toString().contains(search);
-                            }).toList();
+                      refresh();
                     });
                   },
                 ),
@@ -172,23 +208,6 @@ class _ProtoConsoleState extends State<ProtoConsole> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  !askSwitch ? const Text("ASK") : const Text("BE"),
-                  Switch(
-                      value: askSwitch,
-                      onChanged: (v) {
-                        setState(() {
-                          askSwitch = v;
-                          askSwitch
-                              ? searchResults =
-                                  BridgeHandler.beData.values.where((item) {
-                                  return item.toString().contains(search);
-                                }).toList()
-                              : searchResults =
-                                  BridgeHandler.askData.values.where((item) {
-                                  return item.toString().contains(search);
-                                }).toList();
-                        });
-                      }),
                   Switch(
                       value: verbose,
                       onChanged: (v) {
@@ -220,13 +239,14 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           },
                           icon: const Icon(Icons.copy)),
                       Text(searchResults[index].name.toString()),
+                      
                       verbose
                           ? makeBold(searchResults[index].toString(), search)
-                          : askSwitch
+                          : page == 1 
                               ? makeBold(
-                                  searchResults[index].code.toString(), search)
+                                  searchResults[index].question.code.toString(), search)
                               : makeBold(
-                                  searchResults[index].question.code.toString(),
+                                  searchResults[index].code.toString(),
                                   search),
                     ]));
                     return Column(children: widgets);

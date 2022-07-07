@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
+import 'package:tommy/generated/answer.pb.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/cmdpayload.pb.dart';
@@ -24,6 +25,7 @@ class BridgeHandler {
   final Log _log = Log("BridgeHandler");
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
+  static Map<String, Attribute> attributeData = {};
 
   /*-----------------------------------
     Should rethink this appstate function, a carryover from attempting to emulate Alyson
@@ -48,7 +50,7 @@ class BridgeHandler {
         highlightedQuestion: '');
   }
 
-  dynamic getType(EntityAttribute attribute) {
+  dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
       case "String":
@@ -63,50 +65,73 @@ class BridgeHandler {
         {
           return attribute.valueBoolean;
         }
+      case "Date":
+        {
+          return attribute.valueDate;
+        }
+      case "Time":
+        {
+          return attribute.valueTime;
+        }
+      case "DateTime":
+        {
+          return attribute.valueDateTime;
+        }
+      case "Long":
+        {
+          return attribute.valueLong;
+        }
+      case "Money":
+        {
+          return attribute.valueMoney;
+        }
+      case "Double":
+        {
+          return attribute.valueDouble;
+        }
     }
 
     return;
   }
 
-  static void evt(String code) {
+  static void evt(Ask ask) {
     stub.sink(Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
             ..token = Session.tokenResponse!.accessToken!
             ..msgType = "EVT_MSG"
-            ..eventType = "BTN_CLICK"
+            ..eventType = ask.questionCode
             ..redirect = true
             ..data = (MessageData.create()
-              ..code = code
-              ..parentCode = code))
+              ..code = ask.questionCode
+              ..parentCode = ask.questionCode
+              ..sessionId = Session.tokenData['jti']
+              ..processId = ask.processId
+              ))
           .toProto3Json()));
   }
 
-  //TODO: replace json body with MessageData object
+  //neither alyson nor gadaq have a real object/interface for this
+  //so i threw one together myself, might need to reconsider it later
+  //thats assuming we get around to actually sending real protobuf objects
   static void answer(Ask ask, dynamic value) {
     Item answerItem = Item.create()
       ..token = Session.token!
-      ..body = jsonEncode({
-        // "event_type": false,
-        "msg_type": "DATA_MSG",
-        "token": Session.tokenResponse!.accessToken!,
-        "items": [
-          {
-            "questionCode": ask.questionCode,
-            "sourceCode": ask.sourceCode,
-            "targetCode": ask.targetCode,
-            "askId": ask.id.toInt(),
-            "pcmCode": ask.question.attribute.code,
-            "attributeCode": ask.question.attributeCode,
-            "processId": ask.processId,
-            "value": value,
-          }
-        ]
-      });
+      ..body = jsonEncode((AnswerMsg.create()
+            ..msgType = "DATA_MSG"
+            ..token = Session.tokenResponse!.accessToken!
+            ..items.add(Answer.create()
+              ..sourceCode = ask.sourceCode
+              ..targetCode = ask.targetCode
+              ..askId = ask.id
+              ..attributeCode = ask.question.attributeCode
+              ..processId = ask.processId
+              ..value = value))
+          .toProto3Json());
     stub.sink(answerItem);
   }
 
-  //like this
+  //likewise i dont think qmessage is the dedicated class for this, but it fits
   static void submit(Ask ask) {
     Item submit = Item.create()
       ..token = Session.token!
@@ -142,7 +167,14 @@ class BridgeHandler {
       // // //     handleBE(baseEntity, beCallback);
       // // //   }
       // // // }
-
+      if (data['data_type'] == "Attribute") {
+        for(Map<String, dynamic> item in data['items']) {
+        
+          Attribute attribute = Attribute.create()..mergeFromProto3Json(item);
+          attributeData[attribute.code] = attribute;
+          // print("Attribute received - $attribute");
+        }
+      }
       if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -176,6 +208,11 @@ class BridgeHandler {
         _log.info("Created qmessage");
         _log.info("Data ${data.keys.toList()}");
         for (BaseEntity be in qMessage.items) {
+          //TODO: work out a better solution than this
+          //not exactly fond of this workaround
+          be.questions.add(EntityQuestion.create()
+          ..valueString = qMessage.questionCode
+          );
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -186,11 +223,14 @@ class BridgeHandler {
         QDataAskMessage askmsg = QDataAskMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
         askCallback(askmsg);
+        _log.info(
+            "SUCCEEDED IN MERGING ${data["items"][0]["question"]["attribute"]}");
         for (Ask ask in askmsg.items) {
           handleAsk(ask, askCallback);
         }
       } catch (e) {
         _log.error("FAILED TO MERGE $data");
+        _log.error(e);
       }
     }
   }
@@ -278,7 +318,7 @@ class BridgeHandler {
       entity = beData[code]!;
       return entity;
     } catch (e) {
-      throw ArgumentError("Could not find BaseEntity", code);
+      throw ArgumentError("Could not find BaseEntity $code", code);
     }
   }
 
@@ -332,7 +372,7 @@ class BridgeHandler {
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
       throw ArgumentError(
-          "Could not get PCM widget ${templateAttribute.valueString} $e",
+          "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e",
           be.code);
     }
     return entityWidget;
@@ -383,14 +423,10 @@ class BridgeHandler {
           brightness: Brightness.light,
           secondary: Colors.blue,
           onSecondary: Colors.green),
-      // backgroundColor: getColor('PRI_COLOR_SURFACE'),
-      // primaryColor: getColor('PRI_COLOR_PRIMARY')
     );
   }
 
   static BaseEntity getProject() {
-    // String realm =
-    //     Session.tokenData['iss'].toString().split("/").last.toUpperCase();
     String realm = BridgeEnv.clientID.toUpperCase();
     return findByCode("PRJ_$realm");
   }

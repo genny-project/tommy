@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
+import 'package:tommy/templates/fld_dropdown.dart';
+import 'package:tommy/templates/fld_radio.dart';
 import 'package:tommy/templates/tpl_appbar.dart';
 import 'package:tommy/templates/tpl_cards_list_view.dart';
 import 'package:tommy/templates/tpl_dashboard.dart';
 import 'package:tommy/templates/tpl_detail_view.dart';
+import 'package:tommy/templates/tpl_form.dart';
 import 'package:tommy/templates/tpl_hidden_menu.dart';
 import 'package:tommy/templates/tpl_hori.dart';
 import 'package:tommy/templates/tpl_logo.dart';
@@ -22,68 +24,53 @@ class TemplateHandler {
   static Widget getTemplate(String code, BaseEntity entity) {
     switch (code) {
       case "TPL_VERT":
-        {
-          return Vert(entity: entity);
-        }
+        return Vert(entity: entity);
+
       case "TPL_HORI":
-        {
-          return Hori(entity: entity);
-        }
+        return Hori(entity: entity);
+
+      case "TPL_CONTENT":
+        return Container(
+            child: BridgeHandler.getPcmWidget(
+          BridgeHandler.findAttribute(entity, 'PRI_LOC1'),
+        ));
+
+      case "TPL_DASHBOARD":
+        return Vert(
+          entity: entity,
+        );
+
       case "TPL_PROGRESS_BAR":
-        {
-          return const SizedBox();
-        }
+        return const SizedBox();
+
       case "TPL_FORM":
-        {
-          // Ask qGroup = BridgeHandler.askData[BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString]!;
-          //THIS IS HARD CODED FOR THE SAKE OF TESTING!
-          //GET RID OF IT
-          Ask qGroup = BridgeHandler.askData["QUE_TENANT_APPLICATION_GRP"]!;
-          // Ask qGroup = BridgeHandler.askData[BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString]!;
-          return ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: qGroup.childAsks.length,
-            itemBuilder: ((context, index) {
-              Ask returnAsk = qGroup.childAsks.elementAt(index);
-              return TemplateHandler().getField(returnAsk, context);
-            }),
-          );
-        }
+        return GennyForm(entity: entity);
+
       case "TPL_LOGO":
-        {
-          return Logo(
-            entity: entity,
-          );
-        }
+        return Logo(
+          entity: entity,
+        );
+
       case "TPL_HIDDEN_MENU":
-        {
-          return HiddenMenu(entity: entity);
-        }
+        return HiddenMenu(entity: entity);
+
       case "TPL_HEADER_1":
-        {
-          return AppBarTpl(entity: entity);
-        }
+        return AppBarTpl(entity: entity);
+
       case "TPL_SIDEBAR_1":
-        {
-          return Sidebar(entity: entity);
-        }
+        return Sidebar(entity: entity);
+
       case "TPL_DASHBOARD_1":
-        {
-          return Dashboard(entity: entity);
-        }
+        return Dashboard(entity: entity);
+
       case "TPL_DETAIL_VIEW1":
-        {
-          return DetailView(entity: entity);
-        }
+        return DetailView(entity: entity);
+
       case "TPL_CARDS_LIST_VIEW":
-        {
-          return CardsListView(entity: entity);
-        }
+        return CardsListView(entity: entity);
+
       default:
-        {
-          return Text(code);
-        }
+        return Text(code);
     }
   }
 
@@ -91,22 +78,11 @@ class TemplateHandler {
     switch (ask.question.attribute.dataType.component) {
       case "radio":
         {
-          return const Text("Radio what's new?");
+          return RadioField(ask: ask);
         }
       case "dropdown":
         {
-          return ExpansionTile(
-            title: Text(ask.name),
-            children: [
-              TextButton(
-                child: const Text("Ordinarily items would go here"),
-                onPressed: () {
-                  BridgeHandler.answer(ask, "Dummy Dropdown");
-                },
-              ),
-              Text(ask.toString())
-            ],
-          );
+          return DropdownField(ask: ask);
         }
       case "date":
         {
@@ -126,8 +102,9 @@ class TemplateHandler {
           return TextButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
+                //TODO: find a better solution to simply waiting for focus to change arbitrarily
                 Future.delayed(const Duration(seconds: 1), () {
-                  BridgeHandler.submit(ask);
+                  BridgeHandler.evt(ask);
                 });
               },
               child: Text(ask.name));

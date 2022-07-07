@@ -9,13 +9,18 @@ class Logo extends StatelessWidget {
   const Logo({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Ask ask = BridgeHandler.askData[BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString]!;
-    return TextButton(
-      // iconSize: 50,
-      onPressed: (() {
-        BridgeHandler.evt(ask.childAsks[1].question.attribute.code);
-      }),
-      child: CachedNetworkImage(
-       imageUrl: BridgeHandler.getPrimary(ask.childAsks[0].question.attribute.code).valueString,));
+    Ask? ask = BridgeHandler.askData[
+        BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString];
+    return ask != null
+        ? TextButton(
+            // iconSize: 50,
+            onPressed: (() {
+              BridgeHandler.evt(ask.childAsks[1]);
+            }),
+            child: CachedNetworkImage(
+                imageUrl: BridgeHandler.getPrimary(
+                        ask.childAsks[0].question.attribute.code)
+                    .valueString))
+        : SizedBox();
   }
 }

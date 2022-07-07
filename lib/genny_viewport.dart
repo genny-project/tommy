@@ -7,15 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-// import 'package:tommy/utils/log.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
-// import 'package:tommy/utils/proto_utils.dart';
 
 class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);

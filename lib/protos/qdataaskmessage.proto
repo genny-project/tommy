@@ -63,23 +63,23 @@ message LocalTime {
   optional int32 nano = 4;
 }
 
-message ContextList {
-  repeated Context contexts = 1;
-}
+// message ContextList {
+//   repeated Context contexts = 1;
+// }
 
-message Context {
-  optional string created = 1;
-  optional string updated = 2;
-  optional int64 id = 3;
-  optional string name = 4;
-  optional string realm = 5;
-  optional life_genny_qwandaq_entity.BaseEntity entity = 6;
-  optional double weight = 7;
-  optional string contextCode = 8;
-  optional string dataType = 9;
-  optional string dttCode = 10;
-  optional VisualControlType visualControlType = 11;
-}
+// message Context {
+//   optional string created = 1;
+//   optional string updated = 2;
+//   optional int64 id = 3;
+//   optional string name = 4;
+//   optional string realm = 5;
+//   optional life_genny_qwandaq_entity.BaseEntity entity = 6;
+//   optional double weight = 7;
+//   optional string contextCode = 8;
+//   optional string dataType = 9;
+//   optional string dttCode = 10;
+//   optional VisualControlType visualControlType = 11;
+// }
 
 enum VisualControlType {
   VCL_DEFAULT = 0;
@@ -147,35 +147,35 @@ enum VisualControlType {
 //   optional string number = 3;
 // }
 
-message EntityQuestion {
-  optional string valueString = 1;
-  optional double weight = 2;
-  optional Link link = 3;
-}
+// message EntityQuestion {
+//   optional string valueString = 1;
+//   optional double weight = 2;
+//   optional Link link = 3;
+// }
 
 message EntityAttributeId {
   optional life_genny_qwandaq_entity.BaseEntity baseEntity = 1;
-  optional Attribute attribute = 2;
+  optional life_genny_qwandaq_entity.Attribute attribute = 2;
 }
 
-message Attribute {
-  optional string created = 1;
-  optional string updated = 2;
-  optional int64 id = 3;
-  optional string name = 4;
-  optional string realm = 5;
-  optional string code = 6;
-  optional int32 index = 7;
-  optional EEntityStatus status = 8;
-  optional life_genny_qwandaq_entity.DataType dataType = 9;
-  optional bool defaultPrivacyFlag = 10;
-  optional string description = 11;
-  optional string help = 12;
-  optional string placeholder = 13;
-  optional string defaultValue = 14;
-  optional string icon = 15;
-  optional string valueString = 16;
-}
+// message Attribute {
+//   optional string created = 1;
+//   optional string updated = 2;
+//   optional int64 id = 3;
+//   optional string name = 4;
+//   optional string realm = 5;
+//   optional string code = 6;
+//   optional int32 index = 7;
+//   optional EEntityStatus status = 8;
+//   optional life_genny_qwandaq_entity.DataType dataType = 9;
+//   optional bool defaultPrivacyFlag = 10;
+//   optional string description = 11;
+//   optional string help = 12;
+//   optional string placeholder = 13;
+//   optional string defaultValue = 14;
+//   optional string icon = 15;
+//   optional string valueString = 16;
+// }
 
 enum EEntityStatus {
   ACTIVE = 0;
@@ -216,7 +216,7 @@ message AnswerLink {
 message AnswerLinkId {
   optional life_genny_qwandaq_entity.BaseEntity source = 1;
   optional life_genny_qwandaq_entity.BaseEntity target = 2;
-  optional Attribute attribute = 3;
+  optional life_genny_qwandaq_entity.Attribute attribute = 3;
 }
 
 // message DataType {
@@ -245,28 +245,28 @@ message Validation {
   optional string errormsg = 14;
 }
 
-message Question {
-  optional string created = 1;
-  optional string updated = 2;
-  optional int64 id = 3;
-  optional string name = 4;
-  optional string realm = 5;
-  optional string code = 6;
-  optional int32 index = 7;
-  optional EEntityStatus status = 8;
-  repeated QuestionQuestion childQuestions = 9;
-  optional Attribute attribute = 10;
-  optional ContextList contextList = 11;
-  optional string attributeCode = 12;
-  optional bool mandatory = 13;
-  optional bool readonly = 14;
-  optional bool oneshot = 15;
-  optional string placeholder = 16;
-  optional string directions = 17;
-  optional string html = 18;
-  optional string helper = 19;
-  optional string icon = 20;
-}
+// message Question {
+//   optional string created = 1;
+//   optional string updated = 2;
+//   optional int64 id = 3;
+//   optional string name = 4;
+//   optional string realm = 5;
+//   optional string code = 6;
+//   optional int32 index = 7;
+//   optional EEntityStatus status = 8;
+//   repeated QuestionQuestion childQuestions = 9;
+//   optional Attribute attribute = 10;
+//   optional ContextList contextList = 11;
+//   optional string attributeCode = 12;
+//   optional bool mandatory = 13;
+//   optional bool readonly = 14;
+//   optional bool oneshot = 15;
+//   optional string placeholder = 16;
+//   optional string directions = 17;
+//   optional string html = 18;
+//   optional string helper = 19;
+//   optional string icon = 20;
+// }
 
 message EntityEntity {
   optional Link link = 1;
@@ -311,29 +311,29 @@ message Link {
 message EntityEntityId {
   optional life_genny_qwandaq_entity.BaseEntity source = 1;
   optional string targetCode = 2;
-  optional Attribute attribute = 3;
+  optional life_genny_qwandaq_entity.Attribute attribute = 3;
 }
 
-message QuestionQuestion {
-  optional QuestionQuestionId pk = 1;
-  optional string created = 2;
-  optional string updated = 3;
-  optional double weight = 4;
-  optional int64 version = 5;
-  optional bool mandatory = 6;
-  optional bool oneshot = 7;
-  optional bool disabled = 8;
-  optional bool hidden = 9;
-  optional bool readonly = 10;
-  optional string realm = 11;
-  optional bool formTrigger = 12;
-  optional bool createOnTrigger = 13;
-  optional string dependency = 14;
-  optional string icon = 15;
-}
+// message QuestionQuestion {
+//   optional QuestionQuestionId pk = 1;
+//   optional string created = 2;
+//   optional string updated = 3;
+//   optional double weight = 4;
+//   optional int64 version = 5;
+//   optional bool mandatory = 6;
+//   optional bool oneshot = 7;
+//   optional bool disabled = 8;
+//   optional bool hidden = 9;
+//   optional bool readonly = 10;
+//   optional string realm = 11;
+//   optional bool formTrigger = 12;
+//   optional bool createOnTrigger = 13;
+//   optional string dependency = 14;
+//   optional string icon = 15;
+// }
 
-message QuestionQuestionId {
-  optional Question source = 1;
-  optional string targetCode = 2;
-  optional string sourceCode = 3;
-}
+// message QuestionQuestionId {
+//   optional Question source = 1;
+//   optional string targetCode = 2;
+//   optional string sourceCode = 3;
+// }

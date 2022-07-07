@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
@@ -18,6 +17,7 @@ class Sidebar extends StatelessWidget {
     return Theme(
       data: BridgeHandler.getTheme(),
       child: Drawer(
+        key: Key(entity.code),
           child: ListView.builder(
               shrinkWrap: true,
               itemCount: BridgeHandler
@@ -35,7 +35,7 @@ class Sidebar extends StatelessWidget {
                   try {
                     buttons.add(ListTile(
                       onTap: () {
-                        BridgeHandler.evt(ask.questionCode);
+                        BridgeHandler.evt(ask);
                         Navigator.pop(context);
                       },
                       title: Text(
@@ -95,7 +95,7 @@ class Sidebar extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          BridgeHandler.evt(ask.questionCode);
+                          BridgeHandler.evt(ask);
                           Navigator.pop(context);
                         },
                         title: Text(ask.name,

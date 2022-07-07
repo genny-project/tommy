@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/ask.pb.dart';
-import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 class RichtextEditor extends StatefulWidget {
