@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
-import 'package:geoff/utils/timezones.dart';
+import 'package:geoff/utils/time/time_zone.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';

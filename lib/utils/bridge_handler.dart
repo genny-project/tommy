@@ -106,8 +106,7 @@ class BridgeHandler {
               ..code = ask.questionCode
               ..parentCode = ask.questionCode
               ..sessionId = Session.tokenData['jti']
-              ..processId = ask.processId
-              ))
+              ..processId = ask.processId))
           .toProto3Json()));
   }
 
@@ -168,8 +167,7 @@ class BridgeHandler {
       // // //   }
       // // // }
       if (data['data_type'] == "Attribute") {
-        for(Map<String, dynamic> item in data['items']) {
-        
+        for (Map<String, dynamic> item in data['items']) {
           Attribute attribute = Attribute.create()..mergeFromProto3Json(item);
           attributeData[attribute.code] = attribute;
           // print("Attribute received - $attribute");
@@ -210,9 +208,8 @@ class BridgeHandler {
         for (BaseEntity be in qMessage.items) {
           //TODO: work out a better solution than this
           //not exactly fond of this workaround
-          be.questions.add(EntityQuestion.create()
-          ..valueString = qMessage.questionCode
-          );
+          be.questions.add(
+              EntityQuestion.create()..valueString = qMessage.questionCode);
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -334,8 +331,8 @@ class BridgeHandler {
   static EntityAttribute findAttribute(
       BaseEntity entity, String attributeName) {
     if (entity.baseEntityAttributes.isEmpty) {
-      throw ArgumentError(
-          "The entity provided contains no attributes", entity.code);
+      throw ArgumentError("The entity provided contains no attributes", entity.code);
+      return EntityAttribute.create()..attributeCode = "ERR"..description = "The entity provided contains no attributes (${entity.code})";
     }
     try {
       EntityAttribute attribute = entity.baseEntityAttributes
@@ -344,7 +341,7 @@ class BridgeHandler {
     } catch (e) {
       // _log.info("String SSS!");
       // throw ArgumentError("The Attribute does not exist", attributeName);
-      return EntityAttribute();
+      return EntityAttribute.create()..attributeCode = "ERR"..description = e.toString();
     }
   }
 
@@ -367,13 +364,18 @@ class BridgeHandler {
     BaseEntity be = findByCode(attribute.valueString);
     EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
     Widget entityWidget;
+    print("Got attribute ${attribute.attributeCode}");
+    if(attribute.attributeCode == "ERR"){
+      print("GOT ERR");
+    }
     try {
       entityWidget =
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
-      throw ArgumentError(
+      entityWidget = ErrorWidget(ArgumentError(
           "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e",
-          be.code);
+          be.code));
+      // throw
     }
     return entityWidget;
   }
@@ -445,5 +447,11 @@ class BridgeHandler {
         ..valueString = e.toString();
     }
     return attribute;
+  }
+}
+
+extension BaseEntityExtension on BaseEntity {
+  EntityAttribute findAttribute(String attributeName) {
+    return BridgeHandler.findAttribute(this, attributeName);
   }
 }

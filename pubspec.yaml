@@ -25,10 +25,9 @@ dependencies:
   cached_network_image: ^3.2.1
   intl: ^0.17.0
   geoff:
-    # path: /home/joseph/development/geoff
-    git: 
-      url: https://github.com/Kibibibit/geoff
-      ref: c5e7a8f3ebfc74bb3f273e48340c1c422867398a
+    git:
+      url: https://github.com/Kibibibit/geoff.git
+      ref: 0.2.5
 dev_dependencies:
   integration_test:
     sdk: flutter

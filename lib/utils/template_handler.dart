@@ -15,7 +15,7 @@ import 'package:tommy/templates/tpl_logo.dart';
 import 'package:tommy/templates/tpl_sidebar.dart';
 import 'package:tommy/templates/tpl_vert.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/widgets/richtext_editor_widget.dart';
+import 'package:tommy/templates/fld_richtext_editor.dart';
 import 'package:tommy/widgets/timezone_widget.dart';
 
 class TemplateHandler {

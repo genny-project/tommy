@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/utils/template_handler.dart';
 
 //TODO: need a way to discern whether the answer count is mutually exclusive/answer limit
 
@@ -22,38 +21,20 @@ class DropdownField extends StatelessWidget {
       children: [
         //wrap to handle overflow
         Wrap(
+          alignment: WrapAlignment.start,
+          // crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 5.0,
           runSpacing: 5.0,
-          children: List.generate(
-              answers.length,
-              (index) => Container(
-                  decoration: BoxDecoration(
-                      color: BridgeHandler.getTheme().colorScheme.primary,
-                      borderRadius: const BorderRadius.all(Radius.circular(90))),
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        answers[index].name.toString(),
-                        style: TextStyle(
-                            color:
-                                BridgeHandler.getTheme().colorScheme.onPrimary),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          answers.removeAt(index);
-                          answerDropdown();
-                        },
-                        icon: const Icon(Icons.close),
-                        color: BridgeHandler.getTheme().colorScheme.onPrimary,
-                        padding: const EdgeInsets.all(3),
-                        iconSize: 20.0,
-                        constraints: const BoxConstraints(),
-                      )
-                    ],
-                  ))),
+          children: List.generate(answers.length, (index) {
+            return Chip(
+              
+              deleteIcon: const Icon(Icons.close),
+              onDeleted: (){
+                answers.removeAt(index);
+                        answerDropdown();
+              },
+              label: Text(answers[index].name.toString()));
+          }),
         ),
         ListView.builder(
           physics: const NeverScrollableScrollPhysics(),

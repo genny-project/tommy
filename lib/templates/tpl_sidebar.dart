@@ -74,35 +74,38 @@ class Sidebar extends StatelessWidget {
                                     .primary)),
                         children: buttons,
                       )
-                    : ListTile(
-                        leading: SizedBox(
-                          width: 50,
-                          child: SvgPicture.network(
-                            '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}',
-                            height: 30,
-                            width: 30,
-                            color: BridgeHandler.getTheme()
-                                .colorScheme
-                                .onPrimary,
-                            placeholderBuilder: (context) {
-                              return const Center(
-                                child: SizedBox(
-                                    height: 30,
-                                    width: 30,
-                                    child: CircularProgressIndicator()),
-                              );
-                            },
+                    : Tooltip(
+                      message: ask.questionCode,
+                      child: ListTile(
+                          leading: SizedBox(
+                            width: 50,
+                            child: SvgPicture.network(
+                              '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}',
+                              height: 30,
+                              width: 30,
+                              color: BridgeHandler.getTheme()
+                                  .colorScheme
+                                  .onPrimary,
+                              placeholderBuilder: (context) {
+                                return const Center(
+                                  child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: CircularProgressIndicator()),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        onTap: () {
-                          BridgeHandler.evt(ask);
-                          Navigator.pop(context);
-                        },
-                        title: Text(ask.name,
-                            style: TextStyle(
-                                color: BridgeHandler.getTheme()
-                                    .colorScheme
-                                    .onPrimary)));
+                          onTap: () {
+                            BridgeHandler.evt(ask);
+                            Navigator.pop(context);
+                          },
+                          title: Text(ask.name,
+                              style: TextStyle(
+                                  color: BridgeHandler.getTheme()
+                                      .colorScheme
+                                      .onPrimary))),
+                    );
               })),
     );
   }

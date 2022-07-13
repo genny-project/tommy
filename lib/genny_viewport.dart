@@ -134,8 +134,7 @@ class _GennyViewportState extends State<GennyViewport> {
                   MaterialPageRoute(builder: (context) => const ProtoConsole()));
             },
             icon: const Icon(Icons.graphic_eq)),
-        BridgeHandler.getPcmWidget(
-            BridgeHandler.findAttribute(root, 'PRI_LOC3')),
+        BridgeHandler.getPcmWidget(root.findAttribute('PRI_LOC3')),
       ],
     );
 
