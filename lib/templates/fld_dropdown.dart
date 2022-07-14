@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 //TODO: need a way to discern whether the answer count is mutually exclusive/answer limit
@@ -10,8 +11,8 @@ import 'package:tommy/utils/bridge_handler.dart';
 class DropdownField extends StatelessWidget {
   final Ask ask;
   late final BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
-  late final List<BaseEntity> answers = parseAnswer(
-      BridgeHandler.findAttribute(entity, ask.attributeCode).valueString);
+  late final List<BaseEntity> answers =
+      parseAnswer(entity.findAttribute(ask.attributeCode).valueString);
   late final List<EntityAttribute> dropdownItems = getItems(ask);
   DropdownField({Key? key, required this.ask}) : super(key: key);
   @override
@@ -27,13 +28,12 @@ class DropdownField extends StatelessWidget {
           runSpacing: 5.0,
           children: List.generate(answers.length, (index) {
             return Chip(
-              
-              deleteIcon: const Icon(Icons.close),
-              onDeleted: (){
-                answers.removeAt(index);
-                        answerDropdown();
-              },
-              label: Text(answers[index].name.toString()));
+                deleteIcon: const Icon(Icons.close),
+                onDeleted: () {
+                  answers.removeAt(index);
+                  answerDropdown();
+                },
+                label: Text(answers[index].name.toString()));
           }),
         ),
         ListView.builder(
@@ -58,9 +58,9 @@ class DropdownField extends StatelessWidget {
   void answerDropdown() {
     List<String> strAnswers =
         List.generate(answers.length, (index) => answers[index].code);
-    BridgeHandler.findAttribute(entity, ask.attributeCode).valueString =
+    entity.findAttribute(ask.attributeCode).valueString =
         jsonEncode(strAnswers).toString();
-    BridgeHandler.answer(ask, jsonEncode(strAnswers));
+    ask.answer(jsonEncode(strAnswers));
   }
 }
 
@@ -84,8 +84,7 @@ List<EntityAttribute> getItems(Ask ask) {
   BridgeHandler.beData.values
       .where((entity) => entity.questions.first.valueString == ask.questionCode)
       .forEach((entity) {
-    items.add(entity.baseEntityAttributes
-        .firstWhere((element) => element.attributeCode == "PRI_NAME"));
+    entity.findAttribute("PRI_NAME");
   });
   return items;
 }

@@ -9,6 +9,7 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
@@ -130,28 +131,24 @@ class _GennyViewportState extends State<GennyViewport> {
       children: [
         IconButton(
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ProtoConsole()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ProtoConsole()));
             },
             icon: const Icon(Icons.graphic_eq)),
-        BridgeHandler.getPcmWidget(root.findAttribute('PRI_LOC3')),
+        root.findAttribute('PRI_LOC3').getPcmWidget(),
       ],
     );
-
-    // Text(be.baseEntityAttributes.toString()),
   }
 
   Widget getDrawer() {
     BaseEntity? root = BridgeHandler.findByCode("PCM_ROOT");
-    return BridgeHandler.getPcmWidget(
-        BridgeHandler.findAttribute(root, "PRI_LOC2"));
+    return root.findAttribute("PRI_LOC2").getPcmWidget();
   }
 
   PreferredSizeWidget getAppBar() {
     BaseEntity? root = BridgeHandler.findByCode("PCM_ROOT");
     return PreferredSize(
         preferredSize: AppBar().preferredSize,
-        child: BridgeHandler.getPcmWidget(
-            BridgeHandler.findAttribute(root, "PRI_LOC1")));
+        child: root.findAttribute("PRI_LOC1").getPcmWidget());
   }
 }

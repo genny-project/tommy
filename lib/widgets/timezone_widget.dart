@@ -3,12 +3,13 @@ import 'package:geoff/utils/system/log.dart';
 import 'package:geoff/utils/time/time_zone.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 
 class TimezoneWidget extends StatefulWidget {
   final BaseEntity entity;
   final Ask ask;
-  const TimezoneWidget({Key? key, required this.entity, required this.ask}) : super(key: key);
+  const TimezoneWidget({Key? key, required this.entity, required this.ask})
+      : super(key: key);
 
   @override
   State<TimezoneWidget> createState() => _TimezoneWidgetState();
@@ -22,9 +23,7 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
   void initState() {
     super.initState();
     try {
-      value =
-          BridgeHandler.findAttribute(widget.entity, widget.ask.attributeCode)
-              .valueString;
+      value = widget.entity.findAttribute(widget.ask.attributeCode).valueString;
     } catch (e) {
       value;
     }
@@ -60,10 +59,7 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
                                 setState(() {
                                   value = Timezones.timezones[index].utc.first;
                                 });
-                                // state((){
-                                //   value = "r";
-                                // });
-                                BridgeHandler.answer(widget.ask,
+                                widget.ask.answer(
                                     Timezones.timezones[index].utc.first);
                                 Navigator.of(context).pop();
                               },

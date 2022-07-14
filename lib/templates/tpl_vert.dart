@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/utils/template_handler.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 
 class Vert extends StatelessWidget {
   final BaseEntity entity;
@@ -9,8 +9,7 @@ class Vert extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(entity.baseEntityAttributes.length, (index) {
-        return TemplateHandler.attributeWidget(
-            entity.baseEntityAttributes[index], context);
+        return entity.baseEntityAttributes[index].attributeWidget();
       }),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:tommy/generated/ask.pb.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
 class RichtextEditor extends StatefulWidget {
@@ -32,9 +33,8 @@ class _RichtextEditorState extends State<RichtextEditor> {
     super.initState();
     setState(() {
       _controller = TextEditingController(
-          text: BridgeHandler.findAttribute(
-                  BridgeHandler.findByCode(widget.ask.targetCode),
-                  widget.ask.attributeCode)
+          text: BridgeHandler.findByCode(widget.ask.targetCode)
+              .findAttribute(widget.ask.attributeCode)
               .valueString);
     });
   }
@@ -101,7 +101,7 @@ class _RichtextEditorState extends State<RichtextEditor> {
               onFocusChange: ((value) {
                 answerValue = _controller.text;
                 if (!value) {
-                  BridgeHandler.answer(widget.ask, answerValue);
+                  widget.ask.answer(answerValue);
                 }
               }),
               child: TextField(
@@ -111,7 +111,7 @@ class _RichtextEditorState extends State<RichtextEditor> {
                   void Function() f = () {};
                   f = () {
                     if (FocusManager.instance.primaryFocus?.hasFocus == false) {
-                      BridgeHandler.answer(widget.ask, answerValue);
+                      widget.ask.answer(answerValue);
                       // focus.unfocus();
                       FocusManager.instance.primaryFocus?.unfocus();
                       FocusManager.instance.primaryFocus?.removeListener(f);
@@ -121,9 +121,8 @@ class _RichtextEditorState extends State<RichtextEditor> {
                   FocusManager.instance.primaryFocus?.addListener(f);
                 },
                 onChanged: (value) {
-                  BridgeHandler.findAttribute(
-                          BridgeHandler.findByCode(widget.ask.targetCode),
-                          widget.ask.attributeCode)
+                  BridgeHandler.findByCode(widget.ask.targetCode)
+                      .findAttribute(widget.ask.attributeCode)
                       .valueString = value;
                   setState(() {
                     answerValue = value;

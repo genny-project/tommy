@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/widgets/genny_container_widget.dart';
 
 class Dashboard extends StatelessWidget {
@@ -18,7 +18,7 @@ class Dashboard extends StatelessWidget {
         if (entity.baseEntityAttributes[index].attributeCode
             .startsWith("PRI_LOC")) {
           _log.info("Getting Widget for Entity ${entity.baseEntityAttributes[index].valueString}");
-          return BridgeHandler.getPcmWidget(entity.baseEntityAttributes[index]);
+          return entity.baseEntityAttributes[index].getPcmWidget();
         } else {
           return Text("Dashboard additional - ${entity.baseEntityAttributes[index].baseEntityCode.toString()}");
         }

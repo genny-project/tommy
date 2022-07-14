@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/template_handler.dart';
 
 import '../utils/bridge_handler.dart';
@@ -10,8 +11,8 @@ class GennyForm extends StatelessWidget {
   const GennyForm({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Ask? qGroup = BridgeHandler.askData[
-        BridgeHandler.findAttribute(entity, "PRI_QUESTION_CODE").valueString];
+    Ask? qGroup = BridgeHandler
+        .askData[entity.findAttribute("PRI_QUESTION_CODE").valueString];
 
     if (qGroup != null) {
       return Column(

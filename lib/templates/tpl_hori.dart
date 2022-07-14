@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/utils/template_handler.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 
 class Hori extends StatelessWidget {
   final BaseEntity entity;
@@ -8,7 +8,7 @@ class Hori extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: List.generate(entity.baseEntityAttributes.length, (index) {
-      return TemplateHandler.attributeWidget(entity.baseEntityAttributes[index], context);
+      return entity.baseEntityAttributes[index].attributeWidget();
     }),);
   }
 }

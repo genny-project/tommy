@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 
 class CardsListView extends StatelessWidget {
   final BaseEntity entity;
@@ -16,7 +16,7 @@ class CardsListView extends StatelessWidget {
           children: List.generate(entity.baseEntityAttributes.length, (index) {
         if (entity.baseEntityAttributes[index].attributeCode
             .startsWith("PRI_LOC")) {
-          return BridgeHandler.getPcmWidget(entity.baseEntityAttributes[index]);
+          return entity.baseEntityAttributes[index].getPcmWidget();
         } else {
           return Text(entity.baseEntityAttributes[index].attribute.code.toString());
         }

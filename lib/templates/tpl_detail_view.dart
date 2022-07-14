@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
 import 'package:tommy/widgets/genny_container_widget.dart';
@@ -24,7 +25,7 @@ class DetailView extends StatelessWidget {
           String value = attribute.valueString;
           // return Text(attribute.description);
           if(value.startsWith('PRI_')){
-            EntityAttribute priAttribute = BridgeHandler.findAttribute(BridgeHandler.getUser()!,value);
+            EntityAttribute priAttribute = BridgeHandler.getUser()!.findAttribute(value);
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -33,7 +34,7 @@ class DetailView extends StatelessWidget {
               ],
             );
           } else if(value.startsWith("_LNK")) {
-            EntityAttribute lnkAttribute = BridgeHandler.findAttribute(BridgeHandler.getUser()!, TemplateHandler.fixLnkAndPri(value));
+            EntityAttribute lnkAttribute = BridgeHandler.getUser()!.findAttribute(TemplateHandler.fixLnkAndPri(value));
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -331,8 +331,8 @@ class BridgeHandler {
   static EntityAttribute findAttribute(
       BaseEntity entity, String attributeName) {
     if (entity.baseEntityAttributes.isEmpty) {
-      throw ArgumentError("The entity provided contains no attributes", entity.code);
-      return EntityAttribute.create()..attributeCode = "ERR"..description = "The entity provided contains no attributes (${entity.code})";
+      throw ArgumentError(
+          "The entity provided contains no attributes", entity.code);
     }
     try {
       EntityAttribute attribute = entity.baseEntityAttributes
@@ -341,7 +341,9 @@ class BridgeHandler {
     } catch (e) {
       // _log.info("String SSS!");
       // throw ArgumentError("The Attribute does not exist", attributeName);
-      return EntityAttribute.create()..attributeCode = "ERR"..description = e.toString();
+      return EntityAttribute.create()
+        ..attributeCode = "ERR"
+        ..description = e.toString();
     }
   }
 
@@ -361,13 +363,14 @@ class BridgeHandler {
   }
 
   static Widget getPcmWidget(EntityAttribute attribute) {
-    BaseEntity be = findByCode(attribute.valueString);
+    BaseEntity be;
+    try {
+      be = findByCode(attribute.valueString);
+    } catch (e) {
+      return ErrorWidget(e);
+    }
     EntityAttribute templateAttribute = findAttribute(be, "PRI_TEMPLATE_CODE");
     Widget entityWidget;
-    print("Got attribute ${attribute.attributeCode}");
-    if(attribute.attributeCode == "ERR"){
-      print("GOT ERR");
-    }
     try {
       entityWidget =
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
@@ -375,7 +378,6 @@ class BridgeHandler {
       entityWidget = ErrorWidget(ArgumentError(
           "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e",
           be.code));
-      // throw
     }
     return entityWidget;
   }
@@ -447,11 +449,5 @@ class BridgeHandler {
         ..valueString = e.toString();
     }
     return attribute;
-  }
-}
-
-extension BaseEntityExtension on BaseEntity {
-  EntityAttribute findAttribute(String attributeName) {
-    return BridgeHandler.findAttribute(this, attributeName);
   }
 }

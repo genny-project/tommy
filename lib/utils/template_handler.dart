@@ -14,6 +14,7 @@ import 'package:tommy/templates/tpl_hori.dart';
 import 'package:tommy/templates/tpl_logo.dart';
 import 'package:tommy/templates/tpl_sidebar.dart';
 import 'package:tommy/templates/tpl_vert.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/templates/fld_richtext_editor.dart';
 import 'package:tommy/widgets/timezone_widget.dart';
@@ -31,9 +32,8 @@ class TemplateHandler {
 
       case "TPL_CONTENT":
         return Container(
-            child: BridgeHandler.getPcmWidget(
-          BridgeHandler.findAttribute(entity, 'PRI_LOC1'),
-        ));
+          child: entity.findAttribute('PRI_LOC1').getPcmWidget(),
+        );
 
       case "TPL_DASHBOARD":
         return Vert(
@@ -91,7 +91,7 @@ class TemplateHandler {
               firstDate: DateTime.fromMillisecondsSinceEpoch(0),
               lastDate: DateTime.now(),
               onDateChanged: (value) {
-                BridgeHandler.answer(ask, DateFormat('y-M-d').format(value));
+                ask.answer(DateFormat('y-M-d').format(value));
               });
         }
       case "time_zone":
@@ -128,24 +128,19 @@ class TemplateHandler {
             title: Focus(
               onFocusChange: ((focus) {
                 if (!focus) {
-                  BridgeHandler.answer(
-                      ask,
-                      BridgeHandler.findAttribute(entity, ask.attributeCode)
-                          .valueString);
+                  ask.answer(entity.findAttribute(ask.attributeCode).valueString);
                 }
               }),
               child: TextFormField(
                   onChanged: (value) {
-                    BridgeHandler.findAttribute(entity, ask.attributeCode)
-                        .valueString = value;
+                    entity.findAttribute(ask.attributeCode).valueString = value;
                   },
                   initialValue:
-                      BridgeHandler.findAttribute(entity, ask.attributeCode)
-                          .valueString,
+                      entity.findAttribute(ask.attributeCode).valueString,
                   autovalidateMode: AutovalidateMode.always,
                   validator: BridgeHandler.createValidator(ask),
                   onFieldSubmitted: (value) {
-                    BridgeHandler.answer(ask, value);
+                    ask.answer(value);
                   },
                   decoration: InputDecoration(
                     labelText:
@@ -161,12 +156,12 @@ class TemplateHandler {
     return value.split('__')[0].replaceFirst('_', '');
   }
 
-  static Widget attributeWidget(EntityAttribute attribute, context) {
+  static Widget attributeWidget(EntityAttribute attribute) {
     if (!attribute.attributeCode.startsWith("PRI_LOC")) {
       return const SizedBox();
     }
     if (attribute.valueString.startsWith("PCM_")) {
-      return BridgeHandler.getPcmWidget(attribute);
+      return attribute.getPcmWidget();
     }
     return IconButton(
         onPressed: () {

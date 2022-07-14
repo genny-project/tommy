@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/utils/template_handler.dart';
 
 // class RadioField extends StatefulWidget {
 //   final Ask ask;
@@ -26,15 +26,14 @@ class RadioField extends StatelessWidget {
         .where(
             (entity) => entity.questions.first.valueString == ask.questionCode)
         .forEach((entity) {
-      dropdownItems.add(entity.baseEntityAttributes
-          .firstWhere((element) => element.attributeCode == "PRI_NAME"));
+      dropdownItems.add(entity.findAttribute("PRI_NAME"));
     });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(title: Text(ask.question.name)),
         ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: dropdownItems.length,
             itemBuilder: (context, index) {
@@ -42,15 +41,12 @@ class RadioField extends StatelessWidget {
                   title: Text(dropdownItems[index].valueString),
                   value: dropdownItems[index].valueString,
                   groupValue:
-                      BridgeHandler.findAttribute(entity, ask.attributeCode)
-                          .valueString,
+                      entity.findAttribute(ask.attributeCode).valueString,
                   onChanged: (_) {
-                    BridgeHandler.findAttribute(entity, ask.attributeCode)
-                        .valueString = dropdownItems[index].valueString;
-                    BridgeHandler.answer(
-                        ask,
-                        BridgeHandler.findAttribute(entity, ask.attributeCode)
-                            .valueString);
+                    entity.findAttribute(ask.attributeCode).valueString =
+                        dropdownItems[index].valueString;
+                    ask.answer(
+                        entity.findAttribute(ask.attributeCode).valueString);
                   });
             }),
       ],
