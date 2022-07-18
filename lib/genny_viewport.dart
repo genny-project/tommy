@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/ask.pb.dart';
@@ -113,8 +114,14 @@ class _GennyViewportState extends State<GennyViewport> {
   Widget build(BuildContext context) {
     return root.baseEntityAttributes.isNotEmpty == true
         ? rootScaffold(root)
-        : const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+        : Scaffold(
+            body: Center(
+                child: InkWell(
+                    onLongPress: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ProtoConsole()));
+                    },
+                    child: CircularProgressIndicator())),
           );
   }
 

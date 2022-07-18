@@ -18,6 +18,10 @@ extension EntityAttributeExtension on EntityAttribute {
   Widget attributeWidget() {
     return TemplateHandler.attributeWidget(this);
   }
+
+  dynamic getValue() {
+    return BridgeHandler.getValue(this);
+  }
 }
 
 extension AskExtension on Ask {

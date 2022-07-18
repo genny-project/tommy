@@ -13,6 +13,7 @@ import 'package:tommy/templates/tpl_hidden_menu.dart';
 import 'package:tommy/templates/tpl_hori.dart';
 import 'package:tommy/templates/tpl_logo.dart';
 import 'package:tommy/templates/tpl_sidebar.dart';
+import 'package:tommy/templates/tpl_table.dart';
 import 'package:tommy/templates/tpl_vert.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
@@ -68,7 +69,8 @@ class TemplateHandler {
 
       case "TPL_CARDS_LIST_VIEW":
         return CardsListView(entity: entity);
-
+      case "TPL_TABLE":
+        return TableTpl(entity: entity);
       default:
         return Text(code);
     }

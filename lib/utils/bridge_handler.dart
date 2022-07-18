@@ -50,7 +50,7 @@ class BridgeHandler {
         highlightedQuestion: '');
   }
 
-  dynamic getValue(EntityAttribute attribute) {
+  static dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
       case "String":
@@ -175,12 +175,15 @@ class BridgeHandler {
       }
       if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
+       
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
+        
         for (QMessage message in message.messages) {
           Map<String, dynamic> json =
               message.toProto3Json() as Map<String, dynamic>;
           _log.info("the type is ${json['dataType']}");
           for (BaseEntity be in message.items) {
+            print(be);
             handleBE(be, beCallback);
           }
         }
@@ -200,6 +203,7 @@ class BridgeHandler {
     askCallback,
   ) async {
     if (data['data_type'] == 'BaseEntity') {
+
       try {
         QMessage qMessage = QMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -375,6 +379,7 @@ class BridgeHandler {
       entityWidget =
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
+      Log("BridgeHandler").info("Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e");
       entityWidget = ErrorWidget(ArgumentError(
           "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e",
           be.code));
