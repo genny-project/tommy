@@ -26,6 +26,7 @@ message AnswerMsg {
     repeated Answer items = 1;
     required string token = 2;
     required string msgType = 3 [json_name = "msg_type"];
+    required string dataType = 4 [json_name = "data_type"];
 }
 // public Answer(final BaseEntity source, final BaseEntity target, final Attribute attribute, final String value) {
 //     this.sourceCode = source.getCode();

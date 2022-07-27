@@ -94,17 +94,23 @@ class BridgeHandler {
     return;
   }
 
-  static void evt(Ask ask) {
+  static void evt(Ask ask, [String? eventType]) {
     stub.sink(Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
             ..token = Session.tokenResponse!.accessToken!
             ..msgType = "EVT_MSG"
-            ..eventType = ask.questionCode
+            ..eventType = eventType ?? "BTN_CLICK"
             ..redirect = true
+            ..attributeCode = ask.attributeCode
             ..data = (MessageData.create()
               ..code = ask.questionCode
-              ..parentCode = ask.questionCode
+              ..questionCode = ask.questionCode
+              ..sourceCode = ask.sourceCode
+              ..targetCode = ask.targetCode
+              ..parentCode = ""
+              ..questionCode = ask.questionCode
+              ..value = ask.value
               ..sessionId = Session.tokenData['jti']
               ..processId = ask.processId))
           .toProto3Json()));
@@ -113,7 +119,9 @@ class BridgeHandler {
   //neither alyson nor gadaq have a real object/interface for this
   //so i threw one together myself, might need to reconsider it later
   //thats assuming we get around to actually sending real protobuf objects
-  static void answer(Ask ask, dynamic value) {
+
+  //also going to make this asynchronous so it doesnt speed bump the form
+  static void answer(Ask ask, dynamic value) async {
     Item answerItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((AnswerMsg.create()
@@ -149,7 +157,7 @@ class BridgeHandler {
 
   void handleData(Map<String, dynamic> data,
       {required Function(QDataAskMessage ask) askCallback,
-      required Function(BaseEntity be) beCallback}) {
+      required Function(BaseEntity be) beCallback}) async {
     if (data['msg_type'] == "CMD_MSG") {
       CmdPayload payload = CmdPayload.create()
         ..mergeFromProto3Json(data, ignoreUnknownFields: true);
@@ -175,15 +183,17 @@ class BridgeHandler {
       }
       if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
-       
+
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
-        
+
         for (QMessage message in message.messages) {
           Map<String, dynamic> json =
               message.toProto3Json() as Map<String, dynamic>;
           _log.info("the type is ${json['dataType']}");
           for (BaseEntity be in message.items) {
-            print(be);
+            if (message.parentCode.startsWith("SBE_")) {
+              be.parentCode = message.parentCode;
+            }
             handleBE(be, beCallback);
           }
         }
@@ -203,17 +213,14 @@ class BridgeHandler {
     askCallback,
   ) async {
     if (data['data_type'] == 'BaseEntity') {
-
       try {
         QMessage qMessage = QMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
-        _log.info("Created qmessage");
-        _log.info("Data ${data.keys.toList()}");
         for (BaseEntity be in qMessage.items) {
           //TODO: work out a better solution than this
           //not exactly fond of this workaround
-          be.questions.add(
-              EntityQuestion.create()..valueString = qMessage.questionCode);
+          be.parentCode = qMessage.questionCode;
+          // be.questions.add(EntityQuestion.create()..valueString = qMessage.questionCode);
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -224,8 +231,6 @@ class BridgeHandler {
         QDataAskMessage askmsg = QDataAskMessage.create()
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
         askCallback(askmsg);
-        _log.info(
-            "SUCCEEDED IN MERGING ${data["items"][0]["question"]["attribute"]}");
         for (Ask ask in askmsg.items) {
           handleAsk(ask, askCallback);
         }
@@ -335,8 +340,8 @@ class BridgeHandler {
   static EntityAttribute findAttribute(
       BaseEntity entity, String attributeName) {
     if (entity.baseEntityAttributes.isEmpty) {
-      throw ArgumentError(
-          "The entity provided contains no attributes", entity.code);
+      Log("")
+          .error("The entity provided contains no attributes ${entity.code}");
     }
     try {
       EntityAttribute attribute = entity.baseEntityAttributes
@@ -379,7 +384,8 @@ class BridgeHandler {
       entityWidget =
           TemplateHandler.getTemplate(templateAttribute.valueString, be);
     } catch (e) {
-      Log("BridgeHandler").info("Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e");
+      Log("BridgeHandler").info(
+          "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e");
       entityWidget = ErrorWidget(ArgumentError(
           "Could not get PCM widget ${be.code} ${templateAttribute.valueString} $e",
           be.code));
@@ -406,9 +412,11 @@ class BridgeHandler {
   static ThemeData getTheme() {
     BaseEntity project = getProject();
     Color getColor(String code) {
-      return Color(int.parse(
-          "ff${findAttribute(project, code).valueString.substring(1)}",
-          radix: 16));
+      EntityAttribute att = findAttribute(project, code);
+      if (att.attributeCode != "ERR") {
+        return Color(int.parse("ff${att.valueString.substring(1)}", radix: 16));
+      }
+      return Colors.black;
     }
 
     return ThemeData(

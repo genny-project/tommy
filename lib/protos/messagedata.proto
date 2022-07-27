@@ -24,5 +24,6 @@ message MessageData {
     map<string,string> platform = 9;
     string sessionId = 10;
     string processId = 11;
+    string questionCode = 12;
 }
 

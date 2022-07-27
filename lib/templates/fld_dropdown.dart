@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/proto_utils.dart';
 
 //TODO: need a way to discern whether the answer count is mutually exclusive/answer limit
 
@@ -19,6 +22,11 @@ class DropdownField extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Text(ask.name),
+      onExpansionChanged: (_) {
+        if (_) {
+          BridgeHandler.evt(ask, "DD");
+        }
+      },
       children: [
         //wrap to handle overflow
         Wrap(
@@ -81,10 +89,10 @@ List<BaseEntity> parseAnswer(String answer) {
 
 List<EntityAttribute> getItems(Ask ask) {
   List<EntityAttribute> items = [];
-  BridgeHandler.beData.values
-      .where((entity) => entity.questions.first.valueString == ask.questionCode)
-      .forEach((entity) {
-    entity.findAttribute("PRI_NAME");
+  BridgeHandler.beData.values.where((entity) {
+    return entity.parentCode == ask.questionCode;
+  }).forEach((entity) {
+    items.add(entity.findAttribute("PRI_NAME"));
   });
   return items;
 }

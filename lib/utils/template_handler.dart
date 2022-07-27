@@ -3,10 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/templates/fld_dropdown.dart';
+import 'package:tommy/templates/fld_flag.dart';
 import 'package:tommy/templates/fld_radio.dart';
 import 'package:tommy/templates/tpl_appbar.dart';
 import 'package:tommy/templates/tpl_cards_list_view.dart';
 import 'package:tommy/templates/tpl_dashboard.dart';
+import 'package:tommy/templates/tpl_date.dart';
 import 'package:tommy/templates/tpl_detail_view.dart';
 import 'package:tommy/templates/tpl_form.dart';
 import 'package:tommy/templates/tpl_hidden_menu.dart';
@@ -77,6 +79,7 @@ class TemplateHandler {
   }
 
   Widget getField(Ask ask, BuildContext context) {
+    // return Text(ask.question.attribute.dataType.component);
     switch (ask.question.attribute.dataType.component) {
       case "radio":
         {
@@ -86,8 +89,13 @@ class TemplateHandler {
         {
           return DropdownField(ask: ask);
         }
+      case "flag":
+        {
+          return FlagField(ask: ask);
+        }
       case "date":
         {
+          return DateTemplate(ask: ask);
           return CalendarDatePicker(
               initialDate: DateTime.now(),
               firstDate: DateTime.fromMillisecondsSinceEpoch(0),
@@ -122,14 +130,10 @@ class TemplateHandler {
         {
           BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
           return ListTile(
-            shape: ask.mandatory
-                ? const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    side: BorderSide(color: Colors.redAccent, width: 2))
-                : null,
             title: Focus(
               onFocusChange: ((focus) {
                 if (!focus) {
+                  print("Changed focus.");
                   ask.answer(entity.findAttribute(ask.attributeCode).valueString);
                 }
               }),
@@ -145,6 +149,8 @@ class TemplateHandler {
                     ask.answer(value);
                   },
                   decoration: InputDecoration(
+                    
+                    suffixIcon: ask.mandatory ? Icon(Icons.info) : SizedBox(),
                     labelText:
                         "${ask.name} ${ask.question.attribute.dataType.component}",
                   )),
@@ -169,9 +175,9 @@ class TemplateHandler {
         onPressed: () {
           /* # # # # #
           I would use the Geoff logger here but the standard dart print is far better at printing GRPC objects
-      # # # # # */
+          # # # # # */
           // ignore: avoid_print
-          print(attribute);
+          print("Attribute $attribute");
         },
         icon: const Icon(Icons.error));
   }

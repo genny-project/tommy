@@ -19,7 +19,6 @@ class AppBarTpl extends StatelessWidget {
     EntityAttribute logo = be.findAttribute("PRI_LOC1");
     List<EntityAttribute> actionAttributes = be.baseEntityAttributes.where((element) => element != logo).toList();
     title = logo.getPcmWidget();
-    print("ATTRIBUTE map ${actionAttributes.map((e) => e.valueString)}");
     actionAttributes.retainWhere((element) => element.valueString.endsWith("GRP"));
     for (EntityAttribute attribute in actionAttributes) {
       //TODO: DON'T DO THIS
@@ -29,7 +28,6 @@ class AppBarTpl extends StatelessWidget {
         ActionButtonTpl(attribute: attribute));
         // attribute.attributeWidget());
     }
-    _log.info("Title $title");
     return AppBar(
       title: title,
       centerTitle: false,

@@ -4,6 +4,7 @@
 
 class ProjectEnv {
   static const String baseUrl = "https://lojing-dev.gada.io";
+  // static const String baseUrl = "http://10.0.2.2";
   static const String grpcUrl = "10.0.2.2";
   static const String apiVersion = "/v7";
   static const String projectName = "InternMatch";

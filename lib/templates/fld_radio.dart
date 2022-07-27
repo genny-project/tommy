@@ -22,10 +22,14 @@ class RadioField extends StatelessWidget {
     //thought this would be terrible but it actually works stateless
     //cool
     List<EntityAttribute> dropdownItems = [];
-    BridgeHandler.beData.values
-        .where(
-            (entity) => entity.questions.first.valueString == ask.questionCode)
-        .forEach((entity) {
+    BridgeHandler.beData.values.where((entity) {
+      if (entity.questions.isNotEmpty) {
+        return entity.questions.first.valueString == ask.questionCode;
+      } else {
+        dropdownItems = [EntityAttribute.create()..name = "None found"..valueString = "None Found"];
+      }
+      return false;
+    }).forEach((entity) {
       dropdownItems.add(entity.findAttribute("PRI_NAME"));
     });
     return Column(

@@ -24,10 +24,10 @@ class Sidebar extends StatelessWidget {
                   .askData[attribute.valueString]?.childAsks.length,
               itemBuilder: (context, index) {
                 List<Ask>? childAsks =
-                    BridgeHandler.askData[attribute.valueString]?.childAsks;
+                    BridgeHandler.askData[attribute.valueString]!.childAsks;
                 List<Widget> buttons = [];
 
-                childAsks!.sort(((Ask a, Ask b) {
+                childAsks.sort(((Ask a, Ask b) {
                   return a.weight.compareTo(b.weight);
                 }));
                 Ask ask = childAsks[index];

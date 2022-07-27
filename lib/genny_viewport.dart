@@ -26,7 +26,6 @@ class _GennyViewportState extends State<GennyViewport> {
   static final Log _log = Log("Viewport");
   BridgeHandler handler = BridgeHandler(BridgeHandler.initialiseState());
   BaseEntity root = BaseEntity.create();
-  List<Widget> widgets = [];
   FocusNode focus = FocusNode();
   late TemplateHandler templateHandler;
   late Timer timer;
@@ -53,24 +52,15 @@ class _GennyViewportState extends State<GennyViewport> {
             ..body = jsonEncode({'connect': 'connect'}))
           .listen((item) async {
         if (item.body != "{\"h\"}") {
+          print("Got data! ${item.body}");
           handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
-            if (be.code == "PCM_ROOT") {
-              _log.info("Found root");
-              setState(() {
+            setState(() {
+              if (be.code == "PCM_ROOT") {
+                _log.info("Found root");
                 root = be;
-              });
-            }
-            setState(() {});
+              }
+            });
           }), askCallback: ((askmsg) {
-            for (Ask ask in askmsg.items) {
-              widgets.add(Text(
-                "${ask.name} ${ask.questionCode}",
-                style: const TextStyle(color: Colors.blue),
-              ));
-              if (ask.name == "Avatar") {}
-
-              if (ask.name == "Avatar Menu") {}
-            }
             setState(() {});
           }));
         }

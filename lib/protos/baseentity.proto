@@ -20,6 +20,7 @@ message BaseEntity {
   repeated EntityQuestion questions = 11;
   repeated AnswerLink answers = 12;
   optional bool fromCache = 13;
+  optional string parentCode = 14;
 }
 
 message LocalDateTime {
