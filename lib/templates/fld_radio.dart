@@ -47,6 +47,7 @@ class RadioField extends StatelessWidget {
                   groupValue:
                       entity.findAttribute(ask.attributeCode).valueString,
                   onChanged: (_) {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     entity.findAttribute(ask.attributeCode).valueString =
                         dropdownItems[index].valueString;
                     ask.answer(

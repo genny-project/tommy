@@ -4,12 +4,12 @@ import 'package:geoff/utils/time/time_zone.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
+import 'package:tommy/utils/bridge_handler.dart';
 
 class TimezoneWidget extends StatefulWidget {
-  final BaseEntity entity;
+  late final BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
   final Ask ask;
-  const TimezoneWidget({Key? key, required this.entity, required this.ask})
-      : super(key: key);
+  TimezoneWidget({Key? key, required this.ask}) : super(key: key);
 
   @override
   State<TimezoneWidget> createState() => _TimezoneWidgetState();
@@ -39,6 +39,7 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
           ],
         ),
         onPressed: () {
+          FocusManager.instance.primaryFocus?.unfocus();
           showDialog(
               context: context,
               builder: ((context) {

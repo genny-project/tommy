@@ -59,7 +59,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   bool askSwitch = false;
   int page = 0;
   bool verbose = true;
-  final stub = StreamClient(ProtoUtils.getChannel());
+  static final stub = StreamClient(ProtoUtils.getChannel());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

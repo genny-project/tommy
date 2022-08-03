@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/generated/stream.pb.dart';
+import 'package:tommy/genny_viewport.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/template_handler.dart';
 
@@ -15,6 +17,8 @@ class GennyForm extends StatefulWidget {
 }
 
 class _GennyFormState extends State<GennyForm> {
+  List<Ask> allQuestions = [];
+  FocusNode fNode = FocusNode();
   void initState() {
     super.initState();
 
@@ -37,28 +41,138 @@ class _GennyFormState extends State<GennyForm> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, GlobalKey> fieldKeys = {};
+
     Ask? qGroup = BridgeHandler
-        .askData[widget.entity.findAttribute("PRI_QUESTION_CODE").valueString]?..childAsks.sort(((a, b) {
-          return a.weight.compareTo(b.weight);
-        }));
+        .askData[widget.entity.findAttribute("PRI_QUESTION_CODE").valueString]
+      ?..childAsks.sort(((a, b) {
+        return a.weight.compareTo(b.weight);
+      }));
 
     if (qGroup != null) {
+      for (Ask ask in qGroup.childAsks) {
+        ask.attributeCode != "QQQ_QUESTION_GROUP"
+            ? allQuestions.add(ask)
+            : allQuestions.addAll(ask.childAsks);
+      }
+    }
+    if (qGroup != null) {
+      List<Ask> getAll() {
+        List<Ask> asks = [];
+        qGroup.childAsks.forEach((ask) {
+          ask.attributeCode != "QQQ_QUESTION_GROUP"
+              ? asks.add(ask)
+              : asks.addAll(ask.childAsks);
+        });
+        return asks;
+      }
+
+      List<Ask> unanswered() {
+        return getAll()
+            .toList()
+            .where((element) {
+              var value = BridgeHandler.beData[element.targetCode]!
+                  .findAttribute(element.attributeCode)
+                  .getValue();
+              return (element.mandatory == true && value == null ||
+                  value == "");
+            })
+            .toSet()
+            .toList();
+      }
+
       return Column(
           children: List.generate(qGroup.childAsks.length, (index) {
         if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
           Ask ask = qGroup.childAsks[index];
           return Column(
-            children: List.generate(
-                ask.childAsks.length,
-                (index) =>
-                    TemplateHandler().getField(ask.childAsks[index], context)),
-          );
+              children: List.generate(ask.childAsks.length, (index) {
+            return Container(
+                child:
+                    TemplateHandler().getField(ask.childAsks[index], context, fNode));
+          }));
         }
-        return TemplateHandler()
-            .getField(qGroup.childAsks.elementAt(index), context);
-      }));
+        return Container(
+            child:
+                TemplateHandler().getField(qGroup.childAsks[index], context, fNode));
+      },)
+            ..add(UnansweredWidget(qGroup)));
     } else {
       return const LinearProgressIndicator();
     }
+  }
+}
+
+class UnansweredWidget extends StatefulWidget {
+  final Ask qGroup;
+  const UnansweredWidget(
+    this.qGroup, {
+    Key? key,
+  }) : super(key: key);
+ 
+  @override
+  State<UnansweredWidget> createState() => _UnansweredWidgetState();
+}
+
+class _UnansweredWidgetState extends State<UnansweredWidget> {
+  late void Function() f = () {
+    setState(() {
+      
+    });
+  };
+  void initState() {
+    BridgeHandler.message.addListener(f);
+    super.initState();
+  }
+
+  void dispose() {
+    BridgeHandler.message.removeListener(f);
+  }
+
+  List<Ask> getAll() {
+    List<Ask> asks = [];
+    widget.qGroup.childAsks.forEach((ask) {
+      ask.attributeCode != "QQQ_QUESTION_GROUP"
+          ? asks.add(ask)
+          : asks.addAll(ask.childAsks);
+    });
+    return asks;
+  }
+
+  List<Ask> unanswered() {
+    return getAll()
+        .toList()
+        .where((element) {
+          var value = BridgeHandler.beData[element.targetCode]!
+              .findAttribute(element.attributeCode)
+              .getValue();
+          return (element.mandatory == true && value == null || value == "");
+        })
+        .toSet()
+        .toList();
+  }
+
+  // List<Ask> unansweredQ = unanswered();
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        unanswered().isNotEmpty ? Text("Please fill the following required fields") : SizedBox(),
+        Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 10.0,
+            children: List.generate(
+                unanswered().length,
+                (index) => InkWell(
+                      onTap: () {},
+                      child: Chip(
+                          backgroundColor: Colors.red[300],
+                          label: Text(
+                            unanswered()[index].name,
+                            style: const TextStyle(color: Colors.white),
+                          )),
+                    ))),
+      ],
+    );
   }
 }

@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/utils/proto_utils.dart';
 
 //TODO: need a way to discern whether the answer count is mutually exclusive/answer limit
 
@@ -20,47 +17,54 @@ class DropdownField extends StatelessWidget {
   DropdownField({Key? key, required this.ask}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: Text(ask.name),
-      onExpansionChanged: (_) {
-        if (_) {
-          BridgeHandler.evt(ask, "DD");
-        }
-      },
-      children: [
-        //wrap to handle overflow
-        Wrap(
-          alignment: WrapAlignment.start,
-          // crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 5.0,
-          runSpacing: 5.0,
-          children: List.generate(answers.length, (index) {
-            return Chip(
-                deleteIcon: const Icon(Icons.close),
-                onDeleted: () {
-                  answers.removeAt(index);
-                  answerDropdown();
-                },
-                label: Text(answers[index].name.toString()));
-          }),
-        ),
-        ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: dropdownItems.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return ListTile(
-                onTap: () {
-                  answers.add(BridgeHandler
-                      .beData[dropdownItems[index].baseEntityCode]!);
-                  answerDropdown();
-                },
-                title: Text(BridgeHandler
-                    .beData[dropdownItems[index].baseEntityCode]!.name));
-          },
-        ),
-      ],
-    );
+    return StatefulBuilder(builder: (context, setState) {
+      return ExpansionTile(
+        title: Text(ask.name),
+        subtitle: //wrap to handle overflow
+          answers.isNotEmpty ? Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 5.0,
+            runSpacing: 5.0,
+            children: List.generate(answers.length, (index) {
+              return Chip(
+                  deleteIcon: const Icon(Icons.close),
+                  onDeleted: () {
+                    setState((){
+                    answers.removeAt(index);
+                    answerDropdown();});
+                  },
+                  label: Text(answers[index].name.toString()));
+            }),
+          ) : null,
+        onExpansionChanged: (_) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          if (_ && dropdownItems.isEmpty) {
+            BridgeHandler.evt(ask, "DD");
+          }
+        },
+        children: [
+          
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: dropdownItems.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListTile(
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    setState(() {
+                      answers.add(BridgeHandler
+                          .beData[dropdownItems[index].baseEntityCode]!);
+                      answerDropdown();
+                    });
+                  },
+                  title: Text(BridgeHandler
+                      .beData[dropdownItems[index].baseEntityCode]!.name));
+            },
+          ),
+        ],
+      );
+    });
   }
 
   void answerDropdown() {

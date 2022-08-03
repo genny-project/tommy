@@ -27,7 +27,7 @@ class TableTpl extends StatelessWidget {
     print("Attribute codes - ${sbe.baseEntityAttributes.map((e) => e.attributeCode)}");
     print("Getting sbe code ${entity.findAttribute("PRI_LOC1").valueString}");
     print("page size ${sbe.baseEntityAttributes.length} $pageSize ${sbe.findAttribute("SCH_PAGE_SIZE").valueInteger}");
-    return Container(
+    return SizedBox(
       /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render*/
       height:
           (sbe.findAttribute("SCH_PAGE_SIZE").valueInteger.toDouble() * 50) +
@@ -55,25 +55,19 @@ class TableTpl extends StatelessWidget {
                                       : BorderRadius.zero),
                           width: MediaQuery.of(context).size.width,
                           child:
-                              Center(child: Text(col.elementAt(pageIndex).attributeName, style: TextStyle(fontWeight: FontWeight.bold),),)),
-                      SizedBox(
+                              Center(child: Text(col.elementAt(pageIndex).attributeName, style: const TextStyle(fontWeight: FontWeight.bold),),)),
+                      const SizedBox(
                         height: 10,
                       ),
                       Expanded(
                           child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: row.length,
                         itemBuilder: (context, listIndex) {
                           String value;
                           try {
-                            value = row
-                                .elementAt(listIndex)
-                                .findAttribute(col
-                                    .elementAt(pageIndex)
-                                    .attributeCode
-                                    .substring(4))
-                                .valueString;
-                          } catch (e) {
+                            print("$listIndex Trying to get element ${row.elementAt(listIndex).baseEntityAttributes.map((e) => e.attributeCode).toString()} ${col.elementAt(pageIndex).attributeCode.substring(4)}");
+                            value = row.elementAt(listIndex).findAttribute(col.elementAt(pageIndex).attributeCode.substring(4)).valueString;} catch (e) {
                             value = "N/A";
                           }
                           return Container(

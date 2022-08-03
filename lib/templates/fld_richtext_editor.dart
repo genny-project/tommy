@@ -42,10 +42,7 @@ class _RichtextEditorState extends State<RichtextEditor> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        contentPadding: EdgeInsets.zero,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            side: BorderSide(color: Colors.black, width: 2)),
+        // contentPadding: EdgeInsets.zero,
         title: Column(
           children: [
             Text(
@@ -104,22 +101,9 @@ class _RichtextEditorState extends State<RichtextEditor> {
                   widget.ask.answer(answerValue);
                 }
               }),
-              child: TextField(
+              child: TextFormField(
+                
                 controller: _controller,
-                onTap: () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  void Function() f = () {};
-                  f = () {
-                    if (FocusManager.instance.primaryFocus?.hasFocus == false) {
-                      widget.ask.answer(answerValue);
-                      // focus.unfocus();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      FocusManager.instance.primaryFocus?.removeListener(f);
-                    }
-                  };
-                  FocusManager.instance.primaryFocus?.requestFocus();
-                  FocusManager.instance.primaryFocus?.addListener(f);
-                },
                 onChanged: (value) {
                   BridgeHandler.findByCode(widget.ask.targetCode)
                       .findAttribute(widget.ask.attributeCode)

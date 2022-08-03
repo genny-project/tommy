@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
+import 'package:grpc/grpc.dart';
 import 'package:tommy/generated/answer.pb.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -26,7 +27,10 @@ class BridgeHandler {
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
   static Map<String, Attribute> attributeData = {};
-
+  static ValueNotifier message = ValueNotifier<Item>(Item.create());
+  static final ResponseStream stream = StreamClient(ProtoUtils.getChannel()).connect(Item.create()
+            ..token = Session.tokenResponse!.accessToken!
+            ..body = jsonEncode({'connect': 'connect'}));
   /*-----------------------------------
     Should rethink this appstate function, a carryover from attempting to emulate Alyson
     PCM_ROOT handles all of this way better
@@ -220,7 +224,6 @@ class BridgeHandler {
           //TODO: work out a better solution than this
           //not exactly fond of this workaround
           be.parentCode = qMessage.questionCode;
-          // be.questions.add(EntityQuestion.create()..valueString = qMessage.questionCode);
           handleBE(be, beCallback);
         }
       } catch (e) {
@@ -364,7 +367,7 @@ class BridgeHandler {
     String? regex = validationList.isNotEmpty ? validationList.first.regex : "";
     RegExp regExp = RegExp(regex!);
     return (string) {
-      if (!regExp.hasMatch(string!)) {
+      if (!regExp.hasMatch(string!) && string.isNotEmpty) {
         return "Does not match regex";
       }
       return null;

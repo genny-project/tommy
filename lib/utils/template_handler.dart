@@ -78,7 +78,7 @@ class TemplateHandler {
     }
   }
 
-  Widget getField(Ask ask, BuildContext context) {
+  Widget getField(Ask ask, BuildContext context, FocusNode fNode) {
     // return Text(ask.question.attribute.dataType.component);
     switch (ask.question.attribute.dataType.component) {
       case "radio":
@@ -95,18 +95,11 @@ class TemplateHandler {
         }
       case "date":
         {
-          return DateTemplate(ask: ask);
-          return CalendarDatePicker(
-              initialDate: DateTime.now(),
-              firstDate: DateTime.fromMillisecondsSinceEpoch(0),
-              lastDate: DateTime.now(),
-              onDateChanged: (value) {
-                ask.answer(DateFormat('y-M-d').format(value));
-              });
+          return 
+          DateTemplate(ask: ask);
         }
       case "time_zone":
-        BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
-        return TimezoneWidget(entity: entity, ask: ask);
+        return TimezoneWidget(ask: ask);
       case "button":
         {
           return TextButton(
@@ -131,6 +124,7 @@ class TemplateHandler {
           BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
           return ListTile(
             title: Focus(
+              focusNode: fNode,
               onFocusChange: ((focus) {
                 if (!focus) {
                   print("Changed focus.");

@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
+import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
@@ -46,22 +45,23 @@ class _GennyViewportState extends State<GennyViewport> {
       setState(() {
         prefs = pr;
       });
-      stub
-          .connect(Item.create()
-            ..token = Session.tokenResponse!.accessToken!
-            ..body = jsonEncode({'connect': 'connect'}))
-          .listen((item) async {
+
+      BridgeHandler.stream.listen((item) async {
         if (item.body != "{\"h\"}") {
-          print("Got data! ${item.body}");
+          BridgeHandler.message.value = item;
+          print(
+              "Got data! ${(jsonDecode(item.body) as Map<String, dynamic>).remove("items")}");
           handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
             setState(() {
               if (be.code == "PCM_ROOT") {
                 _log.info("Found root");
-                root = be;
+                setState(() {
+                  root = be;
+                });
               }
             });
           }), askCallback: ((askmsg) {
-            setState(() {});
+            // setState(() {});
           }));
         }
       });
@@ -109,9 +109,9 @@ class _GennyViewportState extends State<GennyViewport> {
                 child: InkWell(
                     onLongPress: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ProtoConsole()));
+                          builder: (context) => const ProtoConsole()));
                     },
-                    child: CircularProgressIndicator())),
+                    child: const CircularProgressIndicator())),
           );
   }
 
