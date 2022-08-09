@@ -7,6 +7,7 @@ import 'package:tommy/utils/bridge_handler.dart';
 
 class AppBarTpl extends StatelessWidget {
   final BaseEntity entity;
+  // ignore: unused_field
   final Log _log = Log("TPL_APPBARTPL");
   AppBarTpl({Key? key, required this.entity}) : super(key: key);
   @override

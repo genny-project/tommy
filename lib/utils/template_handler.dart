@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/templates/fld_date.dart';
 import 'package:tommy/templates/fld_dropdown.dart';
 import 'package:tommy/templates/fld_flag.dart';
 import 'package:tommy/templates/fld_radio.dart';
+import 'package:tommy/templates/fld_richtext_editor.dart';
 import 'package:tommy/templates/tpl_appbar.dart';
 import 'package:tommy/templates/tpl_cards_list_view.dart';
 import 'package:tommy/templates/tpl_dashboard.dart';
-import 'package:tommy/templates/tpl_date.dart';
 import 'package:tommy/templates/tpl_detail_view.dart';
 import 'package:tommy/templates/tpl_form.dart';
 import 'package:tommy/templates/tpl_hidden_menu.dart';
@@ -19,7 +19,6 @@ import 'package:tommy/templates/tpl_table.dart';
 import 'package:tommy/templates/tpl_vert.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/templates/fld_richtext_editor.dart';
 import 'package:tommy/widgets/timezone_widget.dart';
 
 class TemplateHandler {
@@ -72,7 +71,9 @@ class TemplateHandler {
       case "TPL_CARDS_LIST_VIEW":
         return CardsListView(entity: entity);
       case "TPL_TABLE":
-        return TableTpl(entity: entity);
+        // return Text("Yeah ${entity.hashCode}");
+        //providing key because without it, it doesnt know to overwrite itself. weird one.
+        return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
       default:
         return Text(code);
     }
@@ -95,8 +96,7 @@ class TemplateHandler {
         }
       case "date":
         {
-          return 
-          DateTemplate(ask: ask);
+          return DateTemplate(ask: ask);
         }
       case "time_zone":
         return TimezoneWidget(ask: ask);
@@ -123,12 +123,18 @@ class TemplateHandler {
         {
           BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
           return ListTile(
+            contentPadding: ask.mandatory
+                ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+                : null,
+            shape: ask.mandatory
+                ? const Border(left: BorderSide(color: Colors.red, width: 4))
+                : null,
             title: Focus(
-              focusNode: fNode,
               onFocusChange: ((focus) {
+                print("Focus Changed $focus");
                 if (!focus) {
-                  print("Changed focus.");
-                  ask.answer(entity.findAttribute(ask.attributeCode).valueString);
+                  ask.answer(
+                      entity.findAttribute(ask.attributeCode).valueString);
                 }
               }),
               child: TextFormField(
@@ -143,10 +149,8 @@ class TemplateHandler {
                     ask.answer(value);
                   },
                   decoration: InputDecoration(
-                    
-                    suffixIcon: ask.mandatory ? Icon(Icons.info) : SizedBox(),
                     labelText:
-                        "${ask.name} ${ask.question.attribute.dataType.component}",
+                        ask.name,
                   )),
             ),
           );

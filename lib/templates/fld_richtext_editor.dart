@@ -43,6 +43,12 @@ class _RichtextEditorState extends State<RichtextEditor> {
   Widget build(BuildContext context) {
     return ListTile(
         // contentPadding: EdgeInsets.zero,
+        contentPadding: widget.ask.mandatory
+            ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+            : null,
+        shape: widget.ask.mandatory
+            ? const Border(left: BorderSide(color: Colors.red, width: 4))
+            : null,
         title: Column(
           children: [
             Text(
@@ -102,7 +108,6 @@ class _RichtextEditorState extends State<RichtextEditor> {
                 }
               }),
               child: TextFormField(
-                
                 controller: _controller,
                 onChanged: (value) {
                   BridgeHandler.findByCode(widget.ask.targetCode)

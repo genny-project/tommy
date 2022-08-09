@@ -28,7 +28,6 @@ class Login extends StatelessWidget {
               style: ButtonStyle(shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)))),
                 onPressed: () {
                   http.get(Uri.parse(BridgeEnv.bridgeUrl)).then((response) async {
-                    print("response ${response.body}");
                     Map<String, dynamic> data = jsonDecode(response.body);
                     _log.info("Bridge Data $data");
                     BridgeEnv.map.forEach(

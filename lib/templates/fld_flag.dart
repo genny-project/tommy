@@ -8,7 +8,10 @@ import 'package:tommy/utils/bridge_handler.dart';
 looks far jankier than the performance impact ever would.*/
 class FlagField extends StatefulWidget {
   final Ask ask;
-  const FlagField({Key? key, required this.ask,}) : super(key: key);
+  const FlagField({
+    Key? key,
+    required this.ask,
+  }) : super(key: key);
 
   @override
   State<FlagField> createState() => _FlagFieldState();
@@ -24,16 +27,21 @@ class _FlagFieldState extends State<FlagField> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      trailing:Switch(
-            value: value,
-            onChanged: (_) {
-              FocusManager.instance.primaryFocus?.unfocus();
-              setState(() {
-                value = _;
-              });
-              widget.ask.answer(value.toString().toUpperCase());
-            }
-      ),
+      contentPadding: widget.ask.mandatory
+          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+          : null,
+      shape: widget.ask.mandatory
+          ? const Border(left: BorderSide(color: Colors.red, width: 4))
+          : null,
+      trailing: Switch(
+          value: value,
+          onChanged: (_) {
+            FocusManager.instance.primaryFocus?.unfocus();
+            setState(() {
+              value = _;
+            });
+            widget.ask.answer(value.toString().toUpperCase());
+          }),
       title: Text(widget.ask.name),
     );
   }
