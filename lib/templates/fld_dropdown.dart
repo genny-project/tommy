@@ -50,7 +50,7 @@ class DropdownField extends StatelessWidget {
           onExpansionChanged: (_) {
             FocusManager.instance.primaryFocus?.unfocus();
             if (_ && dropdownItems.isEmpty) {
-              BridgeHandler.evt(ask, "DD");
+              BridgeHandler.askEvt(ask, "DD");
             }
           },
           children: [

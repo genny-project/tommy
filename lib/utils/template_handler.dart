@@ -65,13 +65,12 @@ class TemplateHandler {
       case "TPL_DASHBOARD_1":
         return Dashboard(entity: entity);
 
-      case "TPL_DETAIL_VIEW1":
+      case "TPL_DETAIL_VIEW":
         return DetailView(entity: entity);
 
       case "TPL_CARDS_LIST_VIEW":
         return CardsListView(entity: entity);
       case "TPL_TABLE":
-        // return Text("Yeah ${entity.hashCode}");
         //providing key because without it, it doesnt know to overwrite itself. weird one.
         return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
       default:
@@ -107,7 +106,7 @@ class TemplateHandler {
                 FocusManager.instance.primaryFocus?.unfocus();
                 //TODO: find a better solution to simply waiting for focus to change arbitrarily
                 Future.delayed(const Duration(seconds: 1), () {
-                  BridgeHandler.evt(ask);
+                  BridgeHandler.askEvt(ask);
                 });
               },
               child: Text(ask.name));

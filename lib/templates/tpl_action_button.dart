@@ -16,7 +16,7 @@ class ActionButtonTpl extends StatelessWidget {
     return PopupMenuButton(itemBuilder: (context) {
       return List.generate(ask?.childAsks.length ?? 0, (index) => PopupMenuItem(
         onTap: (){
-          BridgeHandler.evt(ask!.childAsks[index]);
+          BridgeHandler.askEvt(ask!.childAsks[index]);
         },
         child: Text(ask!.childAsks[index].name)));
       });

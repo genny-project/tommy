@@ -7,7 +7,7 @@ import 'package:tommy/utils/bridge_handler.dart';
 class TableTpl extends StatefulWidget {
   final BaseEntity entity;
 
-  TableTpl({Key? key, required this.entity}) : super(key: key);
+  const TableTpl({Key? key, required this.entity}) : super(key: key);
 
   @override
   State<TableTpl> createState() => _TableTplState();
@@ -24,13 +24,13 @@ class _TableTplState extends State<TableTpl> {
     if (searchBe == null) {
       BridgeHandler.awaitBe(widget.entity.findAttribute("PRI_LOC1").valueString)
           ?.then((value) {
-        print("got searchbe value ${value.code}");
         searchBe = value;
       });
     }
     super.initState();
   }
 
+  @override
   void dispose() {
     super.dispose();
   }
@@ -49,7 +49,6 @@ class _TableTplState extends State<TableTpl> {
     });
 
     if (key != null && key!.isNotEmpty) {
-      print("using key $key");
       BaseEntity sbe = BridgeHandler.beData[key]!;
       List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
         return element.parentCode == sbe.code;
@@ -75,7 +74,7 @@ class _TableTplState extends State<TableTpl> {
                   itemBuilder: ((context, pageIndex) {
                     return Column(
                       children: [
-                        Divider(
+                        const Divider(
                           height: 5,
                         ),
                         Container(
@@ -130,12 +129,12 @@ class _TableTplState extends State<TableTpl> {
 
                                     icon: sort[pageIndex] != null
                                         ? sort[pageIndex]!
-                                            ? Icon(Icons.arrow_circle_up)
-                                            : Icon(Icons.arrow_circle_down)
-                                        : Icon(Icons.arrow_drop_down))
+                                            ? const Icon(Icons.arrow_circle_up)
+                                            : const Icon(Icons.arrow_circle_down)
+                                        : const Icon(Icons.arrow_drop_down))
                               ],
                             )),
-                        Divider(
+                        const Divider(
                           height: 5,
                         ),
                         const SizedBox(
@@ -147,21 +146,23 @@ class _TableTplState extends State<TableTpl> {
                           itemCount: row.length,
                           itemBuilder: (context, listIndex) {
                             String value;
+                            EntityAttribute item = row
+                                .elementAt(listIndex)
+                                .findAttribute(col
+                                    .elementAt(pageIndex)
+                                    .attributeCode
+                                    .replaceFirst("COL_", ""));
+                            Iterable<EntityAttribute> actions =
+                                sbe.baseEntityAttributes.where((element) =>
+                                    element.attributeCode.startsWith("ACT_"));
                             try {
-                              var item = row
-                                  .elementAt(listIndex)
-                                  .findAttribute(col
-                                      .elementAt(pageIndex)
-                                      .attributeCode
-                                      .replaceFirst("COL_", ""))
-                                  .getValue();
-                              if (item != null) {
-                                value = item.toString();
+                              if (item.getValue() != null) {
+                                value = item.getValue().toString();
                               } else {
                                 throw TypeError();
                               }
                             } catch (e) {
-                              print(e);
+                              _log.error(e);
                               value = "N/A";
                             }
                             return Container(
@@ -169,13 +170,35 @@ class _TableTplState extends State<TableTpl> {
                               color: listIndex % 2 == 0
                                   ? Colors.grey[200]
                                   : Colors.transparent,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  pageIndex == 0 ? PopupMenuButton(itemBuilder: (context) {
+                                    return List.generate(
+                                        actions.length,
+                                        (index) => PopupMenuItem(
+                                            onTap: () {
+                                              BridgeHandler.evt(
+                                                  code: actions
+                                                      .elementAt(index)
+                                                      .attributeCode,
+                                                  sourceCode: BridgeHandler.getUser()!.code,
+                                                  targetCode:
+                                                      item.baseEntityCode,
+                                                  parentCode: sbe.parentCode);
+                                            },
+                                            child: Text(actions
+                                                .elementAt(index)
+                                                .attributeName)));
+                                  }) : const SizedBox(),
+                                  const Expanded(child: SizedBox(),),
                                   Text(
                                     value,
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  
+                                  const Expanded(child: SizedBox()),
                                 ],
                               ),
                             );
@@ -189,7 +212,7 @@ class _TableTplState extends State<TableTpl> {
         ),
       );
     } else {
-      return LinearProgressIndicator();
+      return const LinearProgressIndicator();
     }
   }
 }

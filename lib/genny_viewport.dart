@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,6 @@ import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
   @override

@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:grpc/grpc.dart';
@@ -17,7 +15,6 @@ import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/main.dart';
 import 'package:tommy/models/state.dart';
 import 'package:tommy/utils/bridge_env.dart';
-import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
@@ -103,11 +100,10 @@ class BridgeHandler {
           return "N/A";
         }
     }
-
-    return;
+  
   }
 
-  static void evt(Ask ask, [String? eventType]) {
+  static void askEvt(Ask ask, [String? eventType]) {
     Item evtItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
@@ -122,11 +118,33 @@ class BridgeHandler {
               ..sourceCode = ask.sourceCode
               ..targetCode = ask.targetCode
               ..parentCode = ""
-              ..questionCode = ask.questionCode
               ..value = ask.value
               ..sessionId = Session.tokenData['jti']
               ..processId = ask.processId))
           .toProto3Json());
+    stub.sink(evtItem);
+  }
+
+  static void evt(
+      {required String code,
+      required String sourceCode,
+      required String targetCode,
+      required String parentCode}) {
+    Item evtItem = Item.create()
+      ..token = Session.token!
+      ..body = jsonEncode((QMessage.create()
+        ..token = Session.tokenResponse!.accessToken!
+        ..msgType = "EVT_MSG"
+        ..eventType = "BTN_CLICK"
+        ..redirect = true
+        ..data = (MessageData.create()
+          ..code = code
+          ..sourceCode = sourceCode
+          ..targetCode = targetCode
+          ..parentCode = parentCode
+          ..questionCode = "QUE_PROPERTIES"
+          
+          ..sessionId = Session.tokenData['jti'])).toProto3Json());
     stub.sink(evtItem);
   }
 
@@ -262,8 +280,6 @@ class BridgeHandler {
     beCallback(entity);
   }
 
-  
-
   void handlePRJ(BaseEntity entity) {
     _log.info("Got project ${entity.code}");
     MyApp.changeTheme(getTheme());
@@ -347,14 +363,12 @@ class BridgeHandler {
 
   static Future<BaseEntity>? awaitBe(String code) async {
     Completer<BaseEntity> completer = Completer();
-    if(beData[code] != null) {
+    if (beData[code] != null) {
       return beData[code]!;
     }
-    void cancel(StreamSubscription stream) {
-      stream.cancel();
-    }
+
     StreamSubscription<BaseEntity> stream = beStream.stream.listen((entity) {
-      if(entity.code.startsWith(code)) {
+      if (entity.code.startsWith(code)) {
         completer.complete(entity);
       }
     });
@@ -451,7 +465,6 @@ class BridgeHandler {
       if (att.attributeCode != "ERR") {
         return Color(int.parse("ff${att.valueString.substring(1)}", radix: 16));
       }
-      int colour = Random().nextInt(4294967295);
       return Colors.black;
     }
 
