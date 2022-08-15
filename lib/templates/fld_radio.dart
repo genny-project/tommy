@@ -26,7 +26,11 @@ class RadioField extends StatelessWidget {
       if (entity.questions.isNotEmpty) {
         return entity.questions.first.valueString == ask.questionCode;
       } else {
-        dropdownItems = [EntityAttribute.create()..name = "None found"..valueString = "None Found"];
+        dropdownItems = [
+          EntityAttribute.create()
+            ..name = "None found"
+            ..valueString = "None Found"
+        ];
       }
       return false;
     }).forEach((entity) {
@@ -35,7 +39,14 @@ class RadioField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListTile(title: Text(ask.question.name)),
+        ListTile(
+            title: Text(ask.question.name),
+            contentPadding: ask.mandatory
+                ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+                : null,
+            shape: ask.mandatory
+                ? const Border(left: BorderSide(color: Colors.red, width: 4))
+                : null),
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,

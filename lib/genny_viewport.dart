@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
-import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
@@ -14,7 +13,6 @@ import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
-
 class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
   @override
@@ -49,8 +47,6 @@ class _GennyViewportState extends State<GennyViewport> {
       BridgeHandler.stream.listen((item) async {
         if (item.body != "{\"h\"}") {
           BridgeHandler.message.value = item;
-          print(
-              "Got data! ${(jsonDecode(item.body) as Map<String, dynamic>).remove("items")}");
           handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
             setState(() {
               if (be.code == "PCM_ROOT") {

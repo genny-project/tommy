@@ -15,7 +15,7 @@ class Logo extends StatelessWidget {
         ? TextButton(
             // iconSize: 50,
             onPressed: (() {
-              BridgeHandler.evt(ask.childAsks[1]);
+              BridgeHandler.askEvt(ask.childAsks[1]);
             }),
             child: CachedNetworkImage(
                 imageUrl: BridgeHandler.getPrimary(

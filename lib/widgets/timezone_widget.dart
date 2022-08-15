@@ -32,6 +32,12 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: widget.ask.mandatory
+          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+          : null,
+      shape: widget.ask.mandatory
+          ? const Border(left: BorderSide(color: Colors.red, width: 4))
+          : null,
       title: TextButton(
         child: Row(
           children: [

@@ -18,51 +18,62 @@ class DropdownField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(builder: (context, setState) {
-      return ExpansionTile(
-        title: Text(ask.name),
-        subtitle: //wrap to handle overflow
-          answers.isNotEmpty ? Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 5.0,
-            runSpacing: 5.0,
-            children: List.generate(answers.length, (index) {
-              return Chip(
-                  deleteIcon: const Icon(Icons.close),
-                  onDeleted: () {
-                    setState((){
-                    answers.removeAt(index);
-                    answerDropdown();});
-                  },
-                  label: Text(answers[index].name.toString()));
-            }),
-          ) : null,
-        onExpansionChanged: (_) {
-          FocusManager.instance.primaryFocus?.unfocus();
-          if (_ && dropdownItems.isEmpty) {
-            BridgeHandler.evt(ask, "DD");
-          }
-        },
-        children: [
-          
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: dropdownItems.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return ListTile(
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    setState(() {
-                      answers.add(BridgeHandler
-                          .beData[dropdownItems[index].baseEntityCode]!);
-                      answerDropdown();
-                    });
-                  },
-                  title: Text(BridgeHandler
-                      .beData[dropdownItems[index].baseEntityCode]!.name));
-            },
-          ),
-        ],
+      return ListTile(
+        contentPadding: ask.mandatory
+            ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+            : null,
+        shape: ask.mandatory
+            ? const Border(left: BorderSide(color: Colors.red, width: 4))
+            : null,
+        title: ExpansionTile(
+          tilePadding: EdgeInsets.zero,
+          title: Text(ask.name),
+          subtitle: //wrap to handle overflow
+              answers.isNotEmpty
+                  ? Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 5.0,
+                      runSpacing: 5.0,
+                      children: List.generate(answers.length, (index) {
+                        return Chip(
+                            deleteIcon: const Icon(Icons.close),
+                            onDeleted: () {
+                              setState(() {
+                                answers.removeAt(index);
+                                answerDropdown();
+                              });
+                            },
+                            label: Text(answers[index].name.toString()));
+                      }),
+                    )
+                  : null,
+          onExpansionChanged: (_) {
+            FocusManager.instance.primaryFocus?.unfocus();
+            if (_ && dropdownItems.isEmpty) {
+              BridgeHandler.askEvt(ask, "DD");
+            }
+          },
+          children: [
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: dropdownItems.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                    onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      setState(() {
+                        answers.add(BridgeHandler
+                            .beData[dropdownItems[index].baseEntityCode]!);
+                        answerDropdown();
+                      });
+                    },
+                    title: Text(BridgeHandler
+                        .beData[dropdownItems[index].baseEntityCode]!.name));
+              },
+            ),
+          ],
+        ),
       );
     });
   }

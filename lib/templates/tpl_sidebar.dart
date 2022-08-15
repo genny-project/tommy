@@ -35,7 +35,7 @@ class Sidebar extends StatelessWidget {
                   try {
                     buttons.add(ListTile(
                       onTap: () {
-                        BridgeHandler.evt(ask);
+                        BridgeHandler.askEvt(ask);
                         Navigator.pop(context);
                       },
                       title: Text(
@@ -97,7 +97,7 @@ class Sidebar extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            BridgeHandler.evt(ask);
+                            BridgeHandler.askEvt(ask);
                             Navigator.pop(context);
                           },
                           title: Text(ask.name,

@@ -8,6 +8,7 @@ class ActionButtonTpl extends StatelessWidget {
   // TODO: sort this out once this is a PCM
   final EntityAttribute attribute;
   late final Ask? ask = BridgeHandler.askData[attribute.valueString];
+  // ignore: unused_field
   late final Log _log = Log(runtimeType.toString());
   ActionButtonTpl({Key? key, required this.attribute}) : super(key: key);
   @override
@@ -15,7 +16,7 @@ class ActionButtonTpl extends StatelessWidget {
     return PopupMenuButton(itemBuilder: (context) {
       return List.generate(ask?.childAsks.length ?? 0, (index) => PopupMenuItem(
         onTap: (){
-          BridgeHandler.evt(ask!.childAsks[index]);
+          BridgeHandler.askEvt(ask!.childAsks[index]);
         },
         child: Text(ask!.childAsks[index].name)));
       });

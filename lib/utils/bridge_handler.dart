@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:grpc/grpc.dart';
@@ -27,10 +27,12 @@ class BridgeHandler {
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
   static Map<String, Attribute> attributeData = {};
-  static ValueNotifier message = ValueNotifier<Item>(Item.create());
-  static final ResponseStream stream = StreamClient(ProtoUtils.getChannel()).connect(Item.create()
-            ..token = Session.tokenResponse!.accessToken!
-            ..body = jsonEncode({'connect': 'connect'}));
+  static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
+  static StreamController<BaseEntity> beStream = StreamController.broadcast();
+  static final ResponseStream stream =
+      StreamClient(ProtoUtils.getChannel()).connect(Item.create()
+        ..token = Session.tokenResponse!.accessToken!
+        ..body = jsonEncode({'connect': 'connect'}));
   /*-----------------------------------
     Should rethink this appstate function, a carryover from attempting to emulate Alyson
     PCM_ROOT handles all of this way better
@@ -69,7 +71,7 @@ class BridgeHandler {
         {
           return attribute.valueBoolean;
         }
-      case "Date":
+      case "LocalDate":
         {
           return attribute.valueDate;
         }
@@ -93,13 +95,16 @@ class BridgeHandler {
         {
           return attribute.valueDouble;
         }
+      default:
+        {
+          return "N/A";
+        }
     }
-
-    return;
+  
   }
 
-  static void evt(Ask ask, [String? eventType]) {
-    stub.sink(Item.create()
+  static void askEvt(Ask ask, [String? eventType]) {
+    Item evtItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
             ..token = Session.tokenResponse!.accessToken!
@@ -113,11 +118,34 @@ class BridgeHandler {
               ..sourceCode = ask.sourceCode
               ..targetCode = ask.targetCode
               ..parentCode = ""
-              ..questionCode = ask.questionCode
               ..value = ask.value
               ..sessionId = Session.tokenData['jti']
               ..processId = ask.processId))
-          .toProto3Json()));
+          .toProto3Json());
+    stub.sink(evtItem);
+  }
+
+  static void evt(
+      {required String code,
+      required String sourceCode,
+      required String targetCode,
+      required String parentCode}) {
+    Item evtItem = Item.create()
+      ..token = Session.token!
+      ..body = jsonEncode((QMessage.create()
+        ..token = Session.tokenResponse!.accessToken!
+        ..msgType = "EVT_MSG"
+        ..eventType = "BTN_CLICK"
+        ..redirect = true
+        ..data = (MessageData.create()
+          ..code = code
+          ..sourceCode = sourceCode
+          ..targetCode = targetCode
+          ..parentCode = parentCode
+          ..questionCode = "QUE_PROPERTIES"
+          
+          ..sessionId = Session.tokenData['jti'])).toProto3Json());
+    stub.sink(evtItem);
   }
 
   //neither alyson nor gadaq have a real object/interface for this
@@ -247,6 +275,8 @@ class BridgeHandler {
   Future<void> handleBE(BaseEntity entity, beCallback) async {
     beData[entity.code] = entity;
     if (entity.code.startsWith('PRJ_')) handlePRJ(entity);
+    beStream.stream.contains(entity);
+    beStream.add(entity);
     beCallback(entity);
   }
 
@@ -329,6 +359,22 @@ class BridgeHandler {
     } catch (e) {
       throw ArgumentError("Could not find BaseEntity $code", code);
     }
+  }
+
+  static Future<BaseEntity>? awaitBe(String code) async {
+    Completer<BaseEntity> completer = Completer();
+    if (beData[code] != null) {
+      return beData[code]!;
+    }
+
+    StreamSubscription<BaseEntity> stream = beStream.stream.listen((entity) {
+      if (entity.code.startsWith(code)) {
+        completer.complete(entity);
+      }
+    });
+    BaseEntity out = await completer.future;
+    stream.cancel();
+    return out;
   }
 
   static Ask findBySourceCode(String code) {
@@ -423,15 +469,13 @@ class BridgeHandler {
     }
 
     return ThemeData(
-      // canvasColor: Colors.red,
-      appBarTheme: const AppBarTheme(
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
-      ),
-
-      drawerTheme:
-          DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
-      colorScheme: ColorScheme(
+        appBarTheme: const AppBarTheme(
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
+        ),
+        drawerTheme:
+            DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
+        colorScheme: ColorScheme(
           background: getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
           onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
           surface: getColor('PRI_COLOR_SURFACE'),
@@ -441,9 +485,9 @@ class BridgeHandler {
           error: getColor('PRI_COLOR_ERROR_ON'),
           onError: getColor('PRI_COLOR_ERROR_ON'),
           brightness: Brightness.light,
-          secondary: Colors.blue,
-          onSecondary: Colors.green),
-    );
+          secondary: getColor('PRI_COLOR_SECONDARY'),
+          onSecondary: getColor('PRI_COLOR_SECONDARY_ON'),
+        ));
   }
 
   static BaseEntity getProject() {
