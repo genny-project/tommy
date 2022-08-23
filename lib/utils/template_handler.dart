@@ -51,7 +51,8 @@ class TemplateHandler {
         return const SizedBox();
 
       case "TPL_FORM":
-        return GennyForm(entity: entity);
+        //similar to the table oddity, this key absolutely ensures that the form instance is brand new
+        return GennyForm(entity: entity, key: Key("${entity.hashCode + DateTime.now().millisecondsSinceEpoch}"),);
 
       case "TPL_LOGO":
         return Logo(

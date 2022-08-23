@@ -20,10 +20,10 @@ class _TableTplState extends State<TableTpl> {
   int? tblPageSize;
   BaseEntity? searchBe;
 
-      late BaseEntity sbe = BridgeHandler.beData[key]!;
-      late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
-        return element.parentCode == sbe.code;
-      }).toList();
+  late BaseEntity sbe = BridgeHandler.beData[key]!;
+  late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
+    return element.parentCode == sbe.code;
+  }).toList();
   int rowHeight = 40;
   @override
   void initState() {
@@ -109,13 +109,13 @@ class _TableTplState extends State<TableTpl> {
                                         sort = {
                                           pageIndex: !(sort[pageIndex] ?? false)
                                         };
-                                        
+
                                         row.sort(((a, b) {
                                           List<BaseEntity> values = [a, b];
                                           if (!sort[pageIndex]!) {
-                                            values = values.reversed.toList(); 
+                                            values = values.reversed.toList();
                                           }
-                                          
+
                                           return values[0]
                                               .findAttribute(col
                                                   .elementAt(pageIndex)
@@ -128,8 +128,7 @@ class _TableTplState extends State<TableTpl> {
                                                       .attributeCode
                                                       .replaceFirst("COL_", ""))
                                                   .getValue());
-                                        }
-                                        ));
+                                        }));
                                       });
                                     },
                                     // icon: Text("${sort?[pageIndex]}"))
@@ -137,7 +136,8 @@ class _TableTplState extends State<TableTpl> {
                                     icon: sort[pageIndex] != null
                                         ? sort[pageIndex]!
                                             ? const Icon(Icons.arrow_circle_up)
-                                            : const Icon(Icons.arrow_circle_down)
+                                            : const Icon(
+                                                Icons.arrow_circle_down)
                                         : const Icon(Icons.arrow_drop_down))
                               ],
                             )),
@@ -181,32 +181,36 @@ class _TableTplState extends State<TableTpl> {
                                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  pageIndex == 0 ? PopupMenuButton(
-                                    icon: const Icon(Icons.more_horiz),
-                                    itemBuilder: (context) {
-                                    return List.generate(
-                                        actions.length,
-                                        (index) => PopupMenuItem(
-                                            onTap: () {
-                                              BridgeHandler.evt(
-                                                  code: actions
-                                                      .elementAt(index)
-                                                      .attributeCode,
-                                                  sourceCode: BridgeHandler.getUser()!.code,
-                                                  targetCode:
-                                                      item.baseEntityCode,
-                                                  parentCode: sbe.parentCode,
-                                                  questionCode: "QUE_PROPERTIES"
-                                                  );
-                                            },
-                                            child: Text(actions
-                                                .elementAt(index)
-                                                .attributeName)));
-                                  }) : const SizedBox(),
+                                  pageIndex == 0
+                                      ? PopupMenuButton(
+                                          icon: const Icon(Icons.more_horiz),
+                                          itemBuilder: (context) {
+                                            return List.generate(
+                                                actions.length,
+                                                (index) => PopupMenuItem(
+                                                    onTap: () {
+                                                      BridgeHandler.evt(
+                                                          code: actions
+                                                              .elementAt(index)
+                                                              .attributeCode,
+                                                          sourceCode: BridgeHandler
+                                                                  .getUser()!
+                                                              .code,
+                                                          targetCode: item
+                                                              .baseEntityCode,
+                                                          parentCode:
+                                                              sbe.parentCode,
+                                                          questionCode:
+                                                              "QUE_PROPERTIES");
+                                                    },
+                                                    child: Text(actions
+                                                        .elementAt(index)
+                                                        .attributeName)));
+                                          })
+                                      : const SizedBox(),
                                   Flexible(
                                     child: Text(
                                       value,
-                                      
                                       overflow: TextOverflow.clip,
                                     ),
                                   ),

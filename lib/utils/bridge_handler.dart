@@ -421,8 +421,7 @@ class BridgeHandler {
       if (att.attributeCode != "ERR") {
         return Color(int.parse("ff${att.valueString.substring(1)}", radix: 16));
       }
-      return Colors.black;
-      // return Colors.black;
+      return null;
     }
 
     return ThemeData(
