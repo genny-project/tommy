@@ -195,7 +195,9 @@ class _TableTplState extends State<TableTpl> {
                                                   sourceCode: BridgeHandler.getUser()!.code,
                                                   targetCode:
                                                       item.baseEntityCode,
-                                                  parentCode: sbe.parentCode);
+                                                  parentCode: sbe.parentCode,
+                                                  questionCode: "QUE_PROPERTIES"
+                                                  );
                                             },
                                             child: Text(actions
                                                 .elementAt(index)

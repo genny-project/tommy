@@ -24,14 +24,20 @@ class GennyViewport extends StatefulWidget {
 
 class _GennyViewportState extends State<GennyViewport> {
   static final Log _log = Log("Viewport");
-  BridgeHandler handler = BridgeHandler(BridgeHandler.initialiseState());
+  BridgeHandler handler = BridgeHandler();
+
   BaseEntity root = BaseEntity.create();
   FocusNode focus = FocusNode();
   late TemplateHandler templateHandler;
   late Timer timer;
   final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
-  late StreamSubscription sub = BridgeHandler.stream.listen((item) async {
+  late StreamSubscription sub = StreamClient(ProtoUtils.getChannel())
+      .connect(Item.create()
+        ..token = Session.tokenResponse!.accessToken!
+        ..body = jsonEncode({'connect': 'connect'}))
+      .asBroadcastStream()
+      .listen((item) async {
     if (item.body != "{\"h\"}") {
       // print("Got item ${item.body}");
       setState(() {
@@ -58,6 +64,7 @@ class _GennyViewportState extends State<GennyViewport> {
 
   @override
   void dispose() {
+    handler = BridgeHandler();
     timer.cancel();
     sub.cancel();
     super.dispose();
@@ -123,10 +130,12 @@ class _GennyViewportState extends State<GennyViewport> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const CircularProgressIndicator(),
-                        TextButton(onPressed: (){
-                          AppAuthHelper.logout();
-                          navigatorKey.currentState?.pop();
-                        }, child: const Text("Logout")) 
+                        TextButton(
+                            onPressed: () {
+                              AppAuthHelper.logout();
+                              navigatorKey.currentState?.pop();
+                            },
+                            child: const Text("Logout"))
                       ],
                     ))),
           );
@@ -141,7 +150,7 @@ class _GennyViewportState extends State<GennyViewport> {
   }
 
   Widget getBody() {
-    return  ListView(children:[root.findAttribute('PRI_LOC3').getPcmWidget()]);
+    return ListView(children: [root.findAttribute('PRI_LOC3').getPcmWidget()]);
   }
 
   Widget getDrawer() {

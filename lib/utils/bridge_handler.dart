@@ -14,14 +14,12 @@ import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/main.dart';
-import 'package:tommy/models/state.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
 class BridgeHandler {
-  BridgeHandler(this.state);
-  AppState state;
+  BridgeHandler();
 
   static final stub = StreamClient(ProtoUtils.getChannel());
   final Log _log = Log("BridgeHandler");
@@ -30,34 +28,11 @@ class BridgeHandler {
   static Map<String, Attribute> attributeData = {};
   static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
   static StreamController<BaseEntity> beStream = StreamController.broadcast();
-  static final Stream<Item> stream = StreamClient(ProtoUtils.getChannel())
-      .connect(Item.create()
-        ..token = Session.tokenResponse!.accessToken!
-        ..body = jsonEncode({'connect': 'connect'}))
-      .asBroadcastStream();
-
-  /*-----------------------------------
-    Should rethink this appstate function, a carryover from attempting to emulate Alyson
-    PCM_ROOT handles all of this way better
-  -----------------------------------*/
-  static AppState initialiseState() {
-    return AppState(
-        DISPLAY: 'DASHBOARD',
-        DRAWER: 'NONE',
-        DIALOG: 'NONE',
-        TOAST: null,
-        DASHBOARD_COUNTS: null,
-        NOTES: '',
-        DUPLICATE_EMAILS: '',
-        lastSentMessage: {
-          'time': '',
-          'data': {
-            'data': {'code': 'QUE_DASHBOARD_VIEW'}
-          }
-        },
-        lastReceivedMessage: {},
-        highlightedQuestion: '');
-  }
+  // static final Stream<Item> stream = StreamClient(ProtoUtils.getChannel())
+  //     .connect(Item.create()
+  //       ..token = Session.tokenResponse!.accessToken!
+  //       ..body = jsonEncode({'connect': 'connect'}))
+  //     .asBroadcastStream();
 
   static dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
@@ -134,7 +109,8 @@ class BridgeHandler {
       {required String code,
       required String sourceCode,
       required String targetCode,
-      required String parentCode}) {
+      required String parentCode,
+      required String questionCode}) {
     Item evtItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
@@ -147,7 +123,7 @@ class BridgeHandler {
               ..sourceCode = sourceCode
               ..targetCode = targetCode
               ..parentCode = parentCode
-              ..questionCode = "QUE_PROPERTIES"
+              ..questionCode = questionCode
               ..sessionId = Session.tokenData['jti']))
           .toProto3Json());
     stub.sink(evtItem);
@@ -159,7 +135,18 @@ class BridgeHandler {
         {
           beData = {};
           askData = {};
+          attributeData = {};
+          stub.sink(Item.create()
+            ..token = Session.token!
+            ..body = jsonEncode((QMessage.create()
+              ..token = Session.token!
+              ..data = (MessageData.create()..code = "LOGOUT")
+              ..msgType = "EVT_MSG"
+              ..eventType = "LOGOUT"
+              ..redirect = true).toProto3Json()));
           AppAuthHelper.logout();
+          Session.onLogout();
+          Session.tokenResponse = null;
           navigatorKey.currentState?.pop();
           break;
         }
@@ -214,7 +201,6 @@ class BridgeHandler {
     if (data['msg_type'] == "CMD_MSG") {
       CmdPayload payload = CmdPayload.create()
         ..mergeFromProto3Json(data, ignoreUnknownFields: true);
-      handleCmd(payload);
     } else {
       /*--------------------------------------------
         Probably vestigal, it used to be the only way to distinguish a PCM message from an ordinary message
@@ -254,10 +240,6 @@ class BridgeHandler {
         handleMsg(data, beCallback, askCallback);
       }
     }
-  }
-
-  Future<void> handleCmd(CmdPayload payload) async {
-    cmdMachine(payload);
   }
 
   Future<void> handleMsg(
@@ -321,63 +303,6 @@ class BridgeHandler {
       for (Ask ask in ask.childAsks) {
         handleAsk(ask, askCallback);
       }
-    }
-  }
-
-  /*------
-    more carryovers from alyson
-    nested PCMs and root is far more elegant than this
-  ------*/
-  void displayMachine(CmdPayload payload) {
-    _log.info("Displaying - $payload");
-    switch (payload.code) {
-      case "DRAWER:DETAIL":
-        {
-          break;
-        }
-      case "DIALOG_FORM":
-        {
-          break;
-        }
-      default:
-        {
-          _log.info("Default");
-          state.DISPLAY = payload.code;
-          state.DIALOG = 'NONE';
-          state.DRAWER = 'NONE';
-          state.DUPLICATE_EMAILS = '';
-        }
-    }
-  }
-
-  //quod superius macroprosopus, quod inferius microprosopus
-  void cmdMachine(CmdPayload payload) {
-    switch (payload.cmdType) {
-      case "DISPLAY":
-        {
-          displayMachine(payload);
-          break;
-        }
-      case "TOAST":
-        {
-          break;
-        }
-      case "LOGOUT":
-        {
-          break;
-        }
-      case "DOWNLOAD_FILE":
-        {
-          break;
-        }
-      case "NOTES":
-        {
-          break;
-        }
-      default:
-        {
-          break;
-        }
     }
   }
 
