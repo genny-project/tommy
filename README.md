@@ -20,5 +20,13 @@ samples, guidance on mobile development, and a full API reference.
 To distribute to Apple Store TestFlight, run
 
 ```
+cd ios
+fastlane beta
+```
+
+To distribute to Google Play Internal Testing, run
+
+```
+cd android
 fastlane beta
 ```
