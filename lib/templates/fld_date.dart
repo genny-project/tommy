@@ -5,10 +5,10 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
-class DateTemplate extends StatelessWidget {
+class DateField extends StatelessWidget {
   final Ask ask;
   late final BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
-  DateTemplate({Key? key, required this.ask}) : super(key: key);  
+  DateField({Key? key, required this.ask}) : super(key: key);  
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(

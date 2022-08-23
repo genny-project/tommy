@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/templates/tpl_action_button.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 
@@ -20,14 +19,9 @@ class AppBarTpl extends StatelessWidget {
     EntityAttribute logo = be.findAttribute("PRI_LOC1");
     List<EntityAttribute> actionAttributes = be.baseEntityAttributes.where((element) => element != logo).toList();
     title = logo.getPcmWidget();
-    actionAttributes.retainWhere((element) => element.valueString.endsWith("GRP"));
+    actionAttributes.retainWhere((element) => element.attributeCode.startsWith("PRI_LOC"));
     for (EntityAttribute attribute in actionAttributes) {
-      //TODO: DON'T DO THIS
-      //This is hardcoded to hell, these action buttons should just be an expansion PCM or something to that effect
-      //Just doing this as a bodge
-      actions.add(
-        ActionButtonTpl(attribute: attribute));
-        // attribute.attributeWidget());
+      actions.add(attribute.getPcmWidget());
     }
     return AppBar(
       title: title,

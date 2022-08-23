@@ -5,6 +5,7 @@ import 'package:geoff/utils/networking/auth/app_auth_helper.dart';
 import 'package:geoff/utils/networking/auth/session.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/genny_viewport.dart';
+import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:http/http.dart' as http;
 
@@ -42,6 +43,7 @@ class Login extends StatelessWidget {
                     );
                     _log.info("Value body ${BridgeEnv.realm}");
                     _log.info("Keycloak URI ${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}");
+                    AppAuthHelper.setScopes(["openid"]);
                     await AppAuthHelper.login(
                             authServerUrl: BridgeEnv.ENV_KEYCLOAK_REDIRECTURI,
                             realm: BridgeEnv.realm,
@@ -50,8 +52,8 @@ class Login extends StatelessWidget {
                                 "life.genny.tommy.appauth://oauth/login_success/")
                         .then((response) {
                       if (response) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const GennyViewport()));
+                        navigatorKey.currentState!.push(MaterialPageRoute(
+                            builder: (context) => GennyViewport(key: Key(Session.tokenResponse!.idToken!),)));
                       }
                     });
                     _log.info("Access token ${Session.tokenResponse!.accessToken}");
