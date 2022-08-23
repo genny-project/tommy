@@ -10,6 +10,7 @@
 .svn/
 .env
 
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -49,3 +50,5 @@ app.*.map.json
 .vscode
 
 /lib/generated/
+
+/android/google_play.json
