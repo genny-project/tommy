@@ -4,15 +4,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
+import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
+
 class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
   @override
@@ -28,9 +31,35 @@ class _GennyViewportState extends State<GennyViewport> {
   late Timer timer;
   final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
+  late StreamSubscription sub = BridgeHandler.stream.listen((item) async {
+    if (item.body != "{\"h\"}") {
+      // print("Got item ${item.body}");
+      setState(() {
+        BridgeHandler.message.value = item;
+      });
+      handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
+        setState(() {
+          if (be.code == "PCM_ROOT") {
+            _log.info("Found root");
+            setState(() {
+              root = be;
+            });
+          }
+        });
+      }), askCallback: ((askmsg) {
+        for (Ask item in askmsg.items) {
+          if (!BridgeHandler.askData.containsValue(item)) {
+            setState(() {});
+          }
+        }
+      }));
+    }
+  });
 
   @override
   void dispose() {
+    timer.cancel();
+    sub.cancel();
     super.dispose();
     focus.dispose();
   }
@@ -43,24 +72,7 @@ class _GennyViewportState extends State<GennyViewport> {
       setState(() {
         prefs = pr;
       });
-
-      BridgeHandler.stream.listen((item) async {
-        if (item.body != "{\"h\"}") {
-          BridgeHandler.message.value = item;
-          handler.handleData(jsonDecode(item.body), beCallback: ((be) async {
-            setState(() {
-              if (be.code == "PCM_ROOT") {
-                _log.info("Found root");
-                setState(() {
-                  root = be;
-                });
-              }
-            });
-          }), askCallback: ((askmsg) {
-            // setState(() {});
-          }));
-        }
-      });
+      sub.resume();
 
       _log.info("Connected. Attempting Auth Init");
       Item authInit = Item.create()
@@ -107,7 +119,16 @@ class _GennyViewportState extends State<GennyViewport> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const ProtoConsole()));
                     },
-                    child: const CircularProgressIndicator())),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator(),
+                        TextButton(onPressed: (){
+                          AppAuthHelper.logout();
+                          navigatorKey.currentState?.pop();
+                        }, child: const Text("Logout")) 
+                      ],
+                    ))),
           );
   }
 
@@ -120,17 +141,7 @@ class _GennyViewportState extends State<GennyViewport> {
   }
 
   Widget getBody() {
-    return ListView(
-      children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ProtoConsole()));
-            },
-            icon: const Icon(Icons.graphic_eq)),
-        root.findAttribute('PRI_LOC3').getPcmWidget(),
-      ],
-    );
+    return  ListView(children:[root.findAttribute('PRI_LOC3').getPcmWidget()]);
   }
 
   Widget getDrawer() {

@@ -34,13 +34,13 @@ class _FlagFieldState extends State<FlagField> {
           ? const Border(left: BorderSide(color: Colors.red, width: 4))
           : null,
       trailing: Switch(
-          value: value,
+          value: entity.findAttribute(widget.ask.attributeCode).valueBoolean,
           onChanged: (_) {
             FocusManager.instance.primaryFocus?.unfocus();
             setState(() {
-              value = _;
+              entity.findAttribute(widget.ask.attributeCode).valueBoolean = _;
             });
-            widget.ask.answer(value.toString().toUpperCase());
+            widget.ask.answer(_.toString().toUpperCase());
           }),
       title: Text(widget.ask.name),
     );

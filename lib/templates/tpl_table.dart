@@ -19,6 +19,12 @@ class _TableTplState extends State<TableTpl> {
   List<BaseEntity>? rowBe;
   int? tblPageSize;
   BaseEntity? searchBe;
+
+      late BaseEntity sbe = BridgeHandler.beData[key]!;
+      late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
+        return element.parentCode == sbe.code;
+      }).toList();
+  int rowHeight = 40;
   @override
   void initState() {
     if (searchBe == null) {
@@ -49,22 +55,20 @@ class _TableTplState extends State<TableTpl> {
     });
 
     if (key != null && key!.isNotEmpty) {
-      BaseEntity sbe = BridgeHandler.beData[key]!;
-      List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
-        return element.parentCode == sbe.code;
-      }).toList();
-      int pageSize = sbe.findAttribute("SCH_PAGE_SIZE").valueInteger;
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
         return element.attributeCode.startsWith("COL");
       }).toList();
+
+      int pageSize = sbe.findAttribute("SCH_PAGE_SIZE").valueInteger;
+
       return SizedBox(
         /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render
       
       no need to give it the page length when the item count is lesser than the page size
       */
         height: row.length > pageSize
-            ? (pageSize.toDouble() * 50) + 50 + 10
-            : (row.length.toDouble() + 1) * 50 + 10,
+            ? (pageSize.toDouble() * rowHeight) + rowHeight + 20
+            : (row.length.toDouble() + 1) * rowHeight + 20,
         child: Column(
           children: [
             Expanded(
@@ -78,7 +82,7 @@ class _TableTplState extends State<TableTpl> {
                           height: 5,
                         ),
                         Container(
-                            height: 40,
+                            height: rowHeight.toDouble(),
                             decoration: BoxDecoration(
                                 borderRadius: pageIndex == 0
                                     ? const BorderRadius.horizontal(
@@ -105,11 +109,13 @@ class _TableTplState extends State<TableTpl> {
                                         sort = {
                                           pageIndex: !(sort[pageIndex] ?? false)
                                         };
+                                        
                                         row.sort(((a, b) {
                                           List<BaseEntity> values = [a, b];
                                           if (!sort[pageIndex]!) {
-                                            values = values.reversed.toList();
+                                            values = values.reversed.toList(); 
                                           }
+                                          
                                           return values[0]
                                               .findAttribute(col
                                                   .elementAt(pageIndex)
@@ -122,7 +128,8 @@ class _TableTplState extends State<TableTpl> {
                                                       .attributeCode
                                                       .replaceFirst("COL_", ""))
                                                   .getValue());
-                                        }));
+                                        }
+                                        ));
                                       });
                                     },
                                     // icon: Text("${sort?[pageIndex]}"))
@@ -166,15 +173,17 @@ class _TableTplState extends State<TableTpl> {
                               value = "N/A";
                             }
                             return Container(
-                              height: 30,
+                              height: rowHeight.toDouble(),
                               color: listIndex % 2 == 0
                                   ? Colors.grey[200]
                                   : Colors.transparent,
                               child: Row(
                                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  pageIndex == 0 ? PopupMenuButton(itemBuilder: (context) {
+                                  pageIndex == 0 ? PopupMenuButton(
+                                    icon: const Icon(Icons.more_horiz),
+                                    itemBuilder: (context) {
                                     return List.generate(
                                         actions.length,
                                         (index) => PopupMenuItem(
@@ -192,13 +201,13 @@ class _TableTplState extends State<TableTpl> {
                                                 .elementAt(index)
                                                 .attributeName)));
                                   }) : const SizedBox(),
-                                  const Expanded(child: SizedBox(),),
-                                  Text(
-                                    value,
-                                    overflow: TextOverflow.ellipsis,
+                                  Flexible(
+                                    child: Text(
+                                      value,
+                                      
+                                      overflow: TextOverflow.clip,
+                                    ),
                                   ),
-                                  
-                                  const Expanded(child: SizedBox()),
                                 ],
                               ),
                             );

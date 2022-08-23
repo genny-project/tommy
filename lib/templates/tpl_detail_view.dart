@@ -30,61 +30,77 @@ class DetailView extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.9,
         // color: Colors.greenAccent,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        displayEntity.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    )
-                  ] +
-                  [ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: attributes.length,
-                    separatorBuilder: ((context, index) {
-                      return const Divider();
-                    }),
-                    itemBuilder: ((context, index) {
-                    EntityAttribute attribute = attributes[index];
-                    // return Text(attribute.description);
-                    // return Text(attribute.attributeName + attribute.getValue().toString());
-                    String value = attribute.attributeCode;
-                    if (value.startsWith('PRI_')) {
-                      return IntrinsicHeight(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(attribute.attributeName.toString()), 
-                            Text(attribute.getValue().toString()),
-                          ],
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          displayEntity.name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
-                      );
-                    } else if (TemplateHandler.fixLnkAndPri(
-                            attribute.attributeCode)
-                        .startsWith("LNK")) {
-                      // List<EntityAttribute> lnkAttributes = displayEntity.baseEntityAttributes.where().toList();
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(attribute.attributeName.toString()),
-                          Text(displayEntity.baseEntityAttributes
-                              .singleWhere((element) =>
-                                  TemplateHandler.fixLnkAndPri(
-                                          element.attributeCode)
-                                      .startsWith(attribute.attributeCode))
-                              .getValue()
-                              .toString())
-                        ],
-                      );
-                    }
-                    return Text(attribute.attributeCode);
-                  }),)])
-        ),
+                      )
+                    ] +
+                    [
+                      ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: attributes.length,
+                        separatorBuilder: ((context, index) {
+                          return const Divider(thickness: 2,);
+                        }),
+                        itemBuilder: ((context, index) {
+                          EntityAttribute attribute = attributes[index];
+                          // return Text(attribute.description);
+                          // return Text(attribute.attributeName + attribute.getValue().toString());
+                          String value = attribute.attributeCode;
+                          if (value.startsWith('PRI_')) {
+                            return IntrinsicHeight(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ListTile(
+                                    title: Text(
+                                        attribute.attributeName.toString()),
+                                    subtitle: Text(
+                                      attribute.getValue().toString(),
+                                      overflow: TextOverflow.clip,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else if (TemplateHandler.fixLnkAndPri(
+                                  attribute.attributeCode)
+                              .startsWith("LNK")) {
+                            // List<EntityAttribute> lnkAttributes = displayEntity.baseEntityAttributes.where().toList();
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ListTile(
+                                  title:
+                                      Text(attribute.attributeName.toString()),
+                                  subtitle: Text(displayEntity
+                                      .baseEntityAttributes
+                                      .singleWhere((element) =>
+                                          TemplateHandler.fixLnkAndPri(
+                                                  element.attributeCode)
+                                              .startsWith(
+                                                  attribute.attributeCode))
+                                      .getValue()
+                                      .toString()),
+                                )
+                              ],
+                            );
+                          }
+                          return Text(attribute.attributeCode);
+                        }),
+                      )
+                    ])),
       );
     }
     return const LinearProgressIndicator();

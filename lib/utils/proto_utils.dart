@@ -5,10 +5,9 @@ class ProtoUtils {
   static ClientChannel getChannel() {
     ClientChannel channel = ClientChannel(
       ProjectEnv.grpcUrl,
-      // port: 5154,
-      port: 30299,
+      port: ProjectEnv.grpcPort,
       options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
-    );
+      );
     return channel;
   }
 }

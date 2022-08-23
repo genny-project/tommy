@@ -35,7 +35,9 @@ class _GennyFormState extends State<GennyForm> {
     }
     if (qGroup != null) {
       return Column(
-          children: List.generate(qGroup.childAsks.length, (index) {
+          children: [
+              ListTile(
+                title: Text(qGroup.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.start,)), ...List.generate(qGroup.childAsks.length, (index) {
         if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
           Ask ask = qGroup.childAsks[index];
           return Column(
@@ -48,8 +50,12 @@ class _GennyFormState extends State<GennyForm> {
         return Container(
             child:
                 TemplateHandler().getField(qGroup.childAsks[index], context, fNode));
-      },)
-            ..add(UnansweredWidget(qGroup)));
+      },),
+          
+          ]
+      //TODO: Reintroduce this when it is working
+      //      ..add(UnansweredWidget(qGroup))
+      );
     } else {
       return const LinearProgressIndicator();
     }
@@ -68,9 +74,10 @@ class UnansweredWidget extends StatefulWidget {
 }
 
 class _UnansweredWidgetState extends State<UnansweredWidget> {
+
   late void Function() f = () {
     setState(() {
-      
+      unansweredQ = unanswered();
     });
   };
   @override
@@ -106,7 +113,7 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
         .toSet()
         .toList();
   }
-
+  late List<Ask> unansweredQ = unanswered();
   // List<Ask> unansweredQ = unanswered();
   @override
   Widget build(BuildContext context) {

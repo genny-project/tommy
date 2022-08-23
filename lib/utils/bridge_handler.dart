@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/geoff.dart';
-import 'package:grpc/grpc.dart';
 import 'package:tommy/generated/answer.pb.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -29,10 +30,12 @@ class BridgeHandler {
   static Map<String, Attribute> attributeData = {};
   static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
   static StreamController<BaseEntity> beStream = StreamController.broadcast();
-  static final ResponseStream stream =
-      StreamClient(ProtoUtils.getChannel()).connect(Item.create()
+  static final Stream<Item> stream = StreamClient(ProtoUtils.getChannel())
+      .connect(Item.create()
         ..token = Session.tokenResponse!.accessToken!
-        ..body = jsonEncode({'connect': 'connect'}));
+        ..body = jsonEncode({'connect': 'connect'}))
+      .asBroadcastStream();
+
   /*-----------------------------------
     Should rethink this appstate function, a carryover from attempting to emulate Alyson
     PCM_ROOT handles all of this way better
@@ -100,7 +103,6 @@ class BridgeHandler {
           return "N/A";
         }
     }
-  
   }
 
   static void askEvt(Ask ask, [String? eventType]) {
@@ -122,6 +124,9 @@ class BridgeHandler {
               ..sessionId = Session.tokenData['jti']
               ..processId = ask.processId))
           .toProto3Json());
+    //temporary handler for logout and so forth
+    //will use until we have real event handling
+    catchEvent(ask);
     stub.sink(evtItem);
   }
 
@@ -133,21 +138,37 @@ class BridgeHandler {
     Item evtItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
-        ..token = Session.tokenResponse!.accessToken!
-        ..msgType = "EVT_MSG"
-        ..eventType = "BTN_CLICK"
-        ..redirect = true
-        ..data = (MessageData.create()
-          ..code = code
-          ..sourceCode = sourceCode
-          ..targetCode = targetCode
-          ..parentCode = parentCode
-          ..questionCode = "QUE_PROPERTIES"
-          
-          ..sessionId = Session.tokenData['jti'])).toProto3Json());
+            ..token = Session.tokenResponse!.accessToken!
+            ..msgType = "EVT_MSG"
+            ..eventType = "BTN_CLICK"
+            ..redirect = true
+            ..data = (MessageData.create()
+              ..code = code
+              ..sourceCode = sourceCode
+              ..targetCode = targetCode
+              ..parentCode = parentCode
+              ..questionCode = "QUE_PROPERTIES"
+              ..sessionId = Session.tokenData['jti']))
+          .toProto3Json());
     stub.sink(evtItem);
   }
 
+  static void catchEvent(Ask ask) {
+    switch (ask.questionCode) {
+      case "QUE_AVATAR_LOGOUT":
+        {
+          beData = {};
+          askData = {};
+          AppAuthHelper.logout();
+          navigatorKey.currentState?.pop();
+          break;
+        }
+      default:
+        {
+          break;
+        }
+    }
+  }
   //neither alyson nor gadaq have a real object/interface for this
   //so i threw one together myself, might need to reconsider it later
   //thats assuming we get around to actually sending real protobuf objects
@@ -287,6 +308,15 @@ class BridgeHandler {
 
   Future<void> handleAsk(Ask ask, askCallback) async {
     askData[ask.question.code] = ask;
+    if (ask.question.icon.isNotEmpty) {
+      try {
+        SvgPicture picture = SvgPicture.network(
+            '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}');
+        precachePicture(picture.pictureProvider, null);
+      } catch (e) {
+        _log.warning("Could not pre cache svg from network.");
+      }
+    }
     if (ask.childAsks.isNotEmpty) {
       for (Ask ask in ask.childAsks) {
         handleAsk(ask, askCallback);
@@ -357,7 +387,8 @@ class BridgeHandler {
       entity = beData[code]!;
       return entity;
     } catch (e) {
-      throw ArgumentError("Could not find BaseEntity $code", code);
+      Log("findByCode").error("Could not find base entity - $code");
+      return BaseEntity.create();
     }
   }
 
@@ -460,12 +491,13 @@ class BridgeHandler {
 
   static ThemeData getTheme() {
     BaseEntity project = getProject();
-    Color getColor(String code) {
+    Color? getColor(String code) {
       EntityAttribute att = findAttribute(project, code);
       if (att.attributeCode != "ERR") {
         return Color(int.parse("ff${att.valueString.substring(1)}", radix: 16));
       }
       return Colors.black;
+      // return Colors.black;
     }
 
     return ThemeData(
@@ -476,18 +508,19 @@ class BridgeHandler {
         drawerTheme:
             DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
         colorScheme: ColorScheme(
-          background: getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
-          onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
-          surface: getColor('PRI_COLOR_SURFACE'),
-          onSurface: getColor('PRI_COLOR_SURFACE_ON'),
-          primary: getColor('PRI_COLOR_PRIMARY'),
-          onPrimary: getColor('PRI_COLOR_PRIMARY_ON'),
-          error: getColor('PRI_COLOR_ERROR_ON'),
-          onError: getColor('PRI_COLOR_ERROR_ON'),
-          brightness: Brightness.light,
-          secondary: getColor('PRI_COLOR_SECONDARY'),
-          onSecondary: getColor('PRI_COLOR_SECONDARY_ON'),
-        ));
+            //these fallbacks are temporary. ideally we should always get all of these
+            background:
+                getColor('PRI_COLOR_BACKGROUND') ?? Colors.white, //_SURFACE
+            onBackground: getColor('PRI_COLOR_BACKGROUND_ON') ?? Colors.black,
+            surface: getColor('PRI_COLOR_SURFACE') ?? Colors.red,
+            onSurface: getColor('PRI_COLOR_SURFACE_ON') ?? Colors.grey,
+            primary: getColor('PRI_COLOR_PRIMARY') ?? Colors.yellow,
+            onPrimary: getColor('PRI_COLOR_PRIMARY_ON') ?? Colors.white,
+            error: getColor('PRI_COLOR_ERROR_ON') ?? Colors.red,
+            onError: getColor('PRI_COLOR_ERROR_ON') ?? Colors.red,
+            brightness: Brightness.light,
+            secondary: getColor('PRI_COLOR_SECONDARY') ?? Colors.amber,
+            onSecondary: getColor('PRI_COLOR_SECONDARY_ON') ?? Colors.teal));
   }
 
   static BaseEntity getProject() {
