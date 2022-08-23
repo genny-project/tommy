@@ -1,4 +1,4 @@
-package com.example.tommy
+package life.genny.tommy
 
 import io.flutter.embedding.android.FlutterActivity
 

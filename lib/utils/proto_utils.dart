@@ -1,7 +1,6 @@
 import 'package:grpc/grpc.dart';
 import 'package:tommy/projectenv.dart';
 
-
 class ProtoUtils {
   static ClientChannel getChannel() {
     ClientChannel channel = ClientChannel(
