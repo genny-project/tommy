@@ -19,7 +19,9 @@ class _TableTplState extends State<TableTpl> {
   Iterable<EntityAttribute>? colBe;
   List<BaseEntity>? rowBe;
   int? tblPageSize;
-
+        late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
+        return element.parentCode == sbe?.code;
+      }).toList();
   BaseEntity? sbe;
 
   int rowHeight = 40;
@@ -48,9 +50,7 @@ class _TableTplState extends State<TableTpl> {
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
         return element.attributeCode.startsWith("COL");
       }).toList();
-      late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
-        return element.parentCode == sbe.code;
-      }).toList();
+
       int pageSize = sbe.findAttribute("SCH_PAGE_SIZE").valueInteger;
 
       return SizedBox(
