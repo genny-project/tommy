@@ -3,6 +3,7 @@ import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:collection/collection.dart';
 
 class TableTpl extends StatefulWidget {
   final BaseEntity entity;
@@ -18,21 +19,12 @@ class _TableTplState extends State<TableTpl> {
   Iterable<EntityAttribute>? colBe;
   List<BaseEntity>? rowBe;
   int? tblPageSize;
-  BaseEntity? searchBe;
 
-  late BaseEntity sbe = BridgeHandler.beData[key]!;
-  late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
-    return element.parentCode == sbe.code;
-  }).toList();
+  BaseEntity? sbe;
+
   int rowHeight = 40;
   @override
   void initState() {
-    if (searchBe == null) {
-      BridgeHandler.awaitBe(widget.entity.findAttribute("PRI_LOC1").valueString)
-          ?.then((value) {
-        searchBe = value;
-      });
-    }
     super.initState();
   }
 
@@ -47,18 +39,18 @@ class _TableTplState extends State<TableTpl> {
 
   @override
   Widget build(BuildContext context) {
-    key = BridgeHandler.beData.keys.singleWhere(
-        (key) =>
-            key.startsWith(widget.entity.findAttribute("PRI_LOC1").valueString),
-        orElse: () {
-      return "";
-    });
+    sbe = BridgeHandler.beData.values.singleWhereOrNull((element) => element
+        .code
+        .startsWith(widget.entity.findAttribute("PRI_LOC1").valueString));
 
-    if (key != null && key!.isNotEmpty) {
+    if (sbe != null) {
+      final sbe = this.sbe!;
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
         return element.attributeCode.startsWith("COL");
       }).toList();
-
+      late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
+        return element.parentCode == sbe.code;
+      }).toList();
       int pageSize = sbe.findAttribute("SCH_PAGE_SIZE").valueInteger;
 
       return SizedBox(

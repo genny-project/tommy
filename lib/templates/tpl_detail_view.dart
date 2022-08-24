@@ -3,7 +3,7 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
-
+import 'package:collection/collection.dart';
 class DetailView extends StatelessWidget {
   final BaseEntity entity;
   const DetailView({Key? key, required this.entity}) : super(key: key);
@@ -17,12 +17,12 @@ class DetailView extends StatelessWidget {
 
     BaseEntity? sbe =
         BridgeHandler.beData[entity.findAttribute("PRI_LOC1").valueString];
-    if (sbe != null) {
-      BaseEntity displayEntity =
-          BridgeHandler.beData.values.singleWhere((element) {
-        return element.parentCode == sbe.code;
-      })
-            ..baseEntityAttributes.sort((a, b) => a.weight.compareTo(b.weight));
+    BaseEntity? displayEntity =
+          BridgeHandler.beData.values.singleWhereOrNull((element) {
+        return element.parentCode == sbe?.code;
+    });
+    if (displayEntity != null) {
+      displayEntity.baseEntityAttributes.sort((a, b) => a.weight.compareTo(b.weight));
       List<EntityAttribute> attributes = displayEntity.baseEntityAttributes
           .where((attribute) => !attribute.attributeCode.startsWith("_"))
           .toList();
@@ -65,7 +65,7 @@ class DetailView extends StatelessWidget {
                                 children: [
                                   ListTile(
                                     title: Text(
-                                        attribute.attributeName.toString()),
+                                        attribute.attribute.name.toString()),
                                     subtitle: Text(
                                       attribute.getValue().toString(),
                                       overflow: TextOverflow.clip,
@@ -83,7 +83,7 @@ class DetailView extends StatelessWidget {
                               children: [
                                 ListTile(
                                   title:
-                                      Text(attribute.attributeName.toString()),
+                                      Text(attribute.attribute.name.toString()),
                                   subtitle: Text(displayEntity
                                       .baseEntityAttributes
                                       .singleWhere((element) =>

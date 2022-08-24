@@ -17,7 +17,7 @@ import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
-
+import 'package:collection/collection.dart'; 
 class BridgeHandler {
   BridgeHandler();
 
@@ -139,11 +139,12 @@ class BridgeHandler {
           stub.sink(Item.create()
             ..token = Session.token!
             ..body = jsonEncode((QMessage.create()
-              ..token = Session.token!
-              ..data = (MessageData.create()..code = "LOGOUT")
-              ..msgType = "EVT_MSG"
-              ..eventType = "LOGOUT"
-              ..redirect = true).toProto3Json()));
+                  ..token = Session.token!
+                  ..data = (MessageData.create()..code = "LOGOUT")
+                  ..msgType = "EVT_MSG"
+                  ..eventType = "LOGOUT"
+                  ..redirect = true)
+                .toProto3Json()));
           AppAuthHelper.logout();
           Session.onLogout();
           Session.tokenResponse = null;
@@ -228,7 +229,6 @@ class BridgeHandler {
         for (QMessage message in message.messages) {
           Map<String, dynamic> json =
               message.toProto3Json() as Map<String, dynamic>;
-          _log.info("the type is ${json['dataType']}");
           for (BaseEntity be in message.items) {
             if (message.parentCode.startsWith("SBE_")) {
               be.parentCode = message.parentCode;
@@ -291,13 +291,13 @@ class BridgeHandler {
   Future<void> handleAsk(Ask ask, askCallback) async {
     askData[ask.question.code] = ask;
     if (ask.question.icon.isNotEmpty) {
-      try {
-        SvgPicture picture = SvgPicture.network(
-            '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}');
-        precachePicture(picture.pictureProvider, null);
-      } catch (e) {
-        _log.warning("Could not pre cache svg from network.");
-      }
+      precachePicture(
+          SvgPicture.network(
+                  '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}')
+              .pictureProvider,
+          null, onError: (e, s) {
+        _log.warning("Could not pre cache svg from network. $e $s");
+      });
     }
     if (ask.childAsks.isNotEmpty) {
       for (Ask ask in ask.childAsks) {
@@ -315,22 +315,6 @@ class BridgeHandler {
       Log("findByCode").error("Could not find base entity - $code");
       return BaseEntity.create();
     }
-  }
-
-  static Future<BaseEntity>? awaitBe(String code) async {
-    Completer<BaseEntity> completer = Completer();
-    if (beData[code] != null) {
-      return beData[code]!;
-    }
-
-    StreamSubscription<BaseEntity> stream = beStream.stream.listen((entity) {
-      if (entity.code.startsWith(code)) {
-        completer.complete(entity);
-      }
-    });
-    BaseEntity out = await completer.future;
-    stream.cancel();
-    return out;
   }
 
   static Ask findBySourceCode(String code) {
