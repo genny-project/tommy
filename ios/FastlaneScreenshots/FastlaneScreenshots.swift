@@ -33,7 +33,7 @@ class FastlaneScreenshots: XCTestCase {
         
         app.buttons["Login"].tap()
         app.alerts["“tommy” Wants to Use “gada.io” to Sign In"].scrollViews.otherElements.buttons["Continue"].tap()
-        snapshot("02LoginScreen")
+        snapshot("02Login")
         
         let logInToLojingElement = app/*@START_MENU_TOKEN@*/.webViews/*[[".otherElements[\"BrowserView?WebViewProcessID=31163\"].webViews",".webViews"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.webViews.webViews.otherElements["Log in to lojing"]
         logInToLojingElement.children(matching: .textField).element.tap()

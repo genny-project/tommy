@@ -24,5 +24,7 @@ platform :ios do
 
   lane :screenshots do
     capture_screenshots(workspace: "Runner.xcworkspace", scheme: "FastlaneScreenshots")
+    frame_screenshots(white: true)
+    upload_to_app_store
   end
 end

@@ -8,7 +8,7 @@ devices([
   "iPhone X"
 ])
 
-languages(["en-US"])
+# languages(["en-US"])
 
 # The name of the scheme which contains the UI Tests
 scheme("FastlaneScreenshots")
