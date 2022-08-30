@@ -5,6 +5,7 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class TimezoneWidget extends StatefulWidget {
   late final BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
@@ -31,6 +32,8 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
       contentPadding: widget.ask.mandatory
           ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)

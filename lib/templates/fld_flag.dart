@@ -3,6 +3,7 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 /*Going to make this stateful. It works in stateless, but the latency then subsequent jarring update
 looks far jankier than the performance impact ever would.*/
@@ -26,6 +27,8 @@ class _FlagFieldState extends State<FlagField> {
 
   @override
   Widget build(BuildContext context) {
+
+    TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
       contentPadding: widget.ask.mandatory
           ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)

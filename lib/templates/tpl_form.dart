@@ -34,8 +34,10 @@ class _GennyFormState extends State<GennyForm> {
       }
     }
     if (qGroup != null) {
-      return Column(
+      return 
+      Column(
           children: [
+
               ListTile(
                 title: Text(qGroup.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.start,)), ...List.generate(qGroup.childAsks.length, (index) {
         if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
@@ -53,8 +55,7 @@ class _GennyFormState extends State<GennyForm> {
       },),
           
           ]
-      //TODO: Reintroduce this when it is working
-      //      ..add(UnansweredWidget(qGroup))
+           ..add(UnansweredWidget(qGroup))
       );
     } else {
       return const LinearProgressIndicator();
@@ -126,7 +127,11 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
             children: List.generate(
                 unanswered().length,
                 (index) => InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Scrollable.ensureVisible(TemplateHandler.contexts[unanswered()[index].question.code]!,
+                          duration: const Duration(seconds: 1),
+                        );
+                      },
                       child: Chip(
                           backgroundColor: Colors.red[300],
                           label: Text(

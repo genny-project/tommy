@@ -3,6 +3,7 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 // class RadioField extends StatefulWidget {
 //   final Ask ask;
@@ -19,6 +20,8 @@ class RadioField extends StatelessWidget {
   RadioField({Key? key, required this.ask}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
+    TemplateHandler.contexts[ask.question.code] = context;
     //thought this would be terrible but it actually works stateless
     //cool
     List<EntityAttribute> dropdownItems = [];

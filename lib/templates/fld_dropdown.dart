@@ -5,6 +5,7 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 //TODO: need a way to discern whether the answer count is mutually exclusive/answer limit
 
@@ -17,6 +18,8 @@ class DropdownField extends StatelessWidget {
   DropdownField({Key? key, required this.ask}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
+    TemplateHandler.contexts[ask.question.code] = context;
     return StatefulBuilder(builder: (context, setState) {
       return ListTile(
         contentPadding: ask.mandatory

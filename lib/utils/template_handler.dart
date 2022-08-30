@@ -28,6 +28,7 @@ import 'package:tommy/widgets/timezone_widget.dart';
 
 class TemplateHandler {
   // FocusNode focus;
+  static Map<String, BuildContext> contexts = {};
   TemplateHandler();
   static Widget getTemplate(String code, BaseEntity entity) {
     switch (code) {
@@ -135,7 +136,8 @@ class TemplateHandler {
 
       default:
         {
-          return GennyTextField(ask: ask); 
+
+          return GennyTextField(ask: ask,); 
         }
     }
   }

@@ -3,6 +3,7 @@ import 'package:geoff/geoff.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class RichtextEditor extends StatefulWidget {
   const RichtextEditor({Key? key, required this.ask}) : super(key: key);
@@ -41,6 +42,7 @@ class _RichtextEditorState extends State<RichtextEditor> {
 
   @override
   Widget build(BuildContext context) {
+    TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
         // contentPadding: EdgeInsets.zero,
         contentPadding: widget.ask.mandatory
