@@ -17,7 +17,6 @@ import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
-import 'package:collection/collection.dart'; 
 class BridgeHandler {
   BridgeHandler();
 
@@ -227,8 +226,6 @@ class BridgeHandler {
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
 
         for (QMessage message in message.messages) {
-          Map<String, dynamic> json =
-              message.toProto3Json() as Map<String, dynamic>;
           for (BaseEntity be in message.items) {
             if (message.parentCode.startsWith("SBE_")) {
               be.parentCode = message.parentCode;

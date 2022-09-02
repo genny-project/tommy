@@ -28,11 +28,11 @@ class _GennyTextFieldState extends State<GennyTextField> {
     BaseEntity entity = BridgeHandler.findByCode(widget.ask.targetCode);
     return ListTile(
       contentPadding: widget.ask.mandatory
-          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-          : null,
-      shape: widget.ask.mandatory
-          ? const Border(left: BorderSide(color: Colors.red, width: 4))
-          : null,
+           ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
+           : null,
+      // shape: widget.ask.mandatory
+      //     ? const Border(left: BorderSide(color: Colors.red, width: 4))
+      //     : null,
       title: Focus(
         onFocusChange: ((focus) {
           if (!focus) {

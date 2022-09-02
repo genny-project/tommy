@@ -17,7 +17,6 @@ class DateField extends StatelessWidget {
     return StatefulBuilder(
         builder: ((context, setState) => ListTile(
             contentPadding: ask.mandatory ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12) : null,
-            shape: ask.mandatory ? const Border(left: BorderSide(color: Colors.red, width: 4)) : null,
             leading: const Icon(Icons.calendar_month),
             trailing: Text(entity.findAttribute(ask.attributeCode).valueDate),
             onTap: () {

@@ -53,7 +53,11 @@ class TemplateHandler {
 
       case "TPL_FORM":
         //similar to the table oddity, this key absolutely ensures that the form instance is brand new
-        return GennyForm(entity: entity, key: Key("${entity.hashCode + DateTime.now().millisecondsSinceEpoch}"),);
+        
+        //had to rework this because using a unique key on every build was messing with the state management
+        //of the form. made it control like a cow in a shopping trolley
+        return GennyForm(entity: entity,  key: Key("${BridgeHandler
+        .askData[entity.findAttribute("PRI_QUESTION_CODE").valueString]?.hashCode}",));
 
       case "TPL_LOGO":
         return Logo(
@@ -79,6 +83,8 @@ class TemplateHandler {
         return CardsListView(entity: entity);
       case "TPL_TABLE":
         //providing key because without it, it doesnt know to overwrite itself. weird one.
+        //note for later: maybe do what i did with the form key?
+        //as it stands the focus doesnt really matter too much right now but it is worth keeping in mind
         return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
       
       case "TPL_ADD_ITEMS":

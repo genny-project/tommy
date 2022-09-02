@@ -17,7 +17,13 @@ class GennyForm extends StatefulWidget {
 class _GennyFormState extends State<GennyForm> {
   List<Ask> allQuestions = [];
   FocusNode fNode = FocusNode();
-
+  final _selectNotifier = ValueNotifier<String>("");
+  String? focusField;
+  @override
+  void dispose() {
+    _selectNotifier.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     Ask? qGroup = BridgeHandler
@@ -34,28 +40,54 @@ class _GennyFormState extends State<GennyForm> {
       }
     }
     if (qGroup != null) {
-      return 
-      Column(
-          children: [
-
-              ListTile(
-                title: Text(qGroup.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.start,)), ...List.generate(qGroup.childAsks.length, (index) {
-        if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
-          Ask ask = qGroup.childAsks[index];
-          return Column(
-              children: List.generate(ask.childAsks.length, (index) {
-            return Container(
-                child:
-                    TemplateHandler().getField(ask.childAsks[index], context, fNode));
-          }));
-        }
-        return Container(
-            child:
-                TemplateHandler().getField(qGroup.childAsks[index], context, fNode));
-      },),
+      //this listener allows me to update the selected field without rebuilding every widget in the form
+      return ValueListenableBuilder(
+        valueListenable: _selectNotifier,
+        builder: ((context, value, child) {
           
-          ]
-           ..add(UnansweredWidget(qGroup))
+          return 
+         Column(
+            children: [
+          ListTile(
+              title: Text(
+            qGroup.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            textAlign: TextAlign.start,
+          )),
+          
+          ...List.generate(
+            qGroup.childAsks.length,
+            (index) {
+              if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
+                Ask ask = qGroup.childAsks[index];
+                return Column(
+                    children: List.generate(ask.childAsks.length, (index) {
+                  return Container(
+                      decoration: focusField == ask.childAsks[index].question.code
+                          ? BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(12)),
+                              border: Border.all(color: Colors.red, width: 4))
+                          : ask.childAsks[index].mandatory ? const BoxDecoration(border: Border(left: BorderSide(color: Colors.red, width: 4))) : null,
+                      child: TemplateHandler()
+                          .getField(ask.childAsks[index], context, fNode));
+                }));
+              }
+              return Container(
+                  decoration: value == qGroup.childAsks[index].question.code
+                      ? const BoxDecoration(
+                          border: Border(
+                              left: BorderSide(color: Colors.blue, width: 4)))
+                      : null,
+                  child: TemplateHandler()
+                      .getField(qGroup.childAsks[index], context, fNode));
+            },
+          ),
+        ]..add(UnansweredWidget(qGroup, (Ask ask) {
+                // setState(() {
+                  _selectNotifier.value = ask.question.code;
+                  focusField = ask.question.code;
+                // });
+              })));}),
       );
     } else {
       return const LinearProgressIndicator();
@@ -65,17 +97,18 @@ class _GennyFormState extends State<GennyForm> {
 
 class UnansweredWidget extends StatefulWidget {
   final Ask qGroup;
+  final void Function(Ask ask) askSelect;
   const UnansweredWidget(
-    this.qGroup, {
+    this.qGroup,
+    this.askSelect, {
     Key? key,
   }) : super(key: key);
- 
+
   @override
   State<UnansweredWidget> createState() => _UnansweredWidgetState();
 }
 
 class _UnansweredWidgetState extends State<UnansweredWidget> {
-
   late void Function() f = () {
     setState(() {
       unansweredQ = unanswered();
@@ -86,6 +119,7 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
     BridgeHandler.message.addListener(f);
     super.initState();
   }
+
   @override
   void dispose() {
     BridgeHandler.message.removeListener(f);
@@ -114,13 +148,16 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
         .toSet()
         .toList();
   }
+
   late List<Ask> unansweredQ = unanswered();
   // List<Ask> unansweredQ = unanswered();
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        unanswered().isNotEmpty ? const Text("Please fill the following required fields") : const SizedBox(),
+        unanswered().isNotEmpty
+            ? const Text("Please fill the following required fields")
+            : const SizedBox(),
         Wrap(
             alignment: WrapAlignment.center,
             spacing: 10.0,
@@ -128,9 +165,14 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
                 unanswered().length,
                 (index) => InkWell(
                       onTap: () {
-                        Scrollable.ensureVisible(TemplateHandler.contexts[unanswered()[index].question.code]!,
+                        Scrollable.ensureVisible(
+                          TemplateHandler
+                              .contexts[unanswered()[index].question.code]!,
                           duration: const Duration(seconds: 1),
+                          alignment:0.5
                         );
+
+                        widget.askSelect(unanswered()[index]);
                       },
                       child: Chip(
                           backgroundColor: Colors.red[300],

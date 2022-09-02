@@ -39,7 +39,6 @@ class _GennyViewportState extends State<GennyViewport> {
       .asBroadcastStream()
       .listen((item) async {
     if (item.body != "{\"h\"}") {
-      // print("Got item ${item.body}");
       setState(() {
         BridgeHandler.message.value = item;
       });

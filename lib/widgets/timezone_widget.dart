@@ -38,9 +38,6 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
       contentPadding: widget.ask.mandatory
           ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
           : null,
-      shape: widget.ask.mandatory
-          ? const Border(left: BorderSide(color: Colors.red, width: 4))
-          : null,
       title: TextButton(
         child: Row(
           children: [
