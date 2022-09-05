@@ -51,4 +51,7 @@ app.*.map.json
 
 /lib/generated/
 
-/android/google_play.json
+android/*google_play.json
+android/*key.properties
+products/*
+!products/sample
