@@ -9,8 +9,10 @@
 product=$1;
 echo "Build for Product: $product"
 
-if [ $product == "lojing" ] || [ $product == "internmatch" ]
+if [ -z "$product" ]
 then
+    echo "No project found! Please check your input, e.g, sh build-product.sh internmatch"
+else
     appName=`jq '.appName' products/$product/${product}_config.json | tr -d '"'`
     bundleId=`jq '.bundleId' products/$product/${product}_config.json | tr -d '"'`
     grpcUrl=`jq '.grpcUrl' products/$product/${product}_config.json | tr -d '"'`
@@ -42,7 +44,9 @@ then
             mv android/app/src/main/kotlin/life/genny/tommy/MainActivity.kt android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}/
 
             echo "Replace app name"
-            perl -pi -e 's/tommy/'$appName'/g' android/app/src/main/AndroidManifest.xml
+            perl -pi -e 's/android:label=\"tommy\"/android:label="'$appName'"/g' android/app/src/main/AndroidManifest.xml
+
+            
             perl -pi -e 's/Tommy/'$appName'/g' ios/Runner/info.plist
             perl -pi -e 's/tommy/'$appName'/g' ios/Runner/info.plist
 
@@ -56,9 +60,9 @@ then
             perl -pi -e 's/key.properties/'${product}_key.properties'/g' android/app/build.gradle
 
             echo "Put release-key.keystore in android/app folder"
-            cp products/$product/${product}_release_key.keystore android/${product}_krelease_key.keystore
+            cp products/$product/${product}_release_key.keystore android/app/${product}_krelease_key.keystore
 
-            echo "Prepare credentials for App App Store "
+            echo "Prepare credentials for Apple App Store "
             perl -pi -e 's/7W5L2XPVKS/'$developmentTeamId'/g' ios/Runner.xcodeproj/project.pbxproj
             perl -pi -e 's/Tommy/'$provisioningProfileSpecifier'/g' ios/Runner.xcodeproj/project.pbxproj
             perl -pi -e 's/YOUR_APPLE_ID/'$appleIdToRelease'/g' ios/fastlane/Appfile
@@ -73,7 +77,5 @@ then
             echo "All Done!!"
         fi
     fi
-else
-    echo "No project found! Please check your input, e.g, sh build-product.sh internmatch"
 fi
 
