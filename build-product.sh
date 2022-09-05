@@ -65,14 +65,18 @@ else
             echo "Prepare credentials for Apple App Store "
             perl -pi -e 's/7W5L2XPVKS/'$developmentTeamId'/g' ios/Runner.xcodeproj/project.pbxproj
             perl -pi -e 's/Tommy/'$provisioningProfileSpecifier'/g' ios/Runner.xcodeproj/project.pbxproj
-            perl -pi -e 's/YOUR_APPLE_ID/'$appleIdToRelease'/g' ios/fastlane/Appfile
+            sed -i '' 's/YOUR_APPLE_ID/'$appleIdToRelease'/' ios/fastlane/Appfile
             perl -pi -e 's/YOUR_APPLE_APP_STORE_CONNECT_TEAM_ID/'$appleAppStoreConnectTeamID'/g' ios/fastlane/Appfile
             
             echo "Publish the App to Google Play Store Internal Testing"
-            cd android && bundle exec fastlane beta && cd ..
+            cd android
+            bundle exec fastlane beta
+            cd ..
 
             echo "Publish the App to Apple App TestFlight"
-            cd ios && bundle exec fastlane beta && cd ..
+            cd ios
+            bundle exec fastlane beta
+            cd ..
 
             echo "All Done!!"
         fi
