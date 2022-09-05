@@ -19,6 +19,6 @@ platform :android do
   desc "Submit a new Beta Build to Google Play Store"
   lane :beta do
     gradle(task: 'assemble', build_type: 'Release')
-    upload_to_play_store(track: 'Promote')
+    upload_to_play_store(track: 'internal')
   end
 end

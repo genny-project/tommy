@@ -1,0 +1,10 @@
+{
+  "appName": "Sample",
+  "bundleId": "life.genny.sample",
+  "grpcUrl": "sample.gada.io",
+  "grpcPort": "30299",
+  "developmentTeam": "DEVELOPMENT_TEAM_Sample",
+  "provisioningProfileSpecifier": "PROVISIONING_PROFILE_SPECIFIER_Sample",
+  "appleIdToRelease": "xxx@gada.io",
+  "appleAppStoreConnectTeamID": "125555666"
+}

@@ -1,7 +1,7 @@
 app_identifier("life.genny.tommy") # The bundle identifier of your app
-apple_id("xiang.chen@gada.io") # Your Apple email address
+apple_id("YOUR_APPLE_ID") # Your Apple email address
 
-itc_team_id("125515106") # App Store Connect Team ID
+itc_team_id("YOUR_APPLE_APP_STORE_CONNECT_TEAM_ID") # App Store Connect Team ID
 team_id("7W5L2XPVKS") # Developer Portal Team ID
 
 # For more information about the Appfile, see:

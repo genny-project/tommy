@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "YOUR_PROJECT-177222",
+  "private_key_id": "5e3ae59a908_YOUR_PRIVATE_KEY_ID_86a5ab75",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIICVBEBgkqhki_YOUR_PRIVATE_KEY_aB2PWnFA82hvHj7o=\n-----END PRIVATE KEY-----\n",
+  "client_email": "gaservice@YOUR_PROJECT-177222.iam.gserviceaccount.com",
+  "client_id": "109093_YOUR_CLIENT_ID_1959",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gaservice%40YOUR_PROJECT-177222.iam.gserviceaccount.com"
+}
