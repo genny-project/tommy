@@ -9,77 +9,84 @@
 product=$1;
 echo "Build for Product: $product"
 
-if [ -z "$product" ]
+if [[ `git status --porcelain` ]]
 then
-    echo "No project found! Please check your input, e.g, sh build-product.sh internmatch"
+  echo "Warning: please commit all your files at first. Otherwise, your changes will be lost for sure."
 else
-    appName=`jq '.appName' products/$product/${product}_config.json | tr -d '"'`
-    bundleId=`jq '.bundleId' products/$product/${product}_config.json | tr -d '"'`
-    grpcUrl=`jq '.grpcUrl' products/$product/${product}_config.json | tr -d '"'`
-    grpcPort=`jq '.grpcPort' products/$product/${product}_config.json | tr -d '"'`
-    developmentTeamId=`jq '.developmentTeamId' products/$product/${product}_config.json | tr -d '"'`
-    provisioningProfileSpecifier=`jq '.provisioningProfileSpecifier' products/$product/${product}_config.json | tr -d '"'`
-    appleIdToRelease=`jq '.appleIdToRelease' products/$product/${product}_config.json | tr -d '"'`
-    # to get appleAppStoreConnectTeamID, visit https://appstoreconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail and look for contentProviderId
-    appleAppStoreConnectTeamID=`jq '.appleAppStoreConnectTeamID' products/$product/${product}_config.json | tr -d '"'`
-
-    if [ -z "$appName" ] || [ -z "$bundleId" ] || [ -z "$grpcUrl" ] || [ -z "$grpcPort" ] || [ -z "$developmentTeamId" ] || [ -z "$provisioningProfileSpecifier" ]  || [ -z "$appleIdToRelease" ] || [ -z "$appleAppStoreConnectTeamID" ]
+    if [ -z "$product" ]
     then
-        echo `$product-config.json does not exist.`
+        echo "No project found! Please check your input, e.g, sh build-product.sh internmatch"
     else
-        arrayDirectoryName=(${bundleId//./ })
-        if [ ${#arrayDirectoryName[@]} != 3 ]
+        appName=`jq '.appName' products/$product/${product}_config.json | tr -d '"'`
+        bundleId=`jq '.bundleId' products/$product/${product}_config.json | tr -d '"'`
+        grpcUrl=`jq '.grpcUrl' products/$product/${product}_config.json | tr -d '"'`
+        grpcPort=`jq '.grpcPort' products/$product/${product}_config.json | tr -d '"'`
+        developmentTeamId=`jq '.developmentTeamId' products/$product/${product}_config.json | tr -d '"'`
+        provisioningProfileSpecifier=`jq '.provisioningProfileSpecifier' products/$product/${product}_config.json | tr -d '"'`
+        appleIdToRelease=`jq '.appleIdToRelease' products/$product/${product}_config.json | tr -d '"'`
+        # to get appleAppStoreConnectTeamID, visit https://appstoreconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail and look for contentProviderId
+        appleAppStoreConnectTeamID=`jq '.appleAppStoreConnectTeamID' products/$product/${product}_config.json | tr -d '"'`
+
+        if [ -z "$appName" ] || [ -z "$bundleId" ] || [ -z "$grpcUrl" ] || [ -z "$grpcPort" ] || [ -z "$developmentTeamId" ] || [ -z "$provisioningProfileSpecifier" ]  || [ -z "$appleIdToRelease" ] || [ -z "$appleAppStoreConnectTeamID" ]
         then
-            echo "Bundle id is in wrong format"
+            echo `$product-config.json does not exist.`
         else
-            echo "Replace grpcUrl and grpcPort"
-            perl -pi -e 's/10.0.2.2/'$grpcUrl'/g' lib/projectenv.dart
-            perl -pi -e 's/5154/'$grpcPort'/g' lib/projectenv.dart
+            arrayDirectoryName=(${bundleId//./ })
+            if [ ${#arrayDirectoryName[@]} != 3 ]
+            then
+                echo "Bundle id is in wrong format"
+            else
+                echo "Replace grpcUrl and grpcPort"
+                perl -pi -e 's/10.0.2.2/'$grpcUrl'/g' lib/projectenv.dart
+                perl -pi -e 's/5154/'$grpcPort'/g' lib/projectenv.dart
 
-            echo "Replace bundle id and package name"
-            perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $(git ls-files -- . ':!:*build-product.sh')
+                echo "Replace bundle id and package name"
+                perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $(git ls-files -- . ':!:*build-product.sh')
 
-            echo "Move MainActivity.kt to the right package in /android/app/src/main/kotlin"
-            mkdir -p android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}
-            mv android/app/src/main/kotlin/life/genny/tommy/MainActivity.kt android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}/
+                echo "Move MainActivity.kt to the right package in /android/app/src/main/kotlin"
+                mkdir -p android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}
+                mv android/app/src/main/kotlin/life/genny/tommy/MainActivity.kt android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}/
 
-            echo "Replace app name"
-            perl -pi -e 's/android:label=\"tommy\"/android:label="'$appName'"/g' android/app/src/main/AndroidManifest.xml
+                echo "Replace app name"
+                perl -pi -e 's/android:label=\"tommy\"/android:label="'$appName'"/g' android/app/src/main/AndroidManifest.xml
 
-            
-            perl -pi -e 's/Tommy/'$appName'/g' ios/Runner/info.plist
-            perl -pi -e 's/tommy/'$appName'/g' ios/Runner/info.plist
+                
+                perl -pi -e 's/Tommy/'$appName'/g' ios/Runner/info.plist
+                perl -pi -e 's/tommy/'$appName'/g' ios/Runner/info.plist
 
-            echo "Prepare credentials for Google Play Store"
-            echo "Put google_play.json in android folder"
-            cp products/$product/${product}_google_play.json android/${product}_google_play.json
-            perl -pi -e 's/google_play.json/'${product}_google_play.json'/g' android/fastlane/Appfile
-            
-            echo "Put key.property in android folder"
-            cp products/$product/${product}_key.properties android/${product}_key.properties
-            perl -pi -e 's/key.properties/'${product}_key.properties'/g' android/app/build.gradle
+                echo "Prepare credentials for Google Play Store"
+                echo "Put google_play.json in android folder"
+                cp products/$product/${product}_google_play.json android/${product}_google_play.json
+                perl -pi -e 's/google_play.json/'${product}_google_play.json'/g' android/fastlane/Appfile
+                
+                echo "Put key.property in android folder"
+                cp products/$product/${product}_key.properties android/${product}_key.properties
+                perl -pi -e 's/key.properties/'${product}_key.properties'/g' android/app/build.gradle
 
-            echo "Put release-key.keystore in android/app folder"
-            cp products/$product/${product}_release_key.keystore android/app/${product}_krelease_key.keystore
+                echo "Put release-key.keystore in android/app folder"
+                cp products/$product/${product}_release_key.keystore android/app/${product}_krelease_key.keystore
 
-            echo "Prepare credentials for Apple App Store "
-            perl -pi -e 's/7W5L2XPVKS/'$developmentTeamId'/g' ios/Runner.xcodeproj/project.pbxproj
-            perl -pi -e 's/Tommy/'$provisioningProfileSpecifier'/g' ios/Runner.xcodeproj/project.pbxproj
-            sed -i '' 's/YOUR_APPLE_ID/'$appleIdToRelease'/' ios/fastlane/Appfile
-            perl -pi -e 's/YOUR_APPLE_APP_STORE_CONNECT_TEAM_ID/'$appleAppStoreConnectTeamID'/g' ios/fastlane/Appfile
-            
-            echo "Publish the App to Google Play Store Internal Testing"
-            cd android
-            bundle exec fastlane beta
-            cd ..
+                echo "Prepare credentials for Apple App Store "
+                perl -pi -e 's/7W5L2XPVKS/'$developmentTeamId'/g' ios/Runner.xcodeproj/project.pbxproj
+                perl -pi -e 's/Tommy/'$provisioningProfileSpecifier'/g' ios/Runner.xcodeproj/project.pbxproj
+                sed -i '' 's/YOUR_APPLE_ID/'$appleIdToRelease'/' ios/fastlane/Appfile
+                perl -pi -e 's/YOUR_APPLE_APP_STORE_CONNECT_TEAM_ID/'$appleAppStoreConnectTeamID'/g' ios/fastlane/Appfile
+                
+                echo "Publish the App to Google Play Store Internal Testing"
+                cd android
+                bundle exec fastlane beta
+                cd ..
 
-            echo "Publish the App to Apple App TestFlight"
-            cd ios
-            bundle exec fastlane beta
-            cd ..
+                echo "Publish the App to Apple App TestFlight"
+                cd ios
+                bundle exec fastlane beta
+                cd ..
 
-            echo "All Done!!"
+                echo "All Done!!"
+            fi
         fi
     fi
 fi
+
+
 
