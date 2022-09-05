@@ -82,6 +82,9 @@ else
                 bundle exec fastlane beta
                 cd ..
 
+                echo "Remove all changes in local directory ..."
+                git restore .
+
                 echo "All Done!!"
             fi
         fi
