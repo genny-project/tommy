@@ -60,6 +60,9 @@ else
                 done
                 # to search and replace all files in the project, uncomment the following line
                 # perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $(git ls-files -- . ':!:*test-product.sh')
+                
+                echo "Fix appAuthRedirectScheme"
+                perl -pi -e 's/'$bundleId'.appauth/life.genny.tommy.appauth/g' android/app/build.gradle
 
                 echo "Move MainActivity.kt to the right package in /android/app/src/main/kotlin"
                 mkdir -p android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}
