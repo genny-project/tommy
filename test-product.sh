@@ -72,6 +72,7 @@ else
                 perl -pi -e 's/android:label=\"tommy\"/android:label="'$appName'"/g' android/app/src/main/AndroidManifest.xml
                 perl -pi -e 's/Tommy/'$appName'/g' ios/Runner/info.plist
                 perl -pi -e 's/tommy/'$appName'/g' ios/Runner/info.plist
+                perl -pi -e 's/TOMMY/'$appName'/g' lib/pages/login.dart
 
                 echo "Launch $product on $device"
                 flutter run -d "${device}"
