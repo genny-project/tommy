@@ -52,7 +52,6 @@ else
                     android/fastlane/Appfile
                     ios/fastlane/Appfile
                     ios/Runner.xcodeproj/project.pbxproj
-                    lib/pages/login.dart
                 )
                 for i in "${filesToBeUpdated[@]}"
                 do
