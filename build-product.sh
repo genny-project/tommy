@@ -37,11 +37,31 @@ else
                 echo "Bundle id is in wrong format"
             else
                 echo "Replace grpcUrl and grpcPort"
-                perl -pi -e 's/10.0.2.2/'$grpcUrl'/g' lib/projectenv.dart
                 perl -pi -e 's/5154/'$grpcPort'/g' lib/projectenv.dart
+                perl -pi -e 's/10.0.2.2/'$grpcUrl'/g' lib/projectenv.dart
+                perl -pi -e 's/lojing-dev.gada.io/'$grpcUrl'/g' lib/projectenv.dart
 
                 echo "Replace bundle id and package name"
-                perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $(git ls-files -- . ':!:*build-product.sh')
+                filesToBeUpdated=(
+                    android/app/build.gradle
+                    android/app/src/debug/AndroidManifest.xml
+                    android/app/src/main/AndroidManifest.xml
+                    android/app/src/main/kotlin/life/genny/tommy/MainActivity.kt
+                    android/app/src/profile/AndroidManifest.xml
+                    android/fastlane/Appfile
+                    ios/fastlane/Appfile
+                    ios/Runner.xcodeproj/project.pbxproj
+                )
+                for i in "${filesToBeUpdated[@]}"
+                do
+                    echo "Updating $i"
+                    perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $i
+                done
+                # to search and replace all files in the project, uncomment the following line
+                # perl -pi -e 's/life.genny.tommy/'$bundleId'/g' $(git ls-files -- . ':!:*test-product.sh')
+                
+                echo "Fix appAuthRedirectScheme"
+                perl -pi -e 's/'$bundleId'.appauth/life.genny.tommy.appauth/g' android/app/build.gradle
 
                 echo "Move MainActivity.kt to the right package in /android/app/src/main/kotlin"
                 mkdir -p android/app/src/main/kotlin/${arrayDirectoryName[0]}/${arrayDirectoryName[1]}/${arrayDirectoryName[2]}
@@ -49,10 +69,9 @@ else
 
                 echo "Replace app name"
                 perl -pi -e 's/android:label=\"tommy\"/android:label="'$appName'"/g' android/app/src/main/AndroidManifest.xml
-
-                
                 perl -pi -e 's/Tommy/'$appName'/g' ios/Runner/info.plist
                 perl -pi -e 's/tommy/'$appName'/g' ios/Runner/info.plist
+                perl -pi -e 's/TOMMY/'$appName'/g' lib/pages/login.dart
 
                 echo "Prepare credentials for Google Play Store"
                 echo "Put google_play.json in android folder"
