@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000689688">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: ../../build.sh ./projects/lojing.env _ android" time="5.589196435">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

@@ -17,8 +17,9 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
-  lane :beta do
+  lane :beta do |options|
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    sh("../../build.sh",options[:file],"_","ios")
     upload_to_testflight
   end
 
