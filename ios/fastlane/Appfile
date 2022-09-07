@@ -1,4 +1,8 @@
-app_identifier("life.genny.tommy")
-apple_id("xxx@gada.io")
-itc_team_id("125555666")
-team_id("DEVELOPMENT_TEAM_Sample")
+app_identifier("life.genny.tommy") # The bundle identifier of your app
+apple_id("YOUR_APPLE_ID") # Your Apple email address
+
+itc_team_id("YOUR_APPLE_APP_STORE_CONNECT_TEAM_ID") # App Store Connect Team ID
+team_id("7W5L2XPVKS") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
