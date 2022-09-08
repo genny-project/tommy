@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -20,12 +21,14 @@ class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
   @override
   State<GennyViewport> createState() => _GennyViewportState();
+
 }
+
 
 class _GennyViewportState extends State<GennyViewport> {
   static final Log _log = Log("Viewport");
   BridgeHandler handler = BridgeHandler();
-
+  late final ScreenshotController screenshotController;
   BaseEntity root = BaseEntity.create();
   FocusNode focus = FocusNode();
   late TemplateHandler templateHandler;
@@ -72,6 +75,7 @@ class _GennyViewportState extends State<GennyViewport> {
 
   @override
   void initState() {
+    screenshotController = ScreenshotController();
     templateHandler = TemplateHandler();
     super.initState();
     SharedPreferences.getInstance().then((pr) {
@@ -116,28 +120,37 @@ class _GennyViewportState extends State<GennyViewport> {
 
   @override
   Widget build(BuildContext context) {
-    return root.baseEntityAttributes.isNotEmpty == true
-        ? rootScaffold(root)
-        : Scaffold(
-            body: Center(
+    return Screenshot(
+      controller: screenshotController,
+      child: root.baseEntityAttributes.isNotEmpty == true
+          ? rootScaffold(root)
+          : Scaffold(
+              body: Center(
                 child: InkWell(
-                    onLongPress: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ProtoConsole()));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(),
-                        TextButton(
-                            onPressed: () {
-                              AppAuthHelper.logout();
-                              navigatorKey.currentState?.pop();
-                            },
-                            child: const Text("Logout"))
-                      ],
-                    ))),
-          );
+                  onLongPress: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ProtoConsole(),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      TextButton(
+                        onPressed: () {
+                          AppAuthHelper.logout();
+                          navigatorKey.currentState?.pop();
+                        },
+                        child: const Text("Logout"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
   }
 
   Scaffold rootScaffold(BaseEntity root) {
