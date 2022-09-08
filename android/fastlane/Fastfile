@@ -17,8 +17,8 @@ default_platform(:android)
 
 platform :android do
   desc "Submit a new Beta Build to Google Play Store"
-  lane :beta do
-    gradle(task: 'assemble', build_type: 'Release')
+  lane :beta do |options|
+    sh('../../build.sh', options[:file], "_", "android")
     upload_to_play_store(track: 'internal')
   end
 end

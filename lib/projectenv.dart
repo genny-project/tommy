@@ -1,15 +1,15 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 
 class ProjectEnv {
-  static const String baseUrl = "https://lojing-dev.gada.io";
-  // static const String baseUrl = "https://internmatch-dev.gada.io";
-  // static const String baseUrl = "http://10.0.2.2";
+  static String baseUrl = const String.fromEnvironment('BASE_URL');
+  static bool devMode = baseUrl.isEmpty ? true : false;
+  static const List<String> urls = ["https://lojing-dev.gada.io", "https://internmatch-dev.gada.io"];
 
-  static const String grpcUrl = "10.0.2.2";
-  static const int grpcPort = 5154;
+  static String get grpcUrl => baseUrl.replaceFirst("https://", "");
+  static const int grpcPort = int.fromEnvironment("GRPC_PORT");
 
   static const String apiVersion = "/v7";
   static const String projectName = "InternMatch";
-  static const String httpURL = baseUrl + apiVersion + "/api/service/sync";
-  static const String devicesUrl = baseUrl + apiVersion + "/api/devices";
+  static String httpURL = baseUrl + apiVersion + "/api/service/sync";
+  static String devicesUrl = baseUrl + apiVersion + "/api/devices";
 }
