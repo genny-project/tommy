@@ -13,11 +13,9 @@ dependencies:
     sdk: flutter
   
   cupertino_icons: ^1.0.2
-  # flutter_appauth: ^2.4.1
   jaguar_jwt: ^3.0.0
   http: ^0.13.4
   protobuf: ^2.0.1
-  flutter_dotenv: ^5.0.2
   grpc: ^3.0.2
   minio: ^3.5.0
   flutter_svg: ^1.0.3
@@ -26,6 +24,7 @@ dependencies:
   intl: ^0.17.0
   geoff: ^0.2.7
   rename: ^2.0.1
+  screenshot: ^1.2.3
 dev_dependencies:
   integration_test:
     sdk: flutter
@@ -33,6 +32,4 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.1
 flutter:
-  assets:
-    - .env
   uses-material-design: true
