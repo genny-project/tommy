@@ -16,7 +16,7 @@ class DetailView extends StatelessWidget {
     );
 
     BaseEntity? sbe =
-        BridgeHandler.beData[entity.findAttribute("PRI_LOC1").valueString];
+        BridgeHandler.beData[entity.PRI_LOC(1).valueString];
     BaseEntity? displayEntity =
           BridgeHandler.beData.values.singleWhereOrNull((element) {
         return element.parentCode == sbe?.code;
@@ -42,8 +42,8 @@ class DetailView extends StatelessWidget {
                               fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       )
-                    ] +
-                    [
+                    ] 
+                    + [
                       ListView.separated(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -53,8 +53,6 @@ class DetailView extends StatelessWidget {
                         }),
                         itemBuilder: ((context, index) {
                           EntityAttribute attribute = attributes[index];
-                          // return Text(attribute.description);
-                          // return Text(attribute.attributeName + attribute.getValue().toString());
                           String value = attribute.attributeCode;
                           if (value.startsWith('PRI_')) {
                             return IntrinsicHeight(
@@ -77,8 +75,7 @@ class DetailView extends StatelessWidget {
                           } else if (TemplateHandler.fixLnkAndPri(
                                   attribute.attributeCode)
                               .startsWith("LNK")) {
-                            // List<EntityAttribute> lnkAttributes = displayEntity.baseEntityAttributes.where().toList();
-                            return Column(
+                           return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ListTile(
@@ -100,7 +97,8 @@ class DetailView extends StatelessWidget {
                           return Text(attribute.attributeCode);
                         }),
                       )
-                    ])),
+                    ]
+                    )),
       );
     }
     return const LinearProgressIndicator();

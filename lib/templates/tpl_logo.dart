@@ -4,6 +4,7 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/proto_console.dart';
 
 class Logo extends StatelessWidget {
   final BaseEntity entity;
@@ -16,6 +17,13 @@ class Logo extends StatelessWidget {
             // iconSize: 50,
             onPressed: (() {
               BridgeHandler.askEvt(ask.childAsks[1]);
+            }),
+            onLongPress: (() {
+
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const ProtoConsole()));
             }),
             child: CachedNetworkImage(
                 imageUrl: BridgeHandler.getPrimary(

@@ -19,68 +19,47 @@ class Sidebar extends StatelessWidget {
       data: BridgeHandler.getTheme(),
       child: Drawer(
           key: Key(entity.code),
-          child: Column(
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: BridgeHandler
-                      .askData[attribute.valueString]?.childAsks.length,
-                  itemBuilder: (context, index) {
-                    List<Ask>? childAsks =
-                        BridgeHandler.askData[attribute.valueString]!.childAsks;
-                    List<Widget> buttons = [];
+          child: Container(
+            height: 200,
+            width: 200,
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    
+                      shrinkWrap: true,
+                      itemCount: BridgeHandler
+                          .askData[attribute.valueString]?.childAsks.length,
+                      itemBuilder: (context, index) {
+                        List<Ask>? childAsks =
+                            BridgeHandler.askData[attribute.valueString]!.childAsks;
+                        List<Widget> buttons = [];
 
-                    childAsks.sort(((Ask a, Ask b) {
-                      return a.weight.compareTo(b.weight);
-                    }));
-                    Ask ask = childAsks[index];
-                    for (Ask ask in ask.childAsks) {
-                      try {
-                        buttons.add(ListTile(
-                          onTap: () {
-                            BridgeHandler.askEvt(ask);
-                            Navigator.pop(context);
-                          },
-                          title: Text(
-                            ask.name,
-                            style: TextStyle(
-                                color:
-                                    BridgeHandler.getTheme().colorScheme.primary),
-                          ),
-                        ));
-                      } catch (e) {
-                        _log.error("Could not find question target $e");
-                      }
-                    }
-                    return ask.childAsks.isNotEmpty
-                        ? ExpansionTile(
-                            leading: SizedBox(
-                              width: 50,
-                              child: SvgPicture.network(
-                                '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}',
-                                height: 30,
-                                width: 30,
-                                placeholderBuilder: (context) {
-                                  return const Center(
-                                    child: SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator()),
-                                  );
-                                },
-                              ),
-                            ),
-                            title: Text(ask.name,
+                        childAsks.sort(((Ask a, Ask b) {
+                          return a.weight.compareTo(b.weight);
+                        }));
+                        Ask ask = childAsks[index];
+                        for (Ask ask in ask.childAsks) {
+                          try {
+                            buttons.add(ListTile(
+                              onTap: () {
+                                BridgeHandler.askEvt(ask);
+                                Navigator.pop(context);
+                              },
+                              title: Text(
+                                ask.name,
                                 style: TextStyle(
-                                    color: BridgeHandler.getTheme()
-                                        .colorScheme
-                                        .primary)),
-                            children: buttons
-                          
-                          )
-                        : Tooltip(
-                            message: ask.questionCode,
-                            child: ListTile(
+                                    color:
+                                        BridgeHandler.getTheme().colorScheme.onPrimary),
+                              ),
+                            ));
+                          } catch (e) {
+                            _log.error("Could not find question target $e");
+                          }
+                        }
+                        return ask.childAsks.isNotEmpty
+                            ? ExpansionTile(
                                 leading: SizedBox(
                                   width: 50,
                                   child: SvgPicture.network(
@@ -88,8 +67,7 @@ class Sidebar extends StatelessWidget {
                                     height: 30,
                                     width: 30,
                                     color: BridgeHandler.getTheme()
-                                        .colorScheme
-                                        .onPrimary,
+                                            .colorScheme.onPrimary,
                                     placeholderBuilder: (context) {
                                       return const Center(
                                         child: SizedBox(
@@ -100,27 +78,49 @@ class Sidebar extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                                onTap: () {
-                                  BridgeHandler.askEvt(ask);
-                                  Navigator.pop(context);
-                                },
                                 title: Text(ask.name,
                                     style: TextStyle(
                                         color: BridgeHandler.getTheme()
                                             .colorScheme
-                                            .onPrimary))),
-                          );
-                  }),
-                  IconButton(
-                    color: Colors.transparent,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const ProtoConsole()));
-                              },
-                              icon: const Icon(Icons.abc))
-            ],
+                                            .onPrimary)),
+                                children: buttons
+                              
+                              )
+                            : Tooltip(
+                                message: ask.questionCode,
+                                child: ListTile(
+                                    leading: SizedBox(
+                                      width: 50,
+                                      child: SvgPicture.network(
+                                        '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}',
+                                        height: 30,
+                                        width: 30,
+                                        color: BridgeHandler.getTheme()
+                                            .colorScheme.onPrimary,
+                                        placeholderBuilder: (context) {
+                                          return const Center(
+                                            child: SizedBox(
+                                                height: 30,
+                                                width: 30,
+                                                child: CircularProgressIndicator()),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      BridgeHandler.askEvt(ask);
+                                      Navigator.pop(context);
+                                    },
+                                    title: Text(ask.name,
+                                        style: TextStyle(
+                                            color: BridgeHandler.getTheme()
+                                                .colorScheme
+                                                .onPrimary))),
+                              );
+                      }),
+                )
+              ],
+            ),
           ))
     );
   }

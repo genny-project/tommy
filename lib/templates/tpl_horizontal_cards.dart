@@ -5,13 +5,13 @@ import 'package:tommy/utils/bridge_handler.dart';
 
 class HorizontalCardsTpl extends StatelessWidget {
   final BaseEntity entity;
-  late final BaseEntity sbe = BridgeHandler.beData[entity.findAttribute("PRI_LOC1").valueString]!;
+  late final BaseEntity sbe = BridgeHandler.beData[entity.PRI_LOC(1).valueString]!;
   HorizontalCardsTpl({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(entity.baseEntityAttributes.length, (index) {
-        return Text(entity.findAttribute("PRI_LOC1").valueString.toString());
+        return Text(entity.PRI_LOC(1).valueString.toString());
       }),
     );
   }

@@ -74,6 +74,83 @@ class _ProtoConsoleState extends State<ProtoConsole> {
       body: Column(
         children: [
           Text(Session.tokenData['jti'].toString()),
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: 1,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3),
+                              itemCount: 12,
+                              shrinkWrap: true,
+                              
+                              itemBuilder: (context, index) {
+                                ColorScheme scheme =
+                                    BridgeHandler.getTheme().colorScheme;
+                                List<Color> colours = [
+                                  scheme.background,
+                                  scheme.onBackground,
+                                  scheme.error,
+                                  scheme.onError,
+                                  scheme.primary,
+                                  scheme.onPrimary,
+                                  scheme.secondary,
+                                  scheme.onSecondary,
+                                  scheme.surface,
+                                  scheme.onSurface,
+                                  scheme.tertiary,
+                                  scheme.onTertiary
+                                ];
+                                Map<String, Color> colourMap = {
+                                  "background": scheme.background,
+                                  "onBackground": scheme.onBackground,
+                                  "error": scheme.error,
+                                  "onError": scheme.onError,
+                                  "primary": scheme.primary,
+                                  "onPrimary": scheme.onPrimary,
+                                  "secondary": scheme.secondary,
+                                  "onSecondary": scheme.onSecondary,
+                                  "surface": scheme.surface,
+                                  "onSurface": scheme.onSurface,
+                                  "tertiary": scheme.tertiary,
+                                  "onTertiary": scheme.onTertiary
+                                };
+                                return Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Container(
+                                    
+                                      color: colours[index],
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 15,),
+                                          Text(colourMap.keys.elementAt(index),
+                                              style: const TextStyle(
+                                                  backgroundColor: Colors.white)),
+                                          const Expanded(child: SizedBox(),),
+                                          Center(
+                                            child: Text("$index", style: const TextStyle(
+                                              fontSize: 22,
+                                              backgroundColor: Colors.white),),
+                                          ),
+                                        ],
+                                      )),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    });
+              },
+              icon: const Icon(Icons.palette)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -239,15 +316,14 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           },
                           icon: const Icon(Icons.copy)),
                       Text(searchResults[index].name.toString()),
-                      
                       verbose
                           ? makeBold(searchResults[index].toString(), search)
-                          : page == 1 
+                          : page == 1
                               ? makeBold(
-                                  searchResults[index].question.code.toString(), search)
+                                  searchResults[index].question.code.toString(),
+                                  search)
                               : makeBold(
-                                  searchResults[index].code.toString(),
-                                  search),
+                                  searchResults[index].code.toString(), search),
                     ]));
                     return Column(children: widgets);
                   })),

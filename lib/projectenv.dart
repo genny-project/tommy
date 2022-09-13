@@ -5,7 +5,7 @@ class ProjectEnv {
   static bool devMode = baseUrl.isEmpty ? true : false;
   static const List<String> urls = ["https://lojing-dev.gada.io", "https://internmatch-dev.gada.io"];
 
-  static String get grpcUrl => baseUrl.replaceFirst("https://", "");
+  static String grpcUrl = const bool.hasEnvironment("GRPC_URL") ? const String.fromEnvironment("GRPC_URL") : baseUrl.replaceFirst("https://", "");
   static const int grpcPort = int.fromEnvironment("GRPC_PORT");
 
   static const String apiVersion = "/v7";

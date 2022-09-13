@@ -95,6 +95,8 @@ class TemplateHandler {
         return AvatarTpl(entity: entity);
       case "TPL_HORIZONTAL_CARDS":
         return HorizontalCardsTpl(entity: entity);
+      case "TPL_PROCESS":
+        return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
       default:
         return Text(code);
     }

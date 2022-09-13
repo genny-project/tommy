@@ -8,8 +8,10 @@ extension BaseEntityExtension on BaseEntity {
   EntityAttribute findAttribute(String attributeName) {
     return BridgeHandler.findAttribute(this, attributeName);
   }
+  EntityAttribute PRI_LOC(int num) {
+    return findAttribute("PRI_LOC$num");
+  }
 }
-
 extension EntityAttributeExtension on EntityAttribute {
   Widget getPcmWidget() {
     return BridgeHandler.getPcmWidget(this);

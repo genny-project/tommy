@@ -41,7 +41,7 @@ class _TableTplState extends State<TableTpl> {
   Widget build(BuildContext context) {
     BaseEntity? sbe = BridgeHandler.beData.values.singleWhereOrNull((element) =>
         element.code
-            .startsWith(widget.entity.findAttribute("PRI_LOC1").valueString));
+            .startsWith(widget.entity.PRI_LOC(1).valueString));
 
     if (sbe != null) {
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
@@ -174,7 +174,7 @@ class _TableTplState extends State<TableTpl> {
                                   Flexible(
                                     child: Text(
                                       value,
-                                      overflow: TextOverflow.clip,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -200,13 +200,15 @@ class _TableTplState extends State<TableTpl> {
                                                           parentCode:
                                                               sbe.parentCode,
                                                           questionCode:
-                                                              "QUE_PROPERTIES");
+                                                              actions
+                                                        .elementAt(index)
+                                                        .attributeCode);
                                                     },
                                                     child: Text(actions
                                                         .elementAt(index)
-                                                        .attributeName)));
+                                                        .attributeName,)));
                                           }),
-                                          Text(value),
+                                          Flexible(child: Text(value, overflow: TextOverflow.ellipsis,)),
                                           const Icon(Icons.more_horiz, color: Colors.transparent,)
                               ],)
                             );

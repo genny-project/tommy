@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
                     await AppAuthHelper.login(
                             authServerUrl: BridgeEnv.ENV_KEYCLOAK_REDIRECTURI,
                             realm: BridgeEnv.realm,
-                            clientId: BridgeEnv.clientID,
+                            clientId: BridgeEnv.clientID ?? BridgeEnv.realm,
                             redirectUrl:
                                 "life.genny.tommy.appauth://oauth/login_success/")
                         .then((response) {
@@ -70,7 +70,6 @@ class _LoginState extends State<Login> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child: const Center(child: Text("Login")))),
-            
             ProjectEnv.devMode ? Row(
               children: [
                 PopupMenuButton(

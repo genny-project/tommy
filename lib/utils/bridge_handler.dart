@@ -327,7 +327,7 @@ class BridgeHandler {
       BaseEntity entity, String attributeName) {
     if (entity.baseEntityAttributes.isEmpty) {
       Log("")
-          .error("The entity provided contains no attributes ${entity.code}");
+          .error("The entity provided contains no attributes $attributeName");
     }
     try {
       EntityAttribute attribute = entity.baseEntityAttributes
@@ -397,12 +397,12 @@ class BridgeHandler {
 
   static ThemeData getTheme() {
     BaseEntity project = getProject();
-    Color? getColor(String code) {
+    Color getColor(String code) {
       EntityAttribute att = findAttribute(project, code);
       if (att.attributeCode != "ERR") {
         return Color(int.parse("ff${att.valueString.substring(1)}", radix: 16));
       }
-      return null;
+      return Colors.black;
     }
 
     return ThemeData(
@@ -415,22 +415,24 @@ class BridgeHandler {
         colorScheme: ColorScheme(
             //these fallbacks are temporary. ideally we should always get all of these
             background:
-                getColor('PRI_COLOR_BACKGROUND') ?? Colors.white, //_SURFACE
-            onBackground: getColor('PRI_COLOR_BACKGROUND_ON') ?? Colors.black,
-            surface: getColor('PRI_COLOR_SURFACE') ?? Colors.red,
-            onSurface: getColor('PRI_COLOR_SURFACE_ON') ?? Colors.grey,
-            primary: getColor('PRI_COLOR_PRIMARY') ?? Colors.yellow,
-            onPrimary: getColor('PRI_COLOR_PRIMARY_ON') ?? Colors.white,
-            error: getColor('PRI_COLOR_ERROR_ON') ?? Colors.red,
-            onError: getColor('PRI_COLOR_ERROR_ON') ?? Colors.red,
+                getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
+            onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
+            surface: getColor('PRI_COLOR_SURFACE'),
+            onSurface: getColor('PRI_COLOR_SURFACE_ON'),
+            primary: getColor('PRI_COLOR_PRIMARY'),
+            onPrimary: getColor('PRI_COLOR_PRIMARY_ON'),
+            error: getColor('PRI_COLOR_ERROR_ON'),
+            onError: getColor('PRI_COLOR_ERROR_ON'),
             brightness: Brightness.light,
-            secondary: getColor('PRI_COLOR_SECONDARY') ?? Colors.amber,
-            onSecondary: getColor('PRI_COLOR_SECONDARY_ON') ?? Colors.teal));
+            secondary: getColor('PRI_COLOR_SECONDARY'),
+            onSecondary: getColor('PRI_COLOR_SECONDARY_ON')));
   }
 
   static BaseEntity getProject() {
-    String realm = BridgeEnv.clientID.toUpperCase();
-    return findByCode("PRJ_$realm");
+    //IM uses the incorrect name for its project BE so this function (essentially a wildcard) is necessary
+    return beData[beData.keys.firstWhere((key) {
+      return key.startsWith('PRJ');
+    },)]!;
   }
 
   static BaseEntity? getUser() {

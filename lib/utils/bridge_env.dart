@@ -30,7 +30,7 @@ class BridgeEnv {
   static late String sslRequired;
   static late String resource;
   static late Map<String, dynamic> credentials;
-  static late String clientID;
+  static String? clientID;
   static late String vertexUrl;
   static late String apiUrl;
   static late String url;
