@@ -55,3 +55,7 @@ android/*google_play.json
 android/*key.properties
 products/*
 !products/sample
+screenshots/
+Gemfile.lock
+projects/*
+linux/*
