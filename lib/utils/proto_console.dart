@@ -82,8 +82,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                       return SimpleDialog(
                         children: [
                           Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: 1,
+                           width: 1,
                             child: GridView.builder(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -146,6 +145,8 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                               },
                             ),
                           ),
+                          LinearProgressIndicator(),
+                          CircularProgressIndicator()
                         ],
                       );
                     });

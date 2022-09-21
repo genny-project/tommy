@@ -52,6 +52,7 @@ class _LoginState extends State<Login> {
                     Login._log.info("Keycloak URI ${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}");
                     AppAuthHelper.setScopes(["openid"]);
                     await AppAuthHelper.login(
+                            
                             authServerUrl: BridgeEnv.ENV_KEYCLOAK_REDIRECTURI,
                             realm: BridgeEnv.realm,
                             clientId: BridgeEnv.clientID ?? BridgeEnv.realm,

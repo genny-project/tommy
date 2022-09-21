@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/geoff.dart';
@@ -412,15 +411,14 @@ class BridgeHandler {
         ),
         drawerTheme:
             DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
+        progressIndicatorTheme: ProgressIndicatorThemeData(color: getColor('PRI_COLOR_SECONDARY'), linearTrackColor: Colors.transparent,),
         colorScheme: ColorScheme(
-            //these fallbacks are temporary. ideally we should always get all of these
-            background:
-                getColor('PRI_COLOR_BACKGROUND'), //_SURFACE
+            background: getColor('PRI_COLOR_BACKGROUND'),
             onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
             surface: getColor('PRI_COLOR_SURFACE'),
             onSurface: getColor('PRI_COLOR_SURFACE_ON'),
             primary: getColor('PRI_COLOR_PRIMARY'),
-            onPrimary: getColor('PRI_COLOR_PRIMARY_ON'),
+            onPrimary: Colors.white, //TODO: correct this when the values are set properly
             error: getColor('PRI_COLOR_ERROR_ON'),
             onError: getColor('PRI_COLOR_ERROR_ON'),
             brightness: Brightness.light,

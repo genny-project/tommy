@@ -65,7 +65,7 @@ class _GennyFormState extends State<GennyForm> {
                   return Container(
                       decoration: focusField == ask.childAsks[index].question.code
                           ? BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(12)),
+                              borderRadius: ask.childAsks[index].mandatory ? BorderRadius.only(topLeft: Radius.zero, bottomLeft: Radius.zero, topRight: Radius.circular(12), bottomRight: Radius.circular(12)) : BorderRadius.all(Radius.circular(12)),
                               border: Border.all(color: Colors.red, width: 4))
                           : ask.childAsks[index].mandatory ? const BoxDecoration(border: Border(left: BorderSide(color: Colors.red, width: 4))) : null,
                       child: TemplateHandler()
@@ -81,13 +81,13 @@ class _GennyFormState extends State<GennyForm> {
                   child: TemplateHandler()
                       .getField(qGroup.childAsks[index], context, fNode));
             },
-          ),
-        ]..add(UnansweredWidget(qGroup, (Ask ask) {
+          ), UnansweredWidget(qGroup, (Ask ask) {
                 // setState(() {
                   _selectNotifier.value = ask.question.code;
                   focusField = ask.question.code;
                 // });
-              })));}),
+              }),
+        ]);}),
       );
     } else {
       return const LinearProgressIndicator();
