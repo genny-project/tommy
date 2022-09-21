@@ -18,14 +18,11 @@ class GennyTextField extends StatefulWidget {
 }
 
 class _GennyTextFieldState extends State<GennyTextField> {
-  late final BaseEntity entity =
-      BridgeHandler.findByCode(widget.ask.targetCode);
+  late final BaseEntity entity = BridgeHandler.findByCode(widget.ask.targetCode);
   String value = "";
-
   @override
   Widget build(BuildContext context) {
     TemplateHandler.contexts[widget.ask.question.code] = context;
-    BaseEntity entity = BridgeHandler.findByCode(widget.ask.targetCode);
     return ListTile(
       contentPadding: widget.ask.mandatory
            ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)

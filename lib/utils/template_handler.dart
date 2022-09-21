@@ -19,6 +19,7 @@ import 'package:tommy/templates/tpl_hidden_menu.dart';
 import 'package:tommy/templates/tpl_hori.dart';
 import 'package:tommy/templates/tpl_horizontal_cards.dart';
 import 'package:tommy/templates/tpl_logo.dart';
+import 'package:tommy/templates/tpl_process.dart';
 import 'package:tommy/templates/tpl_sidebar.dart';
 import 'package:tommy/templates/tpl_table.dart';
 import 'package:tommy/templates/tpl_vert.dart';
@@ -96,15 +97,15 @@ class TemplateHandler {
       case "TPL_HORIZONTAL_CARDS":
         return HorizontalCardsTpl(entity: entity);
       case "TPL_PROCESS":
-        return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
+        //keep the key solution from the table in mind, might need to use it for the bucket view too, if any problems present
+        return ProcessTpl(entity: entity);
       default:
         return Text(code);
     }
   }
 
   Widget getField(Ask ask, BuildContext context, FocusNode fNode) {
-    // return Text(ask.question.attribute.dataType.component);
-    switch (ask.question.attribute.dataType.component) {
+  switch (ask.question.attribute.dataType.component) {
       case "radio":
         {
           return RadioField(ask: ask);
