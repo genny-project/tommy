@@ -6,8 +6,7 @@ class ProjectEnv {
   static const List<String> urls = ["https://lojing-dev.gada.io", "https://internmatch-dev.gada.io"];
 
   static String grpcUrl = const bool.hasEnvironment("GRPC_URL") ? const String.fromEnvironment("GRPC_URL") : baseUrl.replaceFirst("https://", "");
-  static const int grpcPort = int.fromEnvironment("GRPC_PORT");
-
+  static int grpcPort = const int.fromEnvironment("GRPC_PORT");
   static const String apiVersion = "/v7";
   static const String projectName = "InternMatch";
   static String httpURL = baseUrl + apiVersion + "/api/service/sync";

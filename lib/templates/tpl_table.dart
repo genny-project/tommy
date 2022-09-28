@@ -1,8 +1,11 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/projectenv.dart';
+import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:collection/collection.dart';
@@ -22,7 +25,11 @@ class _TableTplState extends State<TableTpl> {
   List<BaseEntity>? rowBe;
   int? tblPageSize;
 
+  late BaseEntity? searchBe = BridgeHandler.beData.values.singleWhereOrNull((element) =>
+        element.code.startsWith(widget.entity.PRI_LOC(1).valueString));
+  
   int rowHeight = 40;
+
   @override
   void initState() {
     super.initState();
@@ -35,25 +42,25 @@ class _TableTplState extends State<TableTpl> {
 
   // ignore: unused_field
   late final Log _log = Log(runtimeType.toString());
-  Map<int, bool?> sort = {0: false};
+  late Map<int, bool?> sort = {0 : false};
 
   @override
   Widget build(BuildContext context) {
-    BaseEntity? sbe = BridgeHandler.beData.values.singleWhereOrNull((element) =>
-        element.code
-            .startsWith(widget.entity.PRI_LOC(1).valueString));
-
-    if (sbe != null) {
+    if (searchBe != null) {
+      BaseEntity sbe = searchBe!;
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
         return element.attributeCode.startsWith("COL");
-      }).toList();
+      }).toList()
+        ..sort(((a, b) {
+          return a.weight.compareTo(b.weight);
+        }));
       late List<BaseEntity> row = BridgeHandler.beData.values.where((element) {
         return element.parentCode == sbe.code;
       }).toList()
         ..sort((a, b) {
           //this ought to correct the table behaviour while allowing sort properly
           List<BaseEntity> values = [a, b];
-          if (!sort.values.first!) {
+          if (sort.values.first!) {
             values = values.reversed.toList();
           }
           return values[0]
@@ -85,7 +92,6 @@ class _TableTplState extends State<TableTpl> {
                   itemCount: col.length,
                   controller: PageController(viewportFraction: 0.75),
                   itemBuilder: ((context, pageIndex) {
-              
                     return Column(
                       children: [
                         const Divider(
@@ -124,7 +130,7 @@ class _TableTplState extends State<TableTpl> {
                                     // icon: Text("${sort?[pageIndex]}"))
 
                                     icon: sort[pageIndex] != null
-                                        ? sort[pageIndex]!
+                                        ? !sort[pageIndex]!
                                             ? const Icon(Icons.arrow_circle_up)
                                             : const Icon(
                                                 Icons.arrow_circle_down)
@@ -137,85 +143,101 @@ class _TableTplState extends State<TableTpl> {
                         const SizedBox(
                           height: 10,
                         ),
-                        row.isNotEmpty ? Expanded(
-                            child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: row.length,
-                          itemBuilder: (context, listIndex) {
-                                  
-                            String value;
-                            EntityAttribute item = row
-                                .elementAt(listIndex)
-                                .findAttribute(col
-                                    .elementAt(pageIndex)
-                                    .attributeCode
-                                    .replaceFirst("COL_", ""));
-                            Iterable<EntityAttribute> actions =
-                                sbe.baseEntityAttributes.where((element) =>
-                                    element.attributeCode.startsWith("ACT_"));
-                            try {
-                              if (item.getValue() != null) {
-                                value = item.getValue().toString();
-                              } else {
-                                throw TypeError();
-                              }
-                            } catch (e) {
-                              _log.error(e);
-                              value = "N/A";
-                            }
-                            return Container(
-                              height: rowHeight.toDouble(),
-                              color: listIndex % 2 == 0
-                                  ? Colors.grey[200]
-                                  : Colors.transparent,
-                              child: pageIndex != 0 ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      value,
-                                      overflow: TextOverflow.ellipsis,
+                        row.isNotEmpty
+                            ? Expanded(
+                                child: ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: row.length,
+                                itemBuilder: (context, listIndex) {
+                                  String value;
+                                  EntityAttribute item = row
+                                      .elementAt(listIndex)
+                                      .findAttribute(col
+                                          .elementAt(pageIndex)
+                                          .attributeCode
+                                          .replaceFirst("COL_", ""));
+                                  Iterable<EntityAttribute> actions = sbe
+                                      .baseEntityAttributes
+                                      .where((element) => element.attributeCode
+                                          .startsWith("ACT_"));
+                                  try {
+                                    if (item.getValue() != null) {
+                                      value = item.getValue().toString();
+                                    } else {
+                                      throw TypeError();
+                                    }
+                                  } catch (e) {
+                                    _log.error(e);
+                                    value = "N/A";
+                                  }
+                                  return Container(
+                                    height: rowHeight.toDouble(),
+                                    color: listIndex % 2 == 0
+                                        ? Colors.grey[200]
+                                        : Colors.transparent,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        pageIndex == 0
+                                            ? PopupMenuButton(
+                                                icon: const Icon(
+                                                    Icons.more_horiz),
+                                                itemBuilder: (context) {
+                                                  return List.generate(
+                                                      actions.length,
+                                                      (index) => PopupMenuItem(
+                                                          onTap: () {
+                                                            BridgeHandler.evt(
+                                                                code: actions
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .attributeCode,
+                                                                sourceCode:
+                                                                    BridgeHandler
+                                                                            .getUser()!
+                                                                        .code,
+                                                                targetCode: item
+                                                                    .baseEntityCode,
+                                                                parentCode: sbe
+                                                                    .parentCode,
+                                                                questionCode: actions
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .attributeCode);
+                                                          },
+                                                          child: Text(
+                                                            actions
+                                                                .elementAt(
+                                                                    index)
+                                                                .attributeName,
+                                                          )));
+                                                })
+                                            : SizedBox(),
+                                        Flexible(
+                                            child: item.attribute.code ==
+                                                    "PRI_IMAGE_URL"
+                                                ? ClipOval(
+                                                    child: CachedNetworkImage(
+                                                        errorWidget: (context,e,d) => ClipOval(child: Container(child: Icon(Icons.image),)),
+                                                        placeholder: (context, url) => ClipOval(child: Container(child: Icon(Icons.image),)),
+                                                        imageUrl:
+                                                            "${ProjectEnv.baseUrl}/imageproxy/500x500,crop/${BridgeEnv.ENV_MEDIA_PROXY_URL}/$value"))
+                                                : Text(
+                                                    value,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  )),
+                                        const Icon(
+                                          Icons.more_horiz,
+                                          color: Colors.transparent,
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ) : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  PopupMenuButton(
-                                          icon: const Icon(Icons.more_horiz),
-                                          itemBuilder: (context) {
-                                            return List.generate(
-                                                actions.length,
-                                                (index) => PopupMenuItem(
-                                                    onTap: () {
-                                                      BridgeHandler.evt(
-                                                          code: actions
-                                                              .elementAt(index)
-                                                              .attributeCode,
-                                                          sourceCode: BridgeHandler
-                                                                  .getUser()!
-                                                              .code,
-                                                          targetCode: item
-                                                              .baseEntityCode,
-                                                          parentCode:
-                                                              sbe.parentCode,
-                                                          questionCode:
-                                                              actions
-                                                        .elementAt(index)
-                                                        .attributeCode);
-                                                    },
-                                                    child: Text(actions
-                                                        .elementAt(index)
-                                                        .attributeName,)));
-                                          }),
-                                          Flexible(child: Text(value, overflow: TextOverflow.ellipsis,)),
-                                          const Icon(Icons.more_horiz, color: Colors.transparent,)
-                              ],)
-                            );
-                          },
-                        )) : 
-                      const Text("No items found")
-                  
+                                  );
+                                },
+                              ))
+                            : const Text("No items found")
                       ],
                     );
                   })),

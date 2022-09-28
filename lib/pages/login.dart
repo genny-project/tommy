@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Text(String.fromEnvironment('APP_NAME'), style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),),
+            Text(!ProjectEnv.devMode ? const String.fromEnvironment('APP_NAME') : "TOMMY", style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),),
             OutlinedButton(
               style: ButtonStyle(shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)))),
                 onPressed: () {
@@ -85,10 +85,19 @@ class _LoginState extends State<Login> {
           });
         },
         child: Text(ProjectEnv.urls[index])));
-      }), Text(ProjectEnv.baseUrl)
+      }), Text(ProjectEnv.baseUrl.isNotEmpty ? ProjectEnv.baseUrl : "Select Url")
               ],
             ) : SizedBox(),
-      
+          ProjectEnv.devMode ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  ProjectEnv.grpcPort = int.parse(value);
+                });
+              },
+              decoration: InputDecoration(labelText: "GRPC Port"),),
+          ) : SizedBox()
           ]),
         ),
       ),

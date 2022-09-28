@@ -249,8 +249,9 @@ class BridgeHandler {
           ..mergeFromProto3Json(data, ignoreUnknownFields: true);
         for (BaseEntity be in qMessage.items) {
           //TODO: work out a better solution than this
+          //maybe not? this works relatively well to avoid storing the full message data
           //not exactly fond of this workaround
-          be.parentCode = qMessage.questionCode;
+          be.parentCode = qMessage.parentCode;
           handleBE(be, beCallback);
         }
       } catch (e) {

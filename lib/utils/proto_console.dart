@@ -145,8 +145,8 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                               },
                             ),
                           ),
-                          LinearProgressIndicator(),
-                          CircularProgressIndicator()
+                          const LinearProgressIndicator(),
+                          const CircularProgressIndicator()
                         ],
                       );
                     });

@@ -127,7 +127,7 @@ class _ProcessTplState extends State<ProcessTpl> {
                         Expanded(
                             child: ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: items.values.length,
+                          itemCount: items[sbes.elementAt(pageIndex).code]!.length,
                           itemBuilder: (context, listIndex) {
                             //this sort is a little different since items are displayed completely in a single
                             //column, instead of per row, hence the need to limit the column order to a single column
@@ -143,8 +143,8 @@ class _ProcessTplState extends State<ProcessTpl> {
                             
                             BaseEntity be =
                                 items[sbes.elementAt(pageIndex).code]!
-                                    .elementAt(listIndex);
-                            List<EntityAttribute> actions = sbe
+                                    . elementAt(listIndex);
+                            List<EntityAttribute> actions = sbes.elementAt(pageIndex)
                                 .baseEntityAttributes
                                 .where(
                                   (element) =>
@@ -202,7 +202,7 @@ class _ProcessTplState extends State<ProcessTpl> {
                                                                 .primary,
                                                             child: Icon(
                                                               Icons.person,
-                                                              size: 10,
+                                                              size: 25,
                                                               color: BridgeHandler
                                                                       .getTheme()
                                                                   .colorScheme
