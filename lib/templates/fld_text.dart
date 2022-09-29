@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
@@ -61,7 +60,7 @@ class _GennyTextFieldState extends State<GennyTextField> {
               widget.ask.answer(value);
             },
             decoration: InputDecoration(
-              icon: Icon(Icons.info, color: Colors.red,), 
+              icon: const Icon(Icons.info, color: Colors.red,), 
               // Text('*', style: TextStyle(color: Colors.red, fontSize: 24),),
               labelText: widget.ask.name,
             )),

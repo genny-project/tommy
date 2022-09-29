@@ -5,7 +5,6 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/utils/proto_console.dart';
 
 class Sidebar extends StatelessWidget {
   final BaseEntity entity;
@@ -19,12 +18,12 @@ class Sidebar extends StatelessWidget {
       data: BridgeHandler.getTheme(),
       child: Drawer(
           key: Key(entity.code),
-          child: Container(
+          child: SizedBox(
             height: 200,
             width: 200,
             child: Column(
               children: [
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: ListView.builder(
                     

@@ -1,17 +1,14 @@
-import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/projectenv.dart';
-import 'package:tommy/templates/tpl_detail_view.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
-import 'package:tommy/utils/template_handler.dart';
-
 class ProcessTpl extends StatefulWidget {
   final BaseEntity entity;
 
@@ -69,7 +66,7 @@ class _ProcessTplState extends State<ProcessTpl> {
           children: [
             Expanded(
               child: PageView.builder(
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: items.values.length,
                   controller: PageController(viewportFraction: 0.75),
                   itemBuilder: ((context, pageIndex) {
@@ -160,18 +157,16 @@ class _ProcessTplState extends State<ProcessTpl> {
                                 .toList();
                             Map<EntityAttribute, EntityAttribute> colValues =
                                 {};
-                            cols.forEach(
-                              (col) {
-                                var Attribute = be.baseEntityAttributes
+                            for (var col in cols) {
+                                EntityAttribute? attribute = be.baseEntityAttributes
                                     .firstWhereOrNull((attribute) => attribute
                                         .attributeCode
                                         .endsWith(col.attribute.code
                                             .replaceFirst("COL_", "")));
-                                if (Attribute != null) {
-                                  colValues[col] = Attribute;
+                                if (attribute != null) {
+                                  colValues[col] = attribute;
                                 }
-                              },
-                            );
+                              }
 
                             //Content display card
                             return Padding(
@@ -263,11 +258,13 @@ class _ProcessTplState extends State<ProcessTpl> {
                                               
                                             ],
                                           ),
-                                          Divider(),
+                                          const Divider(),
                                           //TODO: decide on whether or not to manage visible fields locally
                                           //i.e. only display rows if they have data
                                           //at a guess i would say that the data to be shown should be denoted
                                           //by the COL_ values
+
+                                          //present implementation just displays the values to each column it receives
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,

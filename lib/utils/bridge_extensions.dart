@@ -8,6 +8,7 @@ extension BaseEntityExtension on BaseEntity {
   EntityAttribute findAttribute(String attributeName) {
     return BridgeHandler.findAttribute(this, attributeName);
   }
+  // ignore: non_constant_identifier_names
   EntityAttribute PRI_LOC(int num) {
     return findAttribute("PRI_LOC$num");
   }

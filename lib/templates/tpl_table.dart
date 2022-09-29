@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geoff/utils/system/log.dart';
@@ -8,6 +6,7 @@ import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 
 class TableTpl extends StatefulWidget {
@@ -25,6 +24,8 @@ class _TableTplState extends State<TableTpl> {
   List<BaseEntity>? rowBe;
   int? tblPageSize;
 
+
+  //If the table screen is stuck on a linearprogressindicator, it means that this search base entity hasnt loaded
   late BaseEntity? searchBe = BridgeHandler.beData.values.singleWhereOrNull((element) =>
         element.code.startsWith(widget.entity.PRI_LOC(1).valueString));
   
@@ -46,6 +47,10 @@ class _TableTplState extends State<TableTpl> {
 
   @override
   Widget build(BuildContext context) {
+    //not sure if this should be done or whether it is a hacky workaround
+    //either way it prevents the app from being stuck on a loading screen forever
+    searchBe = BridgeHandler.beData.values.singleWhereOrNull((element) =>
+        element.code.startsWith(widget.entity.PRI_LOC(1).valueString));
     if (searchBe != null) {
       BaseEntity sbe = searchBe!;
       List<EntityAttribute> col = sbe.baseEntityAttributes.where((element) {
@@ -213,14 +218,14 @@ class _TableTplState extends State<TableTpl> {
                                                                 .attributeName,
                                                           )));
                                                 })
-                                            : SizedBox(),
+                                            : const SizedBox(),
                                         Flexible(
                                             child: item.attribute.code ==
                                                     "PRI_IMAGE_URL"
                                                 ? ClipOval(
                                                     child: CachedNetworkImage(
-                                                        errorWidget: (context,e,d) => ClipOval(child: Container(child: Icon(Icons.image),)),
-                                                        placeholder: (context, url) => ClipOval(child: Container(child: Icon(Icons.image),)),
+                                                        errorWidget: (context,e,d) => const ClipOval(child: Icon(Icons.image)),
+                                                        placeholder: (context, url) => const ClipOval(child: Icon(Icons.image)),
                                                         imageUrl:
                                                             "${ProjectEnv.baseUrl}/imageproxy/500x500,crop/${BridgeEnv.ENV_MEDIA_PROXY_URL}/$value"))
                                                 : Text(

@@ -22,7 +22,7 @@ if [ -z "$platform" ]; then
     flutter run -d $device $args
 else
     if [ $platform == "android" ]; then
-        flutter build apk $args
+        flutter build appbundle $args
     elif [ $platform == "ios" ]; then
         flutter build ipa $args
     fi

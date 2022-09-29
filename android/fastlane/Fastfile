@@ -19,6 +19,6 @@ platform :android do
   desc "Submit a new Beta Build to Google Play Store"
   lane :beta do |options|
     sh('../../build.sh', options[:file], "_", "android")
-    upload_to_play_store(track: 'internal')
+    upload_to_play_store(track: 'internal', skip_upload_changelogs: true, aab: "./../build/app/outputs/bundle/release/app-release.aab")
   end
 end

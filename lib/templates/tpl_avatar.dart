@@ -13,7 +13,7 @@ class AvatarTpl extends StatelessWidget {
   late final Log _log = Log(runtimeType.toString());
   AvatarTpl({Key? key, required this.entity}) : super(key: key);
 
-  late Ask ask = BridgeHandler.askData[entity.findAttribute("PRI_QUESTION_CODE").valueString]!;
+  late final Ask ask = BridgeHandler.askData[entity.findAttribute("PRI_QUESTION_CODE").valueString]!;
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(

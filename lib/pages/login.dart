@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(!ProjectEnv.devMode ? const String.fromEnvironment('APP_NAME') : "TOMMY", style: TextStyle(fontSize: 50, fontWeight: FontWeight.w900),),
+            Text(!ProjectEnv.devMode ? const String.fromEnvironment('APP_NAME') : "TOMMY", style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w900),),
             OutlinedButton(
               style: ButtonStyle(shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)))),
                 onPressed: () {
@@ -78,16 +78,14 @@ class _LoginState extends State<Login> {
                   itemBuilder: (context) {
       return List.generate(ProjectEnv.urls.length, (index) => PopupMenuItem(
         onTap: (){
-          print(ProjectEnv.urls[index]);
           setState(() {
-                
-          ProjectEnv.baseUrl = ProjectEnv.urls[index];
+            ProjectEnv.baseUrl = ProjectEnv.urls[index];
           });
         },
         child: Text(ProjectEnv.urls[index])));
       }), Text(ProjectEnv.baseUrl.isNotEmpty ? ProjectEnv.baseUrl : "Select Url")
               ],
-            ) : SizedBox(),
+            ) : const SizedBox(),
           ProjectEnv.devMode ? Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -96,8 +94,8 @@ class _LoginState extends State<Login> {
                   ProjectEnv.grpcPort = int.parse(value);
                 });
               },
-              decoration: InputDecoration(labelText: "GRPC Port"),),
-          ) : SizedBox()
+              decoration: const InputDecoration(labelText: "GRPC Port"),),
+          ) : const SizedBox()
           ]),
         ),
       ),

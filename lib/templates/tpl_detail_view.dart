@@ -3,6 +3,7 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 class DetailView extends StatelessWidget {
   final BaseEntity entity;

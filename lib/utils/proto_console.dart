@@ -81,8 +81,8 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     builder: (context) {
                       return SimpleDialog(
                         children: [
-                          Container(
-                           width: 1,
+                          SizedBox(
+                            width: 1,
                             child: GridView.builder(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
