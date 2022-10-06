@@ -16,6 +16,7 @@ import 'package:tommy/main.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 class BridgeHandler {
   BridgeHandler();
 
@@ -148,6 +149,11 @@ class BridgeHandler {
           Session.tokenResponse = null;
           navigatorKey.currentState?.pop();
           break;
+        }
+      case "QUE_AVATAR_SETTINGS":
+        {
+          launchUrl(Uri.parse("https://keycloak.gada.io/auth/realms/internmatch/account",), mode: LaunchMode.externalApplication);
+          break;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         }
       default:
         {

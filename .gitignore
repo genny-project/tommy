@@ -60,3 +60,5 @@ Gemfile.lock
 projects/*
 linux/*
 ios/Podfile.lock
+*.keystore
+android/fastlane/metadata/*

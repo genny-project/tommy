@@ -25,6 +25,7 @@ dependencies:
   geoff: ^0.2.7
   rename: ^2.0.1
   screenshot: ^1.2.3
+  url_launcher: ^6.1.6
 dev_dependencies:
   integration_test:
     sdk: flutter

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tommy/pages/login.dart';
 
 
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   runApp(const MyApp());
 }
@@ -22,9 +22,8 @@ class MyApp extends StatefulWidget {
     //this works if you call two commands but not one?
     //i am just as confused as you are.
 
-    navigatorKey.currentState?.pushReplacement(route);
-    navigatorKey.currentState?.pop();
-    navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (context) => Container()));
+    navigatorKey.currentState?.push(route);
+    navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => Container()));
   }
 }
 

@@ -162,7 +162,7 @@ class _GennyViewportState extends State<GennyViewport> {
   }
 
   Widget getBody() {
-    return ListView(children: [root.findAttribute('PRI_LOC3').getPcmWidget()]);
+    return ListView(children: [root.PRI_LOC(3).getPcmWidget()]);
   }
 
   Widget getDrawer() {
