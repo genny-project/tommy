@@ -59,3 +59,4 @@ screenshots/
 Gemfile.lock
 projects/*
 linux/*
+ios/Podfile.lock
