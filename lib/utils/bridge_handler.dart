@@ -425,7 +425,7 @@ class BridgeHandler {
             surface: getColor('PRI_COLOR_SURFACE'),
             onSurface: getColor('PRI_COLOR_SURFACE_ON'),
             primary: getColor('PRI_COLOR_PRIMARY'),
-            onPrimary: Colors.white, //TODO: correct this when the values are set properly
+            onPrimary: getColor('PRI_COLOR_PRIMARY_ON'), //TODO: correct this when the values are set properly
             error: getColor('PRI_COLOR_ERROR_ON'),
             onError: getColor('PRI_COLOR_ERROR_ON'),
             brightness: Brightness.light,

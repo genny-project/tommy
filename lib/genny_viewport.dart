@@ -17,7 +17,7 @@ import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
-class GennyViewport extends StatefulWidget {
+class GennyViewport extends StatefulWidget{
   const GennyViewport({Key? key}) : super(key: key);
   @override
   State<GennyViewport> createState() => _GennyViewportState();
@@ -25,7 +25,7 @@ class GennyViewport extends StatefulWidget {
 }
 
 
-class _GennyViewportState extends State<GennyViewport> {
+class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserver{
   static final Log _log = Log("Viewport");
   BridgeHandler handler = BridgeHandler();
   late final ScreenshotController screenshotController;
@@ -35,13 +35,15 @@ class _GennyViewportState extends State<GennyViewport> {
   late Timer timer;
   final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
-  late StreamSubscription sub = StreamClient(ProtoUtils.getChannel())
-      .connect(Item.create()
+  StreamClient client = StreamClient(ProtoUtils.getChannel());
+      
+  late StreamSubscription sub = 
+      client.connect(Item.create()
         ..token = Session.tokenResponse!.accessToken!
         ..body = jsonEncode({'connect': 'connect'}))
-      .asBroadcastStream()
-      .listen((item) async {
-    if (item.body != "{\"h\"}") {
+      .asBroadcastStream().listen(listener);
+  late void Function(Item) listener =(item) {
+      if (item.body != "{\"h\"}") {
       setState(() {
         BridgeHandler.message.value = item;
       });
@@ -62,8 +64,7 @@ class _GennyViewportState extends State<GennyViewport> {
         }
       }));
     }
-  });
-
+  };
   @override
   void dispose() {
     handler = BridgeHandler();
@@ -74,7 +75,34 @@ class _GennyViewportState extends State<GennyViewport> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("Got new state - $state");
+    switch (state) {
+      case AppLifecycleState.paused: {
+        sub.pause();
+        break;
+      }
+      case AppLifecycleState.resumed: {
+        if(sub.isPaused) {
+
+       
+        sub.cancel();
+        sub.cancel();
+        sub = client.connect(Item.create()
+        ..token = Session.tokenResponse!.accessToken!
+        ..body = jsonEncode({'connect': 'connect'}))
+      .asBroadcastStream().listen(listener);
+        } break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+  @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     screenshotController = ScreenshotController();
     templateHandler = TemplateHandler();
     super.initState();
@@ -83,6 +111,7 @@ class _GennyViewportState extends State<GennyViewport> {
         prefs = pr;
       });
       sub.resume();
+  
 
       _log.info("Connected. Attempting Auth Init");
       Item authInit = Item.create()
@@ -99,6 +128,7 @@ class _GennyViewportState extends State<GennyViewport> {
       timer = Timer.periodic(const Duration(seconds: 5), (timer) {
         String json = jsonEncode(
             {"1": Session.tokenResponse!.accessToken, "2": "{\"h\"}"});
+        print("Stethoscope ${timer.tick}");
         stub.heartbeat(Item.fromJson(json));
       });
       _log.info("Auth init data ${authInit.toProto3Json()}}");

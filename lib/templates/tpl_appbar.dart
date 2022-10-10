@@ -7,7 +7,7 @@ import 'package:tommy/utils/bridge_handler.dart';
 class AppBarTpl extends StatelessWidget {
   final BaseEntity entity;
   // ignore: unused_field
-  final Log _log = Log("TPL_APPBARTPL");
+  late final Log _log = Log(runtimeType.toString());
   AppBarTpl({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -24,9 +24,12 @@ class AppBarTpl extends StatelessWidget {
       actions.add(attribute.getPcmWidget());
     }
     return AppBar(
-      title: title,
+      title: Container(
+        height: AppBar().preferredSize.height,
+        child: title),
       centerTitle: false,
       actions: actions,
     );
   }
 }
+   

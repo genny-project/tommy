@@ -11,7 +11,8 @@ class Logo extends StatelessWidget {
   const Logo({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Ask? ask = BridgeHandler.askData[entity.findAttribute("PRI_QUESTION_CODE").valueString];
+    Ask? ask = BridgeHandler
+        .askData[entity.findAttribute("PRI_QUESTION_CODE").valueString];
     return ask != null
         ? TextButton(
             // iconSize: 50,
@@ -19,13 +20,13 @@ class Logo extends StatelessWidget {
               BridgeHandler.askEvt(ask.childAsks[1]);
             }),
             onLongPress: (() {
-
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => const ProtoConsole()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProtoConsole()));
             }),
             child: CachedNetworkImage(
+              fadeInDuration: Duration.zero,
                 imageUrl: BridgeHandler.getPrimary(
                         ask.childAsks[0].question.attribute.code)
                     .valueString))
