@@ -59,7 +59,6 @@ class _ProtoConsoleState extends State<ProtoConsole> {
   bool askSwitch = false;
   int page = 0;
   bool verbose = true;
-  static final stub = StreamClient(ProtoUtils.getChannel());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,7 +160,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                   onPressed: () async {
                     _log.info("Connecting");
 
-                    stub
+                    BridgeHandler.client
                         .connect(Item.fromJson(jsonEncode({
                       "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({"connect": "connect"})
@@ -177,7 +176,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                           "1": Session.tokenResponse!.accessToken,
                           "2": "{\"h\"}"
                         });
-                        stub.heartbeat(Item.fromJson(json));
+                        BridgeHandler.client.heartbeat(Item.fromJson(json));
                       });
                     });
                   },
@@ -187,7 +186,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                 child: TextButton(
                   child: const Text("Auth Init"),
                   onPressed: () {
-                    stub.sink(Item.fromJson(jsonEncode({
+                    BridgeHandler.client.sink(Item.fromJson(jsonEncode({
                       "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({
                         "event_type": "AUTH_INIT",
@@ -207,7 +206,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                 child: TextButton(
                   child: const Text("processquestions"),
                   onPressed: () async {
-                    stub.sink(Item.fromJson(jsonEncode({
+                    BridgeHandler.client.sink(Item.fromJson(jsonEncode({
                       "1": Session.tokenResponse!.accessToken,
                       "2": jsonEncode({
                         "token": Session.tokenResponse!.accessToken,

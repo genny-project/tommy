@@ -9,6 +9,7 @@ import 'package:tommy/main.dart';
 import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:http/http.dart' as http;
+import 'package:tommy/utils/bridge_handler.dart';
 
 class Login extends StatefulWidget {
   static final Log _log = Log("Login");
@@ -76,7 +77,7 @@ class _LoginState extends State<Login> {
                                     "life.genny.tommy.appauth://oauth/login_success/")
                             .then((response) {
                           if (response) {
-                            navigatorKey.currentState!.push(MaterialPageRoute(
+                            navigatorKey.currentState!.pushReplacement(MaterialPageRoute(
                                 builder: (context) => GennyViewport(
                                       key: Key(Session.tokenResponse!.idToken!),
                                     )));

@@ -13,6 +13,7 @@ import 'package:tommy/generated/qdataaskmessage.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/main.dart';
+import 'package:tommy/pages/login.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
@@ -20,19 +21,14 @@ import 'package:url_launcher/url_launcher.dart';
 class BridgeHandler {
   BridgeHandler();
 
-  static final stub = StreamClient(ProtoUtils.getChannel());
+  static final StreamClient client = StreamClient(ProtoUtils.getChannel());
   final Log _log = Log("BridgeHandler");
   static Map<String, BaseEntity> beData = {};
   static Map<String, Ask> askData = {};
   static Map<String, Attribute> attributeData = {};
   static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
   static StreamController<BaseEntity> beStream = StreamController.broadcast();
-  // static final Stream<Item> stream = StreamClient(ProtoUtils.getChannel())
-  //     .connect(Item.create()
-  //       ..token = Session.tokenResponse!.accessToken!
-  //       ..body = jsonEncode({'connect': 'connect'}))
-  //     .asBroadcastStream();
-
+  
   static dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
@@ -101,7 +97,7 @@ class BridgeHandler {
     //temporary handler for logout and so forth
     //will use until we have real event handling
     catchEvent(ask);
-    stub.sink(evtItem);
+    client.sink(evtItem);
   }
 
   static void evt(
@@ -125,7 +121,7 @@ class BridgeHandler {
               ..questionCode = questionCode
               ..sessionId = Session.tokenData['jti']))
           .toProto3Json());
-    stub.sink(evtItem);
+    client.sink(evtItem);
   }
 
   static void catchEvent(Ask ask) {
@@ -135,7 +131,7 @@ class BridgeHandler {
           beData = {};
           askData = {};
           attributeData = {};
-          stub.sink(Item.create()
+          client.sink(Item.create()
             ..token = Session.token!
             ..body = jsonEncode((QMessage.create()
                   ..token = Session.token!
@@ -144,15 +140,16 @@ class BridgeHandler {
                   ..eventType = "LOGOUT"
                   ..redirect = true)
                 .toProto3Json()));
-          AppAuthHelper.logout();
+          
           Session.onLogout();
           Session.tokenResponse = null;
-          navigatorKey.currentState?.pop();
+          AppAuthHelper.logout().then((value) => navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (context)=>Login())));
+          
           break;
         }
       case "QUE_AVATAR_SETTINGS":
         {
-          launchUrl(Uri.parse("https://keycloak.gada.io/auth/realms/internmatch/account",), mode: LaunchMode.externalApplication);
+          launchUrl(Uri.parse("${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}/realms/internmatch/account",), mode: LaunchMode.externalApplication);
           break;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         }
       default:
@@ -180,7 +177,7 @@ class BridgeHandler {
               ..processId = ask.processId
               ..value = value))
           .toProto3Json());
-    stub.sink(answerItem);
+    client.sink(answerItem);
   }
 
   //likewise i dont think qmessage is the dedicated class for this, but it fits
@@ -197,7 +194,7 @@ class BridgeHandler {
               ..sessionId = Session.tokenData['jti']
               ..processId = ask.processId))
           .toProto3Json());
-    stub.sink(submit);
+    client.sink(submit);
   }
 
   void handleData(Map<String, dynamic> data,

@@ -18,9 +18,11 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do |options|
-    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-    sh("../../build.sh",options[:file],"_","ios")
-    upload_to_testflight
+    Dir.chdir("../..") do
+      sh('sh', 'build.sh', options[:file], "_", "ios")
+    end
+    echo(message:Dir["../../**/*.ipa"].first())
+    upload_to_testflight(ipa: File.expand_path(Dir["../../**/*.ipa"].first()))
   end
 
   lane :screenshots do
@@ -29,3 +31,4 @@ platform :ios do
     upload_to_app_store
   end
 end
+

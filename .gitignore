@@ -62,3 +62,4 @@ linux/*
 ios/Podfile.lock
 *.keystore
 android/fastlane/metadata/*
+Pods/*

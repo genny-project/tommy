@@ -33,9 +33,14 @@ echo "json_key_file(\"google_play.json\")" > ./fastlane/Appfile
 echo "package_name(\"$appId\")" >> ./fastlane/Appfile
 set_line "version: " "version: $versionName+$versionCode" ../pubspec.yaml
 bundle exec fastlane beta file:$dir/`basename $1`
+cd ..
 
 
-# cd ../ios/
+cd ios
+
+
+#these functions are temporarily dummied out
+#as to not interfere with xcode settings
 
 # set_line "DEVELOPMENT_TEAM = " "DEVELOPMENT_TEAM = $DEVELOPMENT_TEAM" ./Runner.xcodeproj/project.pbxproj
 # set_line "PROVISIONING_PROFILE_SPECIFIER = " "PROVISIONING_PROFILE_SPECIFIER = $dart_APP_NAME" ./Runner.xcodeproj/project.pbxproj
@@ -45,6 +50,11 @@ bundle exec fastlane beta file:$dir/`basename $1`
 # echo "itc_team_id(\"$APPLE_APP_STORE_CONNECT_TEAM_ID\")" >> ./fastlane/Appfile
 # echo "team_id(\"$DEVELOPMENT_TEAM\")" >> ./fastlane/Appfile
 
-# bundle exec fastlane beta file:$1
+#!!!!!!!!!!!!!! IF BUILDING DOES NOT WORK, RUN `security unlock-keychain`
+#!!!!!!!!!!!!!! OCCURS IF RUNNING FROM AN SSH INSTANCE
+#!!!!!!!!!!!!!! THIS COMMAND IS RUN FROM THE BUILD SCRIPT
 
+
+bundle exec fastlane beta file:$1
+cd ..
 # git restore .

@@ -24,6 +24,7 @@ else
     if [ $platform == "android" ]; then
         flutter build appbundle $args
     elif [ $platform == "ios" ]; then
+        security unlock-keychain
         flutter build ipa $args
     fi
 

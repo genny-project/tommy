@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
+import 'package:grpc/grpc.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/ask.pb.dart';
@@ -11,21 +12,21 @@ import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/main.dart';
+import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 
-class GennyViewport extends StatefulWidget{
+class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
   @override
   State<GennyViewport> createState() => _GennyViewportState();
-
 }
 
-
-class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserver{
+class _GennyViewportState extends State<GennyViewport>
+    with WidgetsBindingObserver {
   static final Log _log = Log("Viewport");
   BridgeHandler handler = BridgeHandler();
   late final ScreenshotController screenshotController;
@@ -33,17 +34,29 @@ class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserv
   FocusNode focus = FocusNode();
   late TemplateHandler templateHandler;
   late Timer timer;
-  final stub = StreamClient(ProtoUtils.getChannel());
   late SharedPreferences prefs;
-  StreamClient client = StreamClient(ProtoUtils.getChannel());
-      
-  late StreamSubscription sub = 
-      client.connect(Item.create()
+
+  late StreamSubscription sub = BridgeHandler.client
+      .connect(Item.create()
         ..token = Session.tokenResponse!.accessToken!
         ..body = jsonEncode({'connect': 'connect'}))
-      .asBroadcastStream().listen(listener);
-  late void Function(Item) listener =(item) {
-      if (item.body != "{\"h\"}") {
+      .asBroadcastStream()
+      .listen(listener, onError: onError);
+  late Function onError = (e) {
+    e as GrpcError;
+    _log.error("ENCOUNTERED GRPC ERROR ${e.code} $e");
+    if (e.codeName == "ABORTED") {
+      _log.warning("Connection has been aborted. Creating new connection...");
+      sub = BridgeHandler.client
+          .connect(Item.create()
+            ..token = Session.tokenResponse!.accessToken!
+            ..body = jsonEncode({'connect': 'connect'}))
+          .asBroadcastStream()
+          .listen(listener, onError: onError);
+    }
+  };
+  late void Function(Item) listener = (item) {
+    if (item.body != '{"h"}') {
       setState(() {
         BridgeHandler.message.value = item;
       });
@@ -72,31 +85,31 @@ class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserv
     sub.cancel();
     super.dispose();
     focus.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("Got new state - $state");
+    //this function isnt used for an awful lot anymore, since
+    //the aborted connection issue is now handled in the connect function
+    //but pausing the subscription makes the app more performant in the background
+    //so its worth keeping
     switch (state) {
-      case AppLifecycleState.paused: {
-        sub.pause();
-        break;
-      }
-      case AppLifecycleState.resumed: {
-        if(sub.isPaused) {
-
-       
-        sub.cancel();
-        sub.cancel();
-        sub = client.connect(Item.create()
-        ..token = Session.tokenResponse!.accessToken!
-        ..body = jsonEncode({'connect': 'connect'}))
-      .asBroadcastStream().listen(listener);
-        } break;
-      }
-      default: {
-        break;
-      }
+      case AppLifecycleState.paused:
+        {
+          sub.pause();
+          break;
+        }
+      case AppLifecycleState.resumed:
+        {
+          sub.resume();
+          break;
+        }
+      default:
+        {
+          break;
+        }
     }
   }
 
@@ -111,8 +124,6 @@ class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserv
         prefs = pr;
       });
       sub.resume();
-  
-
       _log.info("Connected. Attempting Auth Init");
       Item authInit = Item.create()
         ..token = Session.token!
@@ -128,13 +139,18 @@ class _GennyViewportState extends State<GennyViewport> with WidgetsBindingObserv
       timer = Timer.periodic(const Duration(seconds: 5), (timer) {
         String json = jsonEncode(
             {"1": Session.tokenResponse!.accessToken, "2": "{\"h\"}"});
-        print("Stethoscope ${timer.tick}");
-        stub.heartbeat(Item.fromJson(json));
+
+        BridgeHandler.client.heartbeat(Item.fromJson(json));
       });
       _log.info("Auth init data ${authInit.toProto3Json()}}");
-      stub.sink(authInit);
+      //###############
+      //homogenising (if thats the right word. probably is.) the clients
+      //i realised that i was creating multiple and that that would be a Bad Idea
+      //so now its easier to track down and brutally eviscerate any bugs that may (read: will) appear
+      //###############
+      BridgeHandler.client.sink(authInit);
       _log.info("Attempting Get Dashboard View");
-      stub.sink(Item.create()
+      BridgeHandler.client.sink(Item.create()
         ..token = Session.token!
         ..body = jsonEncode((QMessage.create()
               ..token = Session.tokenResponse!.accessToken!
