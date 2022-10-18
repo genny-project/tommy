@@ -35,24 +35,68 @@ class _GennyViewportState extends State<GennyViewport>
   late TemplateHandler templateHandler;
   late Timer timer;
   late SharedPreferences prefs;
-
-  late StreamSubscription sub = BridgeHandler.client
+  StreamSubscription getSubscription() {
+    // ScaffoldMessenger.of(context).clearMaterialBanners();
+    return BridgeHandler.client
       .connect(Item.create()
         ..token = Session.tokenResponse!.accessToken!
         ..body = jsonEncode({'connect': 'connect'}))
       .asBroadcastStream()
-      .listen(listener, onError: onError);
+      .listen(listener, onError: onError);}
+
+  late StreamSubscription sub = getSubscription();
   late Function onError = (e) {
     e as GrpcError;
     _log.error("ENCOUNTERED GRPC ERROR ${e.code} $e");
-    if (e.codeName == "ABORTED") {
-      _log.warning("Connection has been aborted. Creating new connection...");
-      sub = BridgeHandler.client
-          .connect(Item.create()
-            ..token = Session.tokenResponse!.accessToken!
-            ..body = jsonEncode({'connect': 'connect'}))
-          .asBroadcastStream()
-          .listen(listener, onError: onError);
+
+    switch (e.code) {
+      case 2:
+        {
+          //UNKNOWN - Unknown error [Most commonly an HTTP2 error]
+          _log.warning("Connection lost - HTTP/2 Error. Retrying...");
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+              behavior: SnackBarBehavior.floating,
+              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("2 - ${e.message}"), trailing: CircularProgressIndicator(),),));
+          sub = getSubscription();
+          break;
+        }
+      case 10:
+        {
+          //ABORTED
+          //on ios, when the app has been closed for a period of ~20 seconds, the grpc connection gets aborted
+          //however, the app does not receive this message until it is re-opened
+          //hence the need to reset the listener by creating a new connection
+
+          //presently it is unknown whether this occurs on android, or any other platform
+          //if it does, that would denote that the timeout span is longer than the 20 seconds on ios
+          _log.warning(
+              "Connection has been aborted. Creating new connection...");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+              behavior: SnackBarBehavior.floating,
+              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("10 - ${e.message}"), trailing: CircularProgressIndicator(),),));
+          //restart the connection
+          sub = getSubscription();
+          break;
+        }
+      case 14:
+        {
+          //UNAVAILABLE
+          // e.details!.first
+          print(RetryInfo.getDefault());
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+              behavior: SnackBarBehavior.floating,
+              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("14 - ${e.message}"), trailing: CircularProgressIndicator(),),));
+              actions: [CircularProgressIndicator()];
+          // defaultBackoffStrategy(lastBackoff)
+          sub = getSubscription();
+          break;
+        }
     }
   };
   late void Function(Item) listener = (item) {
