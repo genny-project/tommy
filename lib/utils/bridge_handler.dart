@@ -18,6 +18,8 @@ import 'package:tommy/utils/bridge_env.dart';
 import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+
 class BridgeHandler {
   BridgeHandler();
 
@@ -28,7 +30,7 @@ class BridgeHandler {
   static Map<String, Attribute> attributeData = {};
   static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
   static StreamController<BaseEntity> beStream = StreamController.broadcast();
-  
+  Set<String> images = {};
   static dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
@@ -140,17 +142,23 @@ class BridgeHandler {
                   ..eventType = "LOGOUT"
                   ..redirect = true)
                 .toProto3Json()));
-          
+
           Session.onLogout();
           Session.tokenResponse = null;
-          AppAuthHelper.logout().then((value) => navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (context)=>Login())));
-          
+          AppAuthHelper.logout().then((value) => navigatorKey.currentState
+              ?.pushReplacement(
+                  MaterialPageRoute(builder: (context) => Login())));
+
           break;
         }
       case "QUE_AVATAR_SETTINGS":
         {
-          launchUrl(Uri.parse("${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}/realms/internmatch/account",), mode: LaunchMode.externalApplication);
-          break;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+          launchUrl(
+              Uri.parse(
+                "${BridgeEnv.ENV_KEYCLOAK_REDIRECTURI}/realms/internmatch/account",
+              ),
+              mode: LaunchMode.externalApplication);
+          break;
         }
       default:
         {
@@ -285,19 +293,25 @@ class BridgeHandler {
 
   void handlePRJ(BaseEntity entity) {
     _log.info("Got project ${entity.code}");
-    MyApp.changeTheme(getTheme());
+    MyApp.changeTheme(theme);
   }
 
   Future<void> handleAsk(Ask ask, askCallback) async {
     askData[ask.question.code] = ask;
     if (ask.question.icon.isNotEmpty) {
-      precachePicture(
-          SvgPicture.network(
-                  '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}')
-              .pictureProvider,
-          null, onError: (e, s) {
-        _log.warning("Could not pre cache svg from network. $e $s");
-      });
+      if (!images.contains(ask.question.icon)) {
+        images.add(ask.question.icon);
+        SvgPicture picture = SvgPicture.network(
+            '${BridgeEnv.ENV_MEDIA_PROXY_URL}/${ask.question.icon}');
+        http.Response response = await http
+            .get(Uri.parse((picture.pictureProvider as NetworkPicture).url));
+        if (response.statusCode == 200) {
+          precachePicture(picture.pictureProvider, null);
+        } else {
+          _log.info(
+              "Could not load image ${picture.pictureProvider} : ${ask.question.code}");
+        }
+      }
     }
     if (ask.childAsks.isNotEmpty) {
       for (Ask ask in ask.childAsks) {
@@ -398,7 +412,7 @@ class BridgeHandler {
     }
   }
 
-  static ThemeData getTheme() {
+  static ThemeData get theme {
     BaseEntity project = getProject();
     Color getColor(String code) {
       EntityAttribute att = findAttribute(project, code);
@@ -415,7 +429,10 @@ class BridgeHandler {
         ),
         drawerTheme:
             DrawerThemeData(backgroundColor: getColor('PRI_COLOR_PRIMARY')),
-        progressIndicatorTheme: ProgressIndicatorThemeData(color: getColor('PRI_COLOR_SECONDARY'), linearTrackColor: Colors.transparent,),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: getColor('PRI_COLOR_SECONDARY'),
+          linearTrackColor: Colors.transparent,
+        ),
         colorScheme: ColorScheme(
             background: getColor('PRI_COLOR_BACKGROUND'),
             onBackground: getColor('PRI_COLOR_BACKGROUND_ON'),
@@ -432,9 +449,11 @@ class BridgeHandler {
 
   static BaseEntity getProject() {
     //IM uses the incorrect name for its project BE so this function (essentially a wildcard) is necessary
-    return beData[beData.keys.firstWhere((key) {
-      return key.startsWith('PRJ');
-    },)]!;
+    return beData[beData.keys.firstWhere(
+      (key) {
+        return key.startsWith('PRJ');
+      },
+    )]!;
   }
 
   static BaseEntity? getUser() {

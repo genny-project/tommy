@@ -192,14 +192,14 @@ class _ProcessTplState extends State<ProcessTpl> {
                                                       placeholder: (_, b) {
                                                         return Container(
                                                             color: BridgeHandler
-                                                                    .getTheme()
+                                                                    .theme
                                                                 .colorScheme
                                                                 .primary,
                                                             child: Icon(
                                                               Icons.person,
                                                               size: 25,
                                                               color: BridgeHandler
-                                                                      .getTheme()
+                                                                      .theme
                                                                   .colorScheme
                                                                   .onPrimary,
                                                             ));
@@ -208,14 +208,14 @@ class _ProcessTplState extends State<ProcessTpl> {
                                                           url, error) {
                                                         return Container(
                                                             color: BridgeHandler
-                                                                    .getTheme()
+                                                                    .theme
                                                                 .colorScheme
                                                                 .primary,
                                                             child: Icon(
                                                               Icons.person,
                                                               size: 25,
                                                               color: BridgeHandler
-                                                                      .getTheme()
+                                                                      .theme
                                                                   .colorScheme
                                                                   .onPrimary,
                                                             ));
@@ -310,14 +310,14 @@ class _ProcessTplState extends State<ProcessTpl> {
                                                           placeholder: (_, b) {
                                                             return Container(
                                                                 color: BridgeHandler
-                                                                        .getTheme()
+                                                                        .theme
                                                                     .colorScheme
                                                                     .primary,
                                                                 child: Icon(
                                                                   Icons.person,
                                                                   size: 10,
                                                                   color: BridgeHandler
-                                                                          .getTheme()
+                                                                          .theme
                                                                       .colorScheme
                                                                       .onPrimary,
                                                                 ));
@@ -326,14 +326,14 @@ class _ProcessTplState extends State<ProcessTpl> {
                                                               url, error) {
                                                             return Container(
                                                                 color: BridgeHandler
-                                                                        .getTheme()
+                                                                        .theme
                                                                     .colorScheme
                                                                     .primary,
                                                                 child: Icon(
                                                                   Icons.person,
                                                                   size: 10,
                                                                   color: BridgeHandler
-                                                                          .getTheme()
+                                                                          .theme
                                                                       .colorScheme
                                                                       .onPrimary,
                                                                 ));
