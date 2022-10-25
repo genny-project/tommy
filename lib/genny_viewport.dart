@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geoff/geoff.dart';
-import 'package:grpc/grpc.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tommy/generated/ask.pb.dart';
@@ -11,13 +10,11 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/messagedata.pb.dart';
 import 'package:tommy/generated/qmessage.pb.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
-import 'package:tommy/main.dart';
-import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/proto_console.dart';
-import 'package:tommy/utils/proto_utils.dart';
 import 'package:tommy/utils/template_handler.dart';
+import 'package:grpc/grpc.dart';
 
 class GennyViewport extends StatefulWidget {
   const GennyViewport({Key? key}) : super(key: key);
@@ -38,11 +35,12 @@ class _GennyViewportState extends State<GennyViewport>
   StreamSubscription getSubscription() {
     // ScaffoldMessenger.of(context).clearMaterialBanners();
     return BridgeHandler.client
-      .connect(Item.create()
-        ..token = Session.tokenResponse!.accessToken!
-        ..body = jsonEncode({'connect': 'connect'}))
-      .asBroadcastStream()
-      .listen(listener, onError: onError);}
+        .connect(Item.create()
+          ..token = Session.tokenResponse!.accessToken!
+          ..body = jsonEncode({'connect': 'connect'}))
+        .asBroadcastStream()
+        .listen(listener, onError: onError);
+  }
 
   late StreamSubscription sub = getSubscription();
   late Function onError = (e) {
@@ -54,14 +52,25 @@ class _GennyViewportState extends State<GennyViewport>
         {
           //UNKNOWN - Unknown error [Most commonly an HTTP2 error]
           _log.warning("Connection lost - HTTP/2 Error. Retrying...");
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: EdgeInsets.zero,
             backgroundColor: Colors.white,
-              behavior: SnackBarBehavior.floating,
-              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("2 - ${e.message}"), trailing: CircularProgressIndicator(),),));
+            behavior: SnackBarBehavior.floating,
+            content: ListTile(
+              title: Text("Re-establishing connection"),
+              subtitle: Text("2 - ${e.message}"),
+              trailing: CircularProgressIndicator(),
+            ),
+          ));
           sub = getSubscription();
           break;
         }
+      case 6: { 
+        //ALREADY_EXISTS - typically occurs when tommy tries to connect through grpc twice
+        //no need to alert the user in this instance
+        _log.warning("Session already exists!");
+        break;
+      }
       case 10:
         {
           //ABORTED
@@ -76,8 +85,13 @@ class _GennyViewportState extends State<GennyViewport>
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: EdgeInsets.zero,
             backgroundColor: Colors.white,
-              behavior: SnackBarBehavior.floating,
-              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("10 - ${e.message}"), trailing: CircularProgressIndicator(),),));
+            behavior: SnackBarBehavior.floating,
+            content: ListTile(
+              title: Text("Connection terminated, attempting to re-establish..."),
+              subtitle: Text("10 - ${e.message}"),
+              trailing: CircularProgressIndicator(),
+            ),
+          ));
           //restart the connection
           sub = getSubscription();
           break;
@@ -86,16 +100,27 @@ class _GennyViewportState extends State<GennyViewport>
         {
           //UNAVAILABLE
           // e.details!.first
-          print(RetryInfo.getDefault());
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             padding: EdgeInsets.zero,
             backgroundColor: Colors.white,
-              behavior: SnackBarBehavior.floating,
-              content: ListTile(title: Text("Re-establishing connection"), subtitle: Text("14 - ${e.message}"), trailing: CircularProgressIndicator(),),));
-              actions: [CircularProgressIndicator()];
+            behavior: SnackBarBehavior.floating,
+            content: ListTile(
+              title: Text("Re-establishing connection"),
+              subtitle: Text("14 - ${e.message}"),
+              trailing: CircularProgressIndicator(),
+            ),
+          ));
+          actions:
+          [CircularProgressIndicator()];
           // defaultBackoffStrategy(lastBackoff)
           sub = getSubscription();
           break;
+        }
+      case 15:
+        { //DATA_LOSS - data loss
+          //known to occur on the first login after starting up the local system
+          //has not occured in any other circumstance, to my knowledge
+          _log.warning("Data loss detected");
         }
     }
   };
@@ -226,15 +251,8 @@ class _GennyViewportState extends State<GennyViewport>
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(),
-                      TextButton(
-                        onPressed: () {
-                          AppAuthHelper.logout();
-                          navigatorKey.currentState?.pop();
-                        },
-                        child: const Text("Logout"),
-                      ),
+                    children: const [
+                      CircularProgressIndicator(),
                     ],
                   ),
                 ),

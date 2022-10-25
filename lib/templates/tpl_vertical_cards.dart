@@ -85,26 +85,26 @@ class VerticalCardsTpl extends StatelessWidget {
                                           width: 50,
                                           placeholder: (_, b) {
                                             return Container(
-                                                color: BridgeHandler.getTheme()
+                                                color: BridgeHandler.theme
                                                     .colorScheme
                                                     .primary,
                                                 child: Icon(
                                                   Icons.person,
                                                   size: 25,
-                                                  color: BridgeHandler.getTheme()
+                                                  color: BridgeHandler.theme
                                                       .colorScheme
                                                       .onPrimary,
                                                 ));
                                           },
                                           errorWidget: (context, url, error) {
                                             return Container(
-                                                color: BridgeHandler.getTheme()
+                                                color: BridgeHandler.theme
                                                     .colorScheme
                                                     .primary,
                                                 child: Icon(
                                                   Icons.person,
                                                   size: 25,
-                                                  color: BridgeHandler.getTheme()
+                                                  color: BridgeHandler.theme
                                                       .colorScheme
                                                       .onPrimary,
                                                 ));
@@ -183,26 +183,26 @@ class VerticalCardsTpl extends StatelessWidget {
                                           width: 20,
                                           placeholder: (_, b) {
                                             return Container(
-                                                color: BridgeHandler.getTheme()
+                                                color: BridgeHandler.theme
                                                     .colorScheme
                                                     .primary,
                                                 child: Icon(
                                                   Icons.person,
                                                   size: 10,
-                                                  color: BridgeHandler.getTheme()
+                                                  color: BridgeHandler.theme
                                                       .colorScheme
                                                       .onPrimary,
                                                 ));
                                           },
                                           errorWidget: (context, url, error) {
                                             return Container(
-                                                color: BridgeHandler.getTheme()
+                                                color: BridgeHandler.theme
                                                     .colorScheme
                                                     .primary,
                                                 child: Icon(
                                                   Icons.person,
                                                   size: 10,
-                                                  color: BridgeHandler.getTheme()
+                                                  color: BridgeHandler.theme
                                                       .colorScheme
                                                       .onPrimary,
                                                 ));

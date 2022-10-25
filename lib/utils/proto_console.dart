@@ -91,7 +91,7 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                               
                               itemBuilder: (context, index) {
                                 ColorScheme scheme =
-                                    BridgeHandler.getTheme().colorScheme;
+                                    BridgeHandler.theme.colorScheme;
                                 List<Color> colours = [
                                   scheme.background,
                                   scheme.onBackground,
