@@ -23,6 +23,7 @@ import 'package:tommy/templates/tpl_process.dart';
 import 'package:tommy/templates/tpl_sidebar.dart';
 import 'package:tommy/templates/tpl_table.dart';
 import 'package:tommy/templates/tpl_vert.dart';
+import 'package:tommy/templates/tpl_vertical_cards.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/widgets/timezone_widget.dart';
@@ -99,6 +100,8 @@ class TemplateHandler {
       case "TPL_PROCESS":
         //keep the key solution from the table in mind, might need to use it for the bucket view too, if any problems present
         return ProcessTpl(entity: entity);
+      case "TPL_VERTICAL_CARDS":
+        return VerticalCardsTpl(entity: entity);
       default:
         return Text(code);
     }
