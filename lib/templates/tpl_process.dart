@@ -48,12 +48,13 @@ class _ProcessTplState extends State<ProcessTpl> {
         element.code.startsWith(widget.entity.PRI_LOC(1).valueString));
 
     if (sbe != null) {
-      List<BaseEntity>? sbes = widget.entity.baseEntityAttributes.where((beAttribute) {
-        return beAttribute.attributeCode.startsWith("PRI_LOC");
-      },)
-          .map((e) {
-            return BridgeHandler.findByCode(e.valueString);} )
-          .toList();
+      List<BaseEntity>? sbes = widget.entity.baseEntityAttributes.where(
+        (beAttribute) {
+          return beAttribute.attributeCode.startsWith("PRI_LOC");
+        },
+      ).map((e) {
+        return BridgeHandler.findByCode(e.valueString);
+      }).toList();
 
       Map<String, List<BaseEntity>> items = {};
       for (BaseEntity sbe in sbes) {
@@ -67,25 +68,29 @@ class _ProcessTplState extends State<ProcessTpl> {
                   .floor()
                   .clamp(1, sbes.length))
               .toDouble();
-      return SizedBox(
-          /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render
-      no need to give it the page length when the item count is lesser than the page size
-      */
-          height: MediaQuery.of(context).size.height - Scaffold.of(context).appBarMaxHeight!,
-          child: PageView.builder(
-              padEnds: false,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: sbes.length,
-              controller: PageController(viewportFraction: fraction),
-              // controller: PageController(viewportFraction: (1.75 - MediaQuery.of(context).size.aspectRatio).clamp(1/items.values.length, 1)),
-              itemBuilder: ((context, pageIndex) {
-                return TemplateHandler.getTemplate(
-                    sbes
-                        .elementAt(pageIndex)
-                        .findAttribute("PRI_TEMPLATE_CODE")
-                        .valueString,
-                    sbes.elementAt(pageIndex));
-              })));
+      return GestureDetector(
+        onVerticalDragUpdate: (_) {},
+        child: SizedBox(
+            /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render
+        no need to give it the page length when the item count is lesser than the page size
+        */
+            height: MediaQuery.of(context).size.height -
+                Scaffold.of(context).appBarMaxHeight!,
+            child: PageView.builder(
+                padEnds: false,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: sbes.length,
+                controller: PageController(viewportFraction: fraction),
+                // controller: PageController(viewportFraction: (1.75 - MediaQuery.of(context).size.aspectRatio).clamp(1/items.values.length, 1)),
+                itemBuilder: ((context, pageIndex) {
+                  return TemplateHandler.getTemplate(
+                      sbes
+                          .elementAt(pageIndex)
+                          .findAttribute("PRI_TEMPLATE_CODE")
+                          .valueString,
+                      sbes.elementAt(pageIndex));
+                }))),
+      );
     } else {
       return const LinearProgressIndicator();
     }

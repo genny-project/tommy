@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/parser.dart';
 import 'package:geoff/utils/system/log.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -47,12 +48,12 @@ class Sidebar extends StatelessWidget {
                                   color:
                                       BridgeHandler.theme.colorScheme.onPrimary,
                                   placeholderBuilder: (context) {
-                                    return const Center(
-                                      child: SizedBox(
-                                          height: 30,
-                                          width: 30,
-                                          child: CircularProgressIndicator()),
-                                    );
+                                    return Center(
+                                        child: Icon(
+                                      Icons.circle,
+                                      color: BridgeHandler
+                                          .theme.colorScheme.onPrimary,
+                                    ));
                                   },
                                 )
                               : Center(
