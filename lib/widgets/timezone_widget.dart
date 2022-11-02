@@ -53,8 +53,8 @@ class _TimezoneWidgetState extends State<TimezoneWidget> {
                   title: const Text("Select Time Zone"),
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.width,
-                      width: MediaQuery.of(context).size.width,
+                      height: TemplateHandler.getDeviceSize(context).width,
+                      width: TemplateHandler.getDeviceSize(context).width,
                       child: ListView.builder(
                           clipBehavior: Clip.antiAlias,
                           shrinkWrap: true,

@@ -26,10 +26,12 @@ class Logo extends StatelessWidget {
                       builder: (context) => const ProtoConsole()));
             }),
             child: CachedNetworkImage(
+              placeholder: (c,u)=> SizedBox(),
+              placeholderFadeInDuration: Duration.zero,
               fadeInDuration: Duration.zero,
                 imageUrl: BridgeHandler.getPrimary(
                         ask.childAsks[0].question.attribute.code)
                     .valueString))
-        : const SizedBox();
+        : const Text("Ask not loaded");
   }
 }

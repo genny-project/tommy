@@ -8,6 +8,7 @@ import 'package:tommy/utils/bridge_handler.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class VerticalCardsTpl extends StatelessWidget {
   final BaseEntity entity;
@@ -38,7 +39,7 @@ class VerticalCardsTpl extends StatelessWidget {
           ),
           Container(
               padding: EdgeInsets.symmetric(vertical: 12),
-              width: MediaQuery.of(context).size.width,
+              width: TemplateHandler.getDeviceSize(context).width,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

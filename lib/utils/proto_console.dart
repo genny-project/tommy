@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geoff/geoff.dart';
@@ -8,8 +8,7 @@ import 'package:grpc/grpc_connection_interface.dart';
 import 'package:tommy/generated/stream.pbgrpc.dart';
 import 'package:tommy/projectstyle.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/utils/proto_utils.dart';
-
+import 'package:path_provider/path_provider.dart';
 class ProtoConsole extends StatefulWidget {
   const ProtoConsole({Key? key}) : super(key: key);
 
@@ -151,6 +150,16 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                     });
               },
               icon: const Icon(Icons.palette)),
+
+          TextButton(onPressed: () async {
+            await getExternalStorageDirectories(type: StorageDirectory.downloads).then((dir) {
+                File('${dir!.first.path}/data.json').writeAsStringSync(jsonEncode(BridgeHandler.export()));
+            },);
+            await getApplicationDocumentsDirectory().then((dir) {
+             
+          
+            });
+          }, child: Text("Save Data")),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -308,14 +317,14 @@ class _ProtoConsoleState extends State<ProtoConsole> {
                       IconButton(
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
-                                    text: searchResults[index].toString()))
+                                    text: jsonEncode((searchResults[index]).toProto3Json())))
                                 .then((_) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("Item Copied")));
                             });
                           },
                           icon: const Icon(Icons.copy)),
-                      Text(searchResults[index].name.toString()),
+                      Text(searchResults[index].name),
                       verbose
                           ? makeBold(searchResults[index].toString(), search)
                           : page == 1

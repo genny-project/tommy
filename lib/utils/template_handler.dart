@@ -1,33 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:tommy/template_library.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
-import 'package:tommy/templates/fld_date.dart';
-import 'package:tommy/templates/fld_dropdown.dart';
-import 'package:tommy/templates/fld_flag.dart';
-import 'package:tommy/templates/fld_radio.dart';
-import 'package:tommy/templates/fld_richtext_editor.dart';
-import 'package:tommy/templates/fld_text.dart';
-import 'package:tommy/templates/tpl_add_items.dart';
-import 'package:tommy/templates/tpl_appbar.dart';
-import 'package:tommy/templates/tpl_avatar.dart';
-import 'package:tommy/templates/tpl_bell.dart';
-import 'package:tommy/templates/tpl_cards_list_view.dart';
-import 'package:tommy/templates/tpl_dashboard.dart';
-import 'package:tommy/templates/tpl_detail_view.dart';
-import 'package:tommy/templates/tpl_form.dart';
-import 'package:tommy/templates/tpl_hidden_menu.dart';
-import 'package:tommy/templates/tpl_hori.dart';
-import 'package:tommy/templates/tpl_horizontal_cards.dart';
-import 'package:tommy/templates/tpl_logo.dart';
-import 'package:tommy/templates/tpl_process.dart';
-import 'package:tommy/templates/tpl_sidebar.dart';
-import 'package:tommy/templates/tpl_table.dart';
-import 'package:tommy/templates/tpl_vert.dart';
-import 'package:tommy/templates/tpl_vertical_cards.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/widgets/timezone_widget.dart';
 
+import 'package:widgetbook/src/devices/widgetbook_device_frame.dart';
+import 'package:widgetbook_models/src/devices/device_size.dart';
 class TemplateHandler {
   // FocusNode focus;
   static Map<String, BuildContext> contexts = {};
@@ -180,5 +160,14 @@ class TemplateHandler {
       Text(attribute.valueString.toString())
       ],
     );
+  }
+
+  static Size getDeviceSize(BuildContext context) {
+    DeviceSize? deviceSize = context.findAncestorWidgetOfExactType<WidgetbookDeviceFrame>()?.device.resolution.nativeSize;
+    if(deviceSize != null) {
+      return Size(deviceSize.width, deviceSize.height);
+    }
+    return MediaQuery.of(context).size;
+    
   }
 }

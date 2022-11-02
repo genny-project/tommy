@@ -9,6 +9,8 @@ class BridgeEnv {
 
   static final Log _log = Log("BridgeEnvs");
 
+  static late Map<String, dynamic> data;
+
   static get bridgeUrl {
     _log.info("${ProjectEnv.baseUrl}/api/events/init?url=${ProjectEnv.baseUrl}");
     return "${ProjectEnv.baseUrl}/api/events/init?url=${ProjectEnv.baseUrl}";

@@ -26,7 +26,7 @@ class Sidebar extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height,
+                    height: TemplateHandler.getDeviceSize(context).height,
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: BridgeHandler

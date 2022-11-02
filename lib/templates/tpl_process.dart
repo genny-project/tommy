@@ -10,7 +10,12 @@ import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
+import 'package:tommy/widget_book/widgetbook.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:tommy/utils/template_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:widgetbook/src/workbench/workbench_provider.dart';
+
 
 class ProcessTpl extends StatefulWidget {
   final BaseEntity entity;
@@ -21,7 +26,7 @@ class ProcessTpl extends StatefulWidget {
   State<ProcessTpl> createState() => _ProcessTplState();
 }
 
-class _ProcessTplState extends State<ProcessTpl> {
+class _ProcessTplState<CustomTheme> extends State<ProcessTpl> {
   String? key;
   Iterable<EntityAttribute>? colBe;
   List<BaseEntity>? rowBe;
@@ -64,7 +69,7 @@ class _ProcessTplState extends State<ProcessTpl> {
       }
       // return Text("${sbes.map((e) => e.code).toString()}");
       double fraction = 1 /
-          ((MediaQuery.of(context).size.width / 300)
+          ((TemplateHandler.getDeviceSize(context).width / 300)
                   .floor()
                   .clamp(1, sbes.length))
               .toDouble();
@@ -74,14 +79,13 @@ class _ProcessTplState extends State<ProcessTpl> {
             /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render
         no need to give it the page length when the item count is lesser than the page size
         */
-            height: MediaQuery.of(context).size.height -
-                Scaffold.of(context).appBarMaxHeight!,
+            height: TemplateHandler.getDeviceSize(context).height - (
+                Scaffold.of(context).appBarMaxHeight ?? 0),
             child: PageView.builder(
                 padEnds: false,
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: sbes.length,
                 controller: PageController(viewportFraction: fraction),
-                // controller: PageController(viewportFraction: (1.75 - MediaQuery.of(context).size.aspectRatio).clamp(1/items.values.length, 1)),
                 itemBuilder: ((context, pageIndex) {
                   return TemplateHandler.getTemplate(
                       sbes

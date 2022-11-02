@@ -8,6 +8,7 @@ import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class TableTpl extends StatefulWidget {
   final BaseEntity entity;
@@ -82,7 +83,11 @@ class _TableTplState extends State<TableTpl> {
                   .getValue());
         });
       int pageSize = sbe.findAttribute("SCH_PAGE_SIZE").valueInteger;
-
+       double fraction = 1 /
+          ((TemplateHandler.getDeviceSize(context).width / 150)
+                  .floor()
+                  .clamp(1, col.length))
+              .toDouble();
       return SizedBox(
         /*Pageviews are not fond of intrinsic height. Hence the need to give it an estimated extent to render
       no need to give it the page length when the item count is lesser than the page size
@@ -91,8 +96,9 @@ class _TableTplState extends State<TableTpl> {
             ? (pageSize.toDouble() * rowHeight) + rowHeight + 20
             : (row.length.toDouble() + 2) * rowHeight + 20,
         child: PageView.builder(
+            padEnds: false,
             itemCount: col.length,
-            controller: PageController(viewportFraction: 0.75),
+            controller: PageController(viewportFraction: fraction),
             itemBuilder: ((context, pageIndex) {
               return Column(
                 children: [
@@ -109,7 +115,7 @@ class _TableTplState extends State<TableTpl> {
                                   ? const BorderRadius.horizontal(
                                       right: Radius.circular(20))
                                   : BorderRadius.zero),
-                      width: MediaQuery.of(context).size.width,
+                      width: TemplateHandler.getDeviceSize(context).width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,

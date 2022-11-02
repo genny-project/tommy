@@ -10,6 +10,7 @@ import 'package:tommy/projectenv.dart';
 import 'package:tommy/utils/bridge_env.dart';
 import 'package:http/http.dart' as http;
 import 'package:tommy/utils/bridge_handler.dart';
+import 'package:tommy/utils/template_handler.dart';
 
 class Login extends StatefulWidget {
   static final Log _log = Log("Login");
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
       body: SafeArea(
         top: false,
         child: SizedBox(
-          width: MediaQuery.of(context).size.width,
+          width: TemplateHandler.getDeviceSize(context).width,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -54,6 +55,7 @@ class _LoginState extends State<Login> {
                           .then((response) async {
                         Map<String, dynamic> data = jsonDecode(response.body);
                         Login._log.info("Bridge Data $data");
+                        BridgeEnv.data = data;
                         BridgeEnv.map.forEach(
                           (key, val) {
                             Login._log.info("Key $key");
@@ -89,7 +91,7 @@ class _LoginState extends State<Login> {
                       });
                     },
                     child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.5,
+                        width: TemplateHandler.getDeviceSize(context).width * 0.5,
                         child: const Center(child: Text("Login")))),
                 ProjectEnv.devMode
                     ? Container(

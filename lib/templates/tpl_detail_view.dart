@@ -28,7 +28,7 @@ class DetailView extends StatelessWidget {
           .where((attribute) => !attribute.attributeCode.startsWith("_"))
           .toList();
       return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
+        width: TemplateHandler.getDeviceSize(context).width * 0.9,
         // color: Colors.greenAccent,
         child: Padding(
             padding: const EdgeInsets.all(8.0),

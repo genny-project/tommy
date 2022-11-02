@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoff/geoff.dart';
@@ -31,6 +32,16 @@ class BridgeHandler {
   static ValueNotifier<Item> message = ValueNotifier<Item>(Item.create());
   static StreamController<BaseEntity> beStream = StreamController.broadcast();
   Set<String> images = {};
+
+  static Map<String,dynamic> export() {
+    List<String> beJson = [];
+    List<String> askJson = [];
+    Map<String,dynamic> bridgeEnv = BridgeEnv.data;
+    print("$bridgeEnv");
+    beData.values.toSet().forEach((be) {beJson.add(be.writeToJson());});
+    askData.values.toSet().forEach((ask) {askJson.add(ask.writeToJson());});
+    return {"be": beJson, "ask": askJson, "env": bridgeEnv};
+  }
   static dynamic getValue(EntityAttribute attribute) {
     String classType = attribute.attribute.dataType.className.split('.').last;
     switch (classType) {
