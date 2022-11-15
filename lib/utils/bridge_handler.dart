@@ -114,11 +114,11 @@ class BridgeHandler {
   }
 
   static void evt(
-      {required String code,
-      required String sourceCode,
-      required String targetCode,
-      required String parentCode,
-      required String questionCode}) {
+      {String? code,
+      String? sourceCode,
+      String? targetCode,
+      String? parentCode,
+      String? questionCode}) {
     Item evtItem = Item.create()
       ..token = Session.token!
       ..body = jsonEncode((QMessage.create()
@@ -127,11 +127,11 @@ class BridgeHandler {
             ..eventType = "BTN_CLICK"
             ..redirect = true
             ..data = (MessageData.create()
-              ..code = code
-              ..sourceCode = sourceCode
-              ..targetCode = targetCode
-              ..parentCode = parentCode
-              ..questionCode = questionCode
+              ..code = code ?? ""
+              ..sourceCode = sourceCode ?? ""
+              ..targetCode = targetCode ?? ""
+              ..parentCode = parentCode ?? ""
+              ..questionCode = questionCode ?? ""
               ..sessionId = Session.tokenData['jti']))
           .toProto3Json());
     client.sink(evtItem);
@@ -192,7 +192,7 @@ class BridgeHandler {
               ..sourceCode = ask.sourceCode
               ..targetCode = ask.targetCode
               ..askId = ask.id
-              ..attributeCode = ask.question.attributeCode
+              ..attributeCode = ask.attributeCode
               ..processId = ask.processId
               ..value = value))
           .toProto3Json());

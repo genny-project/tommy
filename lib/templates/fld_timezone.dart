@@ -7,16 +7,16 @@ import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
 
-class TimezoneWidget extends StatefulWidget {
+class TimezoneTpl extends StatefulWidget {
   late final BaseEntity entity = BridgeHandler.findByCode(ask.targetCode);
   final Ask ask;
-  TimezoneWidget({Key? key, required this.ask}) : super(key: key);
+  TimezoneTpl({Key? key, required this.ask}) : super(key: key);
 
   @override
-  State<TimezoneWidget> createState() => _TimezoneWidgetState();
+  State<TimezoneTpl> createState() => _TimezoneTplState();
 }
 
-class _TimezoneWidgetState extends State<TimezoneWidget> {
+class _TimezoneTplState extends State<TimezoneTpl> {
   // ignore: unused_field
   final Log _log = Log("TPL_Timezone");
   String value = "";

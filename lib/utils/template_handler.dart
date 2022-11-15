@@ -4,10 +4,12 @@ import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/widgets/timezone_widget.dart';
+import 'package:tommy/templates/fld_timezone.dart';
 
 import 'package:widgetbook/src/devices/widgetbook_device_frame.dart';
 import 'package:widgetbook_models/src/devices/device_size.dart';
+import 'package:widgetbook_models/src/devices/device.dart';
+
 class TemplateHandler {
   // FocusNode focus;
   static Map<String, BuildContext> contexts = {};
@@ -35,11 +37,14 @@ class TemplateHandler {
 
       case "TPL_FORM":
         //similar to the table oddity, this key absolutely ensures that the form instance is brand new
-        
+
         //had to rework this because using a unique key on every build was messing with the state management
         //of the form. made it control like a cow in a shopping trolley
-        return GennyForm(entity: entity,  key: Key("${BridgeHandler
-        .askData[entity.findAttribute("PRI_QUESTION_CODE").valueString]?.hashCode}",));
+        return GennyForm(
+            entity: entity,
+            key: Key(
+              "${BridgeHandler.askData[entity.findAttribute("PRI_QUESTION_CODE").valueString]?.hashCode}",
+            ));
 
       case "TPL_LOGO":
         return Logo(
@@ -67,8 +72,11 @@ class TemplateHandler {
         //providing key because without it, it doesnt know to overwrite itself. weird one.
         //note for later: maybe do what i did with the form key?
         //as it stands the focus doesnt really matter too much right now but it is worth keeping in mind
-        return TableTpl(entity: entity, key: Key(entity.hashCode.toString()),);
-      
+        return TableTpl(
+          entity: entity,
+          key: Key(entity.hashCode.toString()),
+        );
+
       case "TPL_ADD_ITEMS":
         return AddItemsTpl(entity: entity);
       case "TPL_BELL":
@@ -87,8 +95,8 @@ class TemplateHandler {
     }
   }
 
-  Widget getField(Ask ask, BuildContext context, FocusNode fNode) {
-  switch (ask.question.attribute.dataType.component) {
+  static Widget getField(Ask ask, BuildContext context) {
+    switch (ask.question.attribute.dataType.component) {
       case "radio":
         {
           return RadioField(ask: ask);
@@ -106,7 +114,7 @@ class TemplateHandler {
           return DateField(ask: ask);
         }
       case "time_zone":
-        return TimezoneWidget(ask: ask);
+        return TimezoneTpl(ask: ask);
       case "button":
         {
           return TextButton(
@@ -128,8 +136,9 @@ class TemplateHandler {
 
       default:
         {
-
-          return GennyTextField(ask: ask,); 
+          return GennyTextField(
+            ask: ask,
+          );
         }
     }
   }
@@ -147,7 +156,6 @@ class TemplateHandler {
     }
     return Column(
       children: [
-        
         IconButton(
             onPressed: () {
               /* # # # # #
@@ -157,17 +165,22 @@ class TemplateHandler {
               print("Attribute $attribute");
             },
             icon: const Icon(Icons.error)),
-      Text(attribute.valueString.toString())
+        Text(attribute.valueString.toString())
       ],
     );
   }
 
   static Size getDeviceSize(BuildContext context) {
-    DeviceSize? deviceSize = context.findAncestorWidgetOfExactType<WidgetbookDeviceFrame>()?.device.resolution.nativeSize;
-    if(deviceSize != null) {
-      return Size(deviceSize.width, deviceSize.height);
+    WidgetbookDeviceFrame? frame =
+        context.findAncestorWidgetOfExactType<WidgetbookDeviceFrame>();
+    if (frame != null) {
+      return frame.orientation == Orientation.portrait
+          ? Size(frame.device.resolution.logicalSize.width,
+              frame.device.resolution.logicalSize.height)
+          : Size(frame.device.resolution.logicalSize.height,
+              frame.device.resolution.logicalSize.width);
     }
     return MediaQuery.of(context).size;
-    
   }
 }
+ 

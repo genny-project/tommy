@@ -68,8 +68,8 @@ class _GennyFormState extends State<GennyForm> {
                               borderRadius: ask.childAsks[index].mandatory ? const BorderRadius.only(topLeft: Radius.zero, bottomLeft: Radius.zero, topRight: Radius.circular(12), bottomRight: Radius.circular(12)) : const BorderRadius.all(Radius.circular(12)),
                               border: Border.all(color: Colors.red, width: 4))
                           : ask.childAsks[index].mandatory ? const BoxDecoration(border: Border(left: BorderSide(color: Colors.red, width: 4))) : null,
-                      child: TemplateHandler()
-                          .getField(ask.childAsks[index], context, fNode));
+                      child: TemplateHandler
+                          .getField(ask.childAsks[index], context));
                 }));
               }
               return Container(
@@ -78,8 +78,8 @@ class _GennyFormState extends State<GennyForm> {
                           border: Border(
                               left: BorderSide(color: Colors.blue, width: 4)))
                       : null,
-                  child: TemplateHandler()
-                      .getField(qGroup.childAsks[index], context, fNode));
+                  child: TemplateHandler
+                      .getField(qGroup.childAsks[index], context));
             },
           ), UnansweredWidget(qGroup, (Ask ask) {
                 // setState(() {

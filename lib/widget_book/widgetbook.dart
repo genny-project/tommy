@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:tommy/generated/ask.pb.dart';
+import 'package:tommy/templates/fld_text.dart';
 import 'package:tommy/utils/bridge_handler.dart';
 import 'package:tommy/utils/template_handler.dart';
 import 'package:widgetbook/widgetbook.dart';
@@ -22,38 +24,47 @@ class WidgetbookHotReload extends StatelessWidget {
             WidgetbookComponent(
               name: 'Templates',
               useCases: [
-                getUseCase(name: "tpl_avatar", templateCode: "TPL_AVATAR"),
-                getUseCase(name: "tpl_form", templateCode: "TPL_FORM"),
-                getUseCase(name: "tpl_process", templateCode: "TPL_PROCESS"),
-                getUseCase(name: "tpl_bell", templateCode: "TPL_BELL"),
-                getUseCase(
+                getTplUseCase(name: "tpl_avatar", templateCode: "TPL_AVATAR"),
+                getTplUseCase(name: "tpl_form", templateCode: "TPL_FORM"),
+                getTplUseCase(name: "tpl_process", templateCode: "TPL_PROCESS"),
+                getTplUseCase(name: "tpl_bell", templateCode: "TPL_BELL"),
+                getTplUseCase(
                     name: "tpl_hidden_menu", templateCode: "TPL_HIDDEN_MENU"),
-                getUseCase(name: "tpl_sidebar", templateCode: "TPL_SIDEBAR_1"),
-                getUseCase(
+                getTplUseCase(name: "tpl_sidebar", templateCode: "TPL_SIDEBAR_1"),
+                getTplUseCase(
                     name: "tpl_action_button",
                     templateCode: "TPL_ACTION_BUTTON"),
-                getUseCase(
+                getTplUseCase(
                     name: "tpl_cards_list_view",
                     templateCode: "TPL_CARDS_LIST_VIEW"),
-                getUseCase(name: "tpl_hori", templateCode: "TPL_HORI"),
-                getUseCase(name: "tpl_table", templateCode: "TPL_TABLE"),
-                getUseCase(
+                getTplUseCase(name: "tpl_hori", templateCode: "TPL_HORI"),
+                getTplUseCase(name: "tpl_table", templateCode: "TPL_TABLE"),
+                getTplUseCase(
                     name: "tpl_add_items", templateCode: "TPL_ADD_ITEMS"),
-                getUseCase(
+                getTplUseCase(
                     name: "tpl_dashboard", templateCode: "TPL_DASHBOARD"),
-                getUseCase(
+                getTplUseCase(
                     name: "tpl_horizontal_cards",
                     templateCode: "TPL_HORIZONTAL_CARDS"),
-                getUseCase(name: "tpl_vert", templateCode: "TPL_VERT"),
-                getUseCase(name: "tpl_appbar", templateCode: "TPL_HEADER_1"),
-                getUseCase(
+                getTplUseCase(name: "tpl_vert", templateCode: "TPL_VERT"),
+                getTplUseCase(name: "tpl_appbar", templateCode: "TPL_HEADER_1"),
+                getTplUseCase(
                     name: "tpl_detail_view", templateCode: "TPL_DETAIL_VIEW"),
-                getUseCase(name: "tpl_logo", templateCode: "TPL_LOGO"),
-                getUseCase(
+                getTplUseCase(name: "tpl_logo", templateCode: "TPL_LOGO"),
+                getTplUseCase(
                     name: "tpl_vertical_cards",
                     templateCode: "TPL_VERTICAL_CARDS"),
               ],
             ),
+            WidgetbookComponent(name: "Fields", useCases: [
+              getFieldUseCase(name: "fld_date", componentCode: "date"),
+              getFieldUseCase(name: "fld_dropdown", componentCode: "dropdown"),
+              getFieldUseCase(name: "fld_flag", componentCode: "flag"),
+              getFieldUseCase(name: "fld_radio", componentCode: "radio"),
+              getFieldUseCase(name: "fld_richtext_editor", componentCode: "richtext_editor"),
+              getFieldUseCase(name: "fld_text", componentCode: "text"),
+              getFieldUseCase(name: "fld_timezone", componentCode: "time_zone"),
+            ]),
           ],
         ),
       ],
@@ -63,7 +74,10 @@ class WidgetbookHotReload extends StatelessWidget {
         Apple.iPhone8,
         Apple.iPhoneX,
         Apple.iPhone11,
-        Apple.iPhone12
+        Apple.iPhone12,
+        Apple.iPad10Inch,
+        Apple.iPadMini,
+        Apple.iPadPro12inch
       ],
       appInfo: AppInfo(name: 'Tommy'),
       themes: [
@@ -80,8 +94,39 @@ class WidgetbookHotReload extends StatelessWidget {
     return wb;
   }
 }
+WidgetbookUseCase getFieldUseCase({required String name, required String componentCode}) {
+  List<Ask> asks = [];
+  asks = BridgeHandler.askData.values.where((element) {
+    for(Ask childAsk in element.childAsks) {
+      if(childAsk.question.attribute.dataType.component == componentCode) {
+        asks.add(childAsk);
+      }
+    }
+    return element.question.attribute.dataType.component == componentCode;
+  },).toList();
+  Ask ask;
 
-WidgetbookUseCase getUseCase(
+  return WidgetbookUseCase(name: name, builder: ((context) {
+      String rawAskData = context.knobs.text(
+            label: "Raw Ask",
+            description: "Enter Proto3 JSON data",
+            initialValue: "");
+    if(asks.isNotEmpty && rawAskData.isEmpty) {
+        ask = context.knobs.options(
+                  label: "BaseEntities with associated template",
+                  options: List.generate(
+                      asks.toSet().length,
+                      (index) => Option(
+                          //labelling the option with the index is necessary as any duplicate labels will cause an error
+                          label: (asks[index].attributeCode + " " + index.toString()), value: asks[index])));
+    } else {
+      ask = Ask()..mergeFromProto3Json(rawAskData.isNotEmpty ? jsonDecode(rawAskData) : {});
+    }
+    
+    return TemplateHandler.getField(ask, context);
+  }));
+}
+WidgetbookUseCase getTplUseCase(
     {required String name, required String templateCode}) {
   return WidgetbookUseCase(
       name: name,
@@ -113,6 +158,6 @@ WidgetbookUseCase getUseCase(
           be = BaseEntity.create();
         }
         // return Text(context.knobs.toString());
-        return TemplateHandler.getTemplate(templateCode, be);
+        return ListView(children: [TemplateHandler.getTemplate(templateCode, be)]);
       });
 }

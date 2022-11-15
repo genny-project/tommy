@@ -18,7 +18,6 @@ class DropdownField extends StatelessWidget {
   DropdownField({Key? key, required this.ask}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-
     TemplateHandler.contexts[ask.question.code] = context;
     return StatefulBuilder(builder: (context, setState) {
       return ListTile(
@@ -54,24 +53,27 @@ class DropdownField extends StatelessWidget {
             }
           },
           children: [
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: dropdownItems.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTile(
-                    onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      setState(() {
-                        answers.add(BridgeHandler
-                            .beData[dropdownItems[index].baseEntityCode]!);
-                        answerDropdown();
-                      });
+            dropdownItems.isEmpty
+                ? ListTile(title: Text("No options found"))
+                : ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: dropdownItems.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                          onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            setState(() {
+                              answers.add(BridgeHandler.beData[
+                                  dropdownItems[index].baseEntityCode]!);
+                              answerDropdown();
+                            });
+                          },
+                          title: Text(BridgeHandler
+                              .beData[dropdownItems[index].baseEntityCode]!
+                              .name));
                     },
-                    title: Text(BridgeHandler
-                        .beData[dropdownItems[index].baseEntityCode]!.name));
-              },
-            ),
+                  ),
           ],
         ),
       );

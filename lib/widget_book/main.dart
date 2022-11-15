@@ -9,7 +9,6 @@ import 'package:tommy/generated/baseentity.pb.dart';
 import 'package:tommy/generated/ask.pb.dart';
 
 void main(List<String> args) {
-  print(Directory.current);
   String file = File("lib/widget_book/backup.json").readAsStringSync();
   Map<String,dynamic> json = jsonDecode(file);
   (json["be"] as List<dynamic>).forEach((string) {
