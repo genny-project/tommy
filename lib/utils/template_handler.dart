@@ -133,7 +133,10 @@ class TemplateHandler {
             ask: ask,
           );
         }
-
+      case "upload":
+        {
+          return UploadField(ask: ask);
+        }
       default:
         {
           return GennyTextField(

@@ -51,13 +51,14 @@ class _ProcessTplState<CustomTheme> extends State<ProcessTpl> {
   Widget build(BuildContext context) {
     BaseEntity? sbe = BridgeHandler.beData.values.firstWhereOrNull((element) =>
         element.code.startsWith(widget.entity.PRI_LOC(1).valueString));
-
     if (sbe != null) {
       List<BaseEntity>? sbes = widget.entity.baseEntityAttributes.where(
         (beAttribute) {
           return beAttribute.attributeCode.startsWith("PRI_LOC");
         },
-      ).map((e) {
+      )
+      .sorted((a, b) => a.weight.compareTo(b.weight))
+      .map((e) {
         return BridgeHandler.findByCode(e.valueString);
       }).toList();
 
@@ -96,7 +97,7 @@ class _ProcessTplState<CustomTheme> extends State<ProcessTpl> {
                 }))),
       );
     } else {
-      return const LinearProgressIndicator();
+      return const CircularProgressIndicator();
     }
   }
 }

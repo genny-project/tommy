@@ -22,3 +22,5 @@ export 'package:tommy/templates/tpl_sidebar.dart';
 export 'package:tommy/templates/tpl_table.dart';
 export 'package:tommy/templates/tpl_vert.dart';
 export 'package:tommy/templates/tpl_vertical_cards.dart';
+export 'package:tommy/templates/fld_timezone.dart';
+export 'package:tommy/templates/fld_upload.dart';

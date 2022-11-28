@@ -60,14 +60,13 @@ class _TableTplState extends State<TableTpl> {
   int get pageStart => searchBe!.findAttribute("SCH_PAGE_START").valueInteger;
   late int totalResults =
       searchBe!.findAttribute("PRI_TOTAL_RESULTS").valueInteger;
-  List<BaseEntity> getRow() {
-    return (BridgeHandler.beData.values.where((element) {
+  List<BaseEntity> get getRow {
+    List<BaseEntity> rows = (BridgeHandler.beData.values.where((element) {
       return element.parentCode == searchBe!.code;
     }).toList()
-          ..sort((a, b) {
-            return a.index.compareTo(b.index);
-          }))
-        .sublist(pageStart)
+          );
+
+    return rows.sublist(pageStart, min(pageStart + pageSize, rows.length))
       ..sort((a, b) {
         //this ought to correct the table behaviour while allowing sort properly
         List<BaseEntity> values = [a, b];
@@ -90,6 +89,7 @@ class _TableTplState extends State<TableTpl> {
                     .replaceFirst("COL_", ""))
                 .getValue());
       });
+        
   }
 
   @override
@@ -101,7 +101,7 @@ class _TableTplState extends State<TableTpl> {
     if (searchBe != null) {
       BaseEntity sbe = searchBe!;
 
-      late List<BaseEntity> row = getRow();
+      late List<BaseEntity> row = getRow;
 
       double fraction = 1 /
           ((TemplateHandler.getDeviceSize(context).width / 150)
