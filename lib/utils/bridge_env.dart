@@ -22,7 +22,7 @@ class BridgeEnv {
   }
 
   static get authUrl {
-    ENV_KEYCLOAK_REDIRECTURI = "https://keycloak.gada.io/auth";
+    ENV_KEYCLOAK_REDIRECTURI = "https://keycloak-bali.gada.io/auth";
     _log.info("This is the realm $clientID");
     _log.info("This is the auth server $ENV_KEYCLOAK_REDIRECTURI");
     return "$ENV_KEYCLOAK_REDIRECTURI/realms/$clientID/.well-known/openid-configuration";

@@ -7,7 +7,8 @@ class Hori extends StatelessWidget {
   const Hori({Key? key, required this.entity}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Column(children: List.generate(entity.baseEntityAttributes.length, (index) {
+    List<EntityAttribute> priLocs = entity.baseEntityAttributes.where((element) => element.attributeCode.startsWith('PRI_LOC')).toList();
+    return Row(children: List.generate(entity.baseEntityAttributes.length, (index) {
       return entity.baseEntityAttributes[index].attributeWidget();
     }),);
   }

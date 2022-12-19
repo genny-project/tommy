@@ -35,9 +35,6 @@ class _TimezoneTplState extends State<TimezoneTpl> {
 
     TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
-      contentPadding: widget.ask.mandatory
-          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-          : null,
       title: TextButton(
         child: Row(
           children: [

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -17,15 +19,14 @@ class GennyTextField extends StatefulWidget {
 }
 
 class _GennyTextFieldState extends State<GennyTextField> {
-  late final BaseEntity entity = BridgeHandler.findByCode(widget.ask.targetCode);
+  late final BaseEntity entity =
+      BridgeHandler.findByCode(widget.ask.targetCode);
   String value = "";
+  Timer? timer;
   @override
   Widget build(BuildContext context) {
     TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
-      contentPadding: widget.ask.mandatory
-           ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-           : null,
       // shape: widget.ask.mandatory
       //     ? const Border(left: BorderSide(color: Colors.red, width: 4))
       //     : null,
@@ -37,13 +38,18 @@ class _GennyTextFieldState extends State<GennyTextField> {
           }
         }),
         child: TextFormField(
-            
             keyboardType: maskType(entity
                 .findAttribute(widget.ask.attributeCode)
                 .attribute
                 .dataType),
             // controller: TextEditingController(text: entity.findAttribute(widget.ask.attributeCode).valueString),
             onChanged: (newValue) {
+              timer?.cancel();
+              timer = Timer(Duration(milliseconds: 800), () {
+                entity.findAttribute(widget.ask.attributeCode).valueString =
+                    value;
+                widget.ask.answer(value);
+              });
               value = newValue;
             },
             initialValue: entity
@@ -60,10 +66,30 @@ class _GennyTextFieldState extends State<GennyTextField> {
               widget.ask.answer(value);
             },
             decoration: InputDecoration(
-              icon: const Icon(Icons.info, color: Colors.red,), 
-              // Text('*', style: TextStyle(color: Colors.red, fontSize: 24),),
-              labelText: widget.ask.name,
-            )),
+                filled: true,
+                fillColor: Colors.grey[250],
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary,
+                        width: 2)),
+                focusColor: Theme.of(context).colorScheme.secondary,
+                // Text('*', style: TextStyle(color: Colors.red, fontSize: 24),),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                  Text(widget.ask.name),
+                  widget.ask.mandatory ? Text("*", style: TextStyle(color: Colors.red, fontSize: 20,),) : SizedBox()
+                ]),
+                border: InputBorder.none,
+                errorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2)),
+                focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 2)),
+                labelStyle: TextStyle(decorationColor: Colors.red))),
       ),
     );
   }

@@ -9,7 +9,9 @@ class Vert extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(entity.baseEntityAttributes.length, (index) {
-        return entity.baseEntityAttributes[index].attributeWidget();
+        return (entity.baseEntityAttributes..sort((a, b) {
+         return a.attributeCode.compareTo(b.attributeCode);
+        }))[index].attributeWidget();
       }),
     );
   }

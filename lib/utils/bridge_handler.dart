@@ -37,7 +37,6 @@ class BridgeHandler {
     List<String> beJson = [];
     List<String> askJson = [];
     Map<String,dynamic> bridgeEnv = BridgeEnv.data;
-    print("$bridgeEnv");
     beData.values.toSet().forEach((be) {beJson.add(be.writeToJson());});
     askData.values.toSet().forEach((ask) {askJson.add(ask.writeToJson());});
     return {"be": beJson, "ask": askJson, "env": bridgeEnv};
@@ -243,12 +242,13 @@ class BridgeHandler {
       }
       if (data['data_type'] == "QBulkMessage") {
         QBulkMessage message = QBulkMessage.create();
-
         message.mergeFromProto3Json(data, ignoreUnknownFields: true);
 
         for (QMessage message in message.messages) {
           for (BaseEntity be in message.items) {
+            
             if (message.parentCode.startsWith("SBE_")) {
+              
               be.parentCode = message.parentCode;
             }
             handleBE(be, beCallback);
@@ -373,13 +373,15 @@ class BridgeHandler {
   ///Creates a text field validation function from the validation list of an [Ask] object
   ///
   ///Presently only contains Regex functionality
-  static String? Function(String?) createValidator(Ask ask) {
+  static String? Function(String?) createValidator(Ask ask, {String? value}) {
     List validationList = ask.question.attribute.dataType.validationList;
     String? regex = validationList.isNotEmpty ? validationList.first.regex : "";
     RegExp regExp = RegExp(regex!);
     return (string) {
-      if (!regExp.hasMatch(string!) && string.isNotEmpty) {
-        return "Does not match regex";
+      String? stringValue;
+      stringValue = value ?? string;
+      if (!regExp.hasMatch(stringValue!) && stringValue.isNotEmpty) {
+        return "Please enter valid data";
       }
       return null;
     };

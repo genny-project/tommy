@@ -36,18 +36,10 @@ class _UploadFieldState extends State<UploadField> {
   Widget build(BuildContext context) {
     TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
-      contentPadding: widget.ask.mandatory
-          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-          : null,
-      title: Text("${widget.ask.name}"),
+      title: Text(widget.ask.name),
       subtitle: Text(
           entity.findAttribute(widget.ask.attributeCode).getValue().toString()),
       leading: getLeading(),
-
-      //  requestBody != null
-      //     ? Image.network(BridgeEnv.ENV_MEDIA_PROXY_URL +
-      //         "/${requestBody!['files'][0]['uuid']}")
-      //     : Icon(Icons.image),
       onTap: () async {
         fileResult = await FilePicker.platform.pickFiles();
 
@@ -61,8 +53,6 @@ class _UploadFieldState extends State<UploadField> {
               fileBytes = bytes;
               fileTotalBytes = total;
             });
-
-            print("Got upload event $bytes $total ${bytes / total}");
           });
 
           request.headers['Authorization'] = 'bearer ${Session.token}';

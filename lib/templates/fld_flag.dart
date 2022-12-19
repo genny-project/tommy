@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
@@ -27,21 +28,23 @@ class _FlagFieldState extends State<FlagField> {
 
   @override
   Widget build(BuildContext context) {
-
     TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
-      contentPadding: widget.ask.mandatory
-          ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-          : null,
-      trailing: Switch(
-          value: entity.findAttribute(widget.ask.attributeCode).valueBoolean,
-          onChanged: (_) {
-            FocusManager.instance.primaryFocus?.unfocus();
-            setState(() {
-              entity.findAttribute(widget.ask.attributeCode).valueBoolean = _;
-            });
-            widget.ask.answer(_.toString().toUpperCase());
-          }),
+      trailing: Container(
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Switch(
+              thumbColor: MaterialStateProperty.all(Colors.white),
+              value: entity.findAttribute(widget.ask.attributeCode).valueBoolean,
+              onChanged: (_) {
+                FocusManager.instance.primaryFocus?.unfocus();
+                setState(() {
+                  entity.findAttribute(widget.ask.attributeCode).valueBoolean = _;
+                });
+                widget.ask.answer(_.toString().toUpperCase());
+              }),
+        ),
+      ),
       title: Text(widget.ask.name),
     );
   }

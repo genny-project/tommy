@@ -14,7 +14,6 @@ import 'package:tommy/generated/baseentity.pb.dart';
 class WidgetbookHotReload extends StatelessWidget {
   final String file;
   const WidgetbookHotReload(this.file, {Key? key}) : super(key: key);
-  static final String thing = "yeahhh";
   static BuildContext? bcontext;
   static Widgetbook<ThemeData> wb = Widgetbook.material(
       categories: [

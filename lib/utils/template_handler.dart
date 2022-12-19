@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tommy/template_library.dart';
 import 'package:tommy/generated/ask.pb.dart';
 import 'package:tommy/generated/baseentity.pb.dart';
+import 'package:tommy/templates/fld_address.dart';
+import 'package:tommy/templates/fld_button.dart';
+import 'package:tommy/templates/fld_phone.dart';
+import 'package:tommy/templates/tpl_hori_all.dart';
 import 'package:tommy/utils/bridge_extensions.dart';
 import 'package:tommy/utils/bridge_handler.dart';
-import 'package:tommy/templates/fld_timezone.dart';
-
 import 'package:widgetbook/src/devices/widgetbook_device_frame.dart';
 import 'package:widgetbook_models/src/devices/device_size.dart';
 import 'package:widgetbook_models/src/devices/device.dart';
@@ -21,7 +23,10 @@ class TemplateHandler {
 
       case "TPL_HORI":
         return Hori(entity: entity);
-
+      case "TPL_HORI_ALL":
+        return HoriAll(
+          entity: entity,
+        );
       case "TPL_CONTENT":
         return Container(
           child: entity.findAttribute('PRI_LOC1').getPcmWidget(),
@@ -117,15 +122,7 @@ class TemplateHandler {
         return TimezoneTpl(ask: ask);
       case "button":
         {
-          return TextButton(
-              onPressed: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                //TODO: find a better solution to simply waiting for focus to change arbitrarily
-                Future.delayed(const Duration(seconds: 2), () {
-                  BridgeHandler.askEvt(ask);
-                });
-              },
-              child: Text(ask.name));
+          return ButtonField(ask: ask);
         }
       case "richtext_editor":
         {
@@ -137,11 +134,25 @@ class TemplateHandler {
         {
           return UploadField(ask: ask);
         }
+      case "text":
+        return GennyTextField(ask: ask);
+      case "email":
+        //on alyson the text field has a differing function when reading data, hence why there are differing component types
+        return GennyTextField(ask: ask);
+      case "phone":
+        return PhoneField(ask: ask);
+      case "address":
+        return AddressField(
+          ask: ask,
+        );
       default:
         {
-          return GennyTextField(
-            ask: ask,
-          );
+          return Column(children: [
+            GennyTextField(
+              ask: ask,
+            ),
+            Text(ask.question.attribute.dataType.component)
+          ]);
         }
     }
   }
@@ -168,7 +179,9 @@ class TemplateHandler {
               print("Attribute $attribute");
             },
             icon: const Icon(Icons.error)),
-        Text(attribute.valueString.toString())
+        Text(attribute.attributeCode),
+        Text(attribute.baseEntityCode),
+        Text(attribute.valueString)
       ],
     );
   }
@@ -186,4 +199,3 @@ class TemplateHandler {
     return MediaQuery.of(context).size;
   }
 }
- 

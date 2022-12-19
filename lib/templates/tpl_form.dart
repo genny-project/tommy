@@ -24,6 +24,7 @@ class _GennyFormState extends State<GennyForm> {
     _selectNotifier.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     Ask? qGroup = BridgeHandler
@@ -44,54 +45,48 @@ class _GennyFormState extends State<GennyForm> {
       return ValueListenableBuilder(
         valueListenable: _selectNotifier,
         builder: ((context, value, child) {
-          
-          return 
-         Column(
-            children: [
-          ListTile(
-              title: Text(
-            qGroup.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            textAlign: TextAlign.start,
-          )),
-          
-          ...List.generate(
-            qGroup.childAsks.length,
-            (index) {
-              if (qGroup.childAsks[index].attributeCode == "QQQ_QUESTION_GROUP") {
-                Ask ask = qGroup.childAsks[index];
-                return Column(
-                    children: List.generate(ask.childAsks.length, (index) {
-                  return Container(
-                      decoration: focusField == ask.childAsks[index].question.code
-                          ? BoxDecoration(
-                              borderRadius: ask.childAsks[index].mandatory ? const BorderRadius.only(topLeft: Radius.zero, bottomLeft: Radius.zero, topRight: Radius.circular(12), bottomRight: Radius.circular(12)) : const BorderRadius.all(Radius.circular(12)),
-                              border: Border.all(color: Colors.red, width: 4))
-                          : ask.childAsks[index].mandatory ? const BoxDecoration(border: Border(left: BorderSide(color: Colors.red, width: 4))) : null,
-                      child: TemplateHandler
-                          .getField(ask.childAsks[index], context));
-                }));
-              }
-              return Container(
-                  decoration: value == qGroup.childAsks[index].question.code
-                      ? const BoxDecoration(
-                          border: Border(
-                              left: BorderSide(color: Colors.blue, width: 4)))
-                      : null,
-                  child: TemplateHandler
-                      .getField(qGroup.childAsks[index], context));
-            },
-          ), UnansweredWidget(qGroup, (Ask ask) {
-                // setState(() {
-                  _selectNotifier.value = ask.question.code;
-                  focusField = ask.question.code;
-                // });
-              }),
-        ]);}),
+          return Column(children: [
+            ListTile(
+                title: Text(
+              qGroup.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              textAlign: TextAlign.start,
+            )),
+            ...List.generate(
+              qGroup.childAsks.length,
+              (index) {
+                if (qGroup.childAsks[index].attributeCode ==
+                    "QQQ_QUESTION_GROUP") {
+                  Ask ask = qGroup.childAsks[index];
+                  return Column(
+                      children: List.generate(ask.childAsks.length, (index) {
+                    return field(ask.childAsks[index]);
+                  }));
+                }
+                return field(qGroup.childAsks[index]);
+              },
+            ),
+            UnansweredWidget(qGroup, (Ask ask) {
+              // setState(() {
+              _selectNotifier.value = ask.question.code;
+              focusField = ask.question.code;
+              // });
+            }),
+          ]);
+        }),
       );
     } else {
       return const LinearProgressIndicator();
     }
+  }
+
+  Widget field(Ask ask) {
+    return Container(
+        decoration: focusField == ask.question.code
+            ? const BoxDecoration(
+                border: Border.symmetric(horizontal: BorderSide(color: Colors.red, width: 4,)))
+            : null,
+        child: TemplateHandler.getField(ask, context));
   }
 }
 
@@ -139,11 +134,11 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
   List<Ask> unanswered() {
     return getAll()
         .toList()
-        .where((element) {
-          var value = BridgeHandler.beData[element.targetCode]!
-              .findAttribute(element.attributeCode)
+        .where((ask) {
+          var value = BridgeHandler.beData[ask.targetCode]
+              ?.findAttribute(ask.attributeCode)
               .getValue();
-          return (element.mandatory == true && value == null || value == "");
+          return (ask.mandatory == true && value == null || value == "");
         })
         .toSet()
         .toList();
@@ -163,24 +158,32 @@ class _UnansweredWidgetState extends State<UnansweredWidget> {
             spacing: 10.0,
             children: List.generate(
                 unanswered().length,
-                (index) => InkWell(
-                      onTap: () {
-                        Scrollable.ensureVisible(
+                (index) => ActionChip(
+                    visualDensity: VisualDensity(vertical: VisualDensity.minimumDensity),
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(15 / 2))),
+                    onPressed: () {
+                      Scrollable.ensureVisible(
                           TemplateHandler
                               .contexts[unanswered()[index].question.code]!,
                           duration: const Duration(seconds: 1),
-                          alignment:0.5
-                        );
+                          alignment: 0.5);
 
-                        widget.askSelect(unanswered()[index]);
-                      },
-                      child: Chip(
-                          backgroundColor: Colors.red[300],
-                          label: Text(
-                            unanswered()[index].name,
-                            style: const TextStyle(color: Colors.white),
-                          )),
-                    ))),
+                      widget.askSelect(unanswered()[index]);
+                    },
+                    backgroundColor:
+                        Theme.of(context).colorScheme.error.withAlpha(50),
+                    label: Text(
+                      
+                      unanswered()[index].name,
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .error
+                              .withAlpha(150)),
+                    )))),
       ],
     );
   }

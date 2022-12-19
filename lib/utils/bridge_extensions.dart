@@ -31,4 +31,10 @@ extension AskExtension on Ask {
   void answer(dynamic value) {
     BridgeHandler.answer(this, value);
   }
+  Widget field(BuildContext context) {
+    return TemplateHandler.getField(this, context);
+  }
+  void evt() {
+    return BridgeHandler.askEvt(this);
+  }
 }

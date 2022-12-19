@@ -44,10 +44,6 @@ class _RichtextEditorState extends State<RichtextEditor> {
   Widget build(BuildContext context) {
     TemplateHandler.contexts[widget.ask.question.code] = context;
     return ListTile(
-        // contentPadding: EdgeInsets.zero,
-        contentPadding: widget.ask.mandatory
-            ? const EdgeInsets.symmetric(horizontal: 16).copyWith(left: 12)
-            : null,
         title: Column(
           children: [
             Text(
